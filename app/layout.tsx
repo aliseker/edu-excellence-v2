@@ -1,15 +1,25 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
-  variable: "--font-inter",
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Edu-Excellence | Yurtdışı Eğitim Danışmanlık",
-  description: "Yurtdışında eğitim almak isteyen öğrencilere profesyonel danışmanlık hizmeti",
+  title: "Edu-Excellence | Eğitimin Mükemmel Hali",
+  description: "Eğitimin Mükemmel Hali - Yurtdışı eğitim, dil okulları, üniversite, master/MBA, staj ve Erasmus+ programları ile kariyerinizi bir üst seviyeye taşıyın.",
+  icons: {
+    icon: '/images/logo.jpg',
+    apple: '/images/logo.jpg',
+    shortcut: '/images/logo.jpg',
+  },
 };
 
 export default function RootLayout({
@@ -19,7 +29,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr">
-      <body className={`${inter.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         {children}
       </body>
     </html>
