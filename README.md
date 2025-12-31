@@ -5,7 +5,7 @@ Modern yurtdışı eğitim danışmanlık platformu. React 19.2.1 ve Next.js 16.
 ## 🚀 Teknolojiler
 
 - **Next.js** 16.0.10
-- **React** 19.2.1
+- **React** 19.2.3
 - **TypeScript**
 - **Tailwind CSS** 4
 - **App Router**
