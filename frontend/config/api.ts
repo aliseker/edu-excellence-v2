@@ -1,5 +1,13 @@
-// API Configuration
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+// Merkezi API URL konfigürasyonu
+// Development için: 'https://localhost:7166/api'
+// Production için: 'https://eduexcellence.com.tr/api'
+
+export const API_BASE_URL = 'https://eduexcellence.com.tr/api';
+//export const API_BASE_URL = 'https://localhost:7166/api';
+
+// Backend base URL (image URLs için)
+export const BACKEND_BASE_URL = 'https://eduexcellence.com.tr';
+//export const BACKEND_BASE_URL = 'https://localhost:7166';
 
 export const API_ENDPOINTS = {
   // Universities
