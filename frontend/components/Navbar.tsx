@@ -283,11 +283,11 @@ const Navbar = () => {
           : 'bg-white'
       }`}
     >
-      <div className="max-w-7xl mx-auto pl-0 pr-0.5 sm:pr-1 lg:pr-1.5">
-        <div className="flex items-center h-16">
-          {/* Logo Section - En sola yaslı */}
-          <Link href="/" className="flex items-center space-x-2 flex-shrink-0 mr-2 -ml-20 sm:-ml-24 lg:-ml-28">
-            <div className="relative h-12 w-12 overflow-hidden">
+      <div className="w-full max-w-7xl mx-auto px-2 sm:px-3 lg:px-4">
+        <div className="flex items-center h-16 justify-between">
+          {/* Logo Section - Responsive */}
+          <Link href="/" className="flex items-center space-x-1.5 sm:space-x-2 flex-shrink-0 mr-1 sm:mr-2">
+            <div className="relative h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 overflow-hidden">
               <Image
                 src="/images/logo.jpg"
                 alt="Edu-Excellence Logo"
@@ -297,13 +297,13 @@ const Navbar = () => {
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-gray-900 font-black text-lg leading-tight uppercase tracking-tight">Edu-Excellence</span>
-              <span className="text-[10px] text-gray-600 leading-tight font-bold uppercase tracking-wider">Eğitimin Mükemmel Hali</span>
+              <span className="text-gray-900 font-black text-xs sm:text-sm lg:text-lg leading-tight uppercase tracking-tight">Edu-Excellence</span>
+              <span className="text-[8px] sm:text-[9px] lg:text-[10px] text-gray-600 leading-tight font-bold uppercase tracking-wider hidden sm:block">Eğitimin Mükemmel Hali</span>
             </div>
           </Link>
 
           {/* Desktop Menu - Center */}
-          <div className="hidden lg:flex items-center space-x-0 flex-1 justify-center">
+          <div className="hidden lg:flex items-center gap-0.5 flex-1 justify-center mx-2">
             {menuItems.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               const hasDropdown = item.dropdown && item.dropdown.length > 0;
@@ -312,7 +312,7 @@ const Navbar = () => {
                 <div key={item.href} className="relative group">
                   <Link
                     href={item.href}
-                    className={`px-1.5 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all duration-200 flex items-center gap-0.5 whitespace-nowrap border-2 ${
+                    className={`px-1 py-1.5 text-[9px] font-black uppercase tracking-tight transition-all duration-200 flex items-center gap-0.5 whitespace-nowrap border-2 ${
                       isActive
                         ? 'text-purple-600 border-purple-600 bg-purple-50'
                         : 'text-gray-900 border-transparent hover:text-purple-600 hover:border-purple-600 hover:bg-purple-50'
@@ -373,10 +373,11 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* Diğer Hizmetlerimiz - Arama'nın solunda */}
-          <div className="hidden lg:block flex-shrink-0 mr-1">
+          {/* Right Section - Diğer Hizmetlerimiz + Search */}
+          <div className="hidden lg:flex items-center space-x-2 flex-shrink-0">
+            {/* Diğer Hizmetlerimiz */}
             <div className="relative group">
-              <button className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all duration-200 flex items-center gap-0.5 whitespace-nowrap border-2 text-gray-900 border-transparent hover:text-purple-600 hover:border-purple-600 hover:bg-purple-50">
+              <button className="px-1.5 py-1.5 text-[9px] font-black uppercase tracking-tight transition-all duration-200 flex items-center gap-0.5 whitespace-nowrap border-2 text-gray-900 border-transparent hover:text-purple-600 hover:border-purple-600 hover:bg-purple-50">
                 DİĞER HİZMETLERİMİZ
                 <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -440,10 +441,9 @@ const Navbar = () => {
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Search Section - Right */}
-          <div className="hidden lg:flex items-center space-x-1 flex-shrink-0">
+            {/* Search Section */}
+            <div className="flex items-center space-x-1">
             <form onSubmit={handleSearch} className="flex items-center space-x-1">
               <div className="relative">
                 <input
@@ -451,10 +451,10 @@ const Navbar = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Ara..."
-                  className="w-36 px-2.5 py-1.5 pl-7 border-4 border-gray-900 focus:outline-none focus:border-purple-600 text-[10px] font-bold"
+                  className="w-32 px-2 py-1.5 pl-6 border-4 border-gray-900 focus:outline-none focus:border-purple-600 text-[9px] font-bold"
                 />
                 <svg
-                  className="absolute left-1.5 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-600"
+                  className="absolute left-1 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -465,11 +465,12 @@ const Navbar = () => {
               </div>
               <button
                 type="submit"
-                className="px-4 py-1.5 bg-purple-600 text-white font-black uppercase tracking-wider hover:bg-purple-700 transition-all duration-200 shadow-[4px_4px_0_0_rgba(0,0,0,0.2)] hover:shadow-[2px_2px_0_0_rgba(0,0,0,0.2)] hover:translate-x-1 hover:translate-y-1 text-[10px]"
+                className="px-3 py-1.5 bg-purple-600 text-white font-black uppercase tracking-tight hover:bg-purple-700 transition-all duration-200 shadow-[4px_4px_0_0_rgba(0,0,0,0.2)] hover:shadow-[2px_2px_0_0_rgba(0,0,0,0.2)] hover:translate-x-1 hover:translate-y-1 text-[9px]"
               >
                 Ara
               </button>
             </form>
+            </div>
           </div>
 
           {/* Mobile Menu Button */}

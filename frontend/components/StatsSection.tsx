@@ -31,7 +31,7 @@ const StatsSection = () => {
   ];
 
   return (
-    <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-20 relative overflow-hidden">
+    <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-12 sm:py-16 lg:py-20 relative overflow-hidden">
       {/* Animated Background */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-0 left-0 w-full h-full" style={{
@@ -40,9 +40,9 @@ const StatsSection = () => {
         }}></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-5xl md:text-6xl font-black text-white mb-4 uppercase tracking-tight leading-tight">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 relative z-10">
+        <div className="text-center mb-10 sm:mb-12 lg:mb-16">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-3 sm:mb-4 uppercase tracking-tight leading-tight px-2">
             Rakamlarla
             <br />
             <span className="relative inline-block">
@@ -50,22 +50,22 @@ const StatsSection = () => {
               <span className="relative text-purple-300">EDU-EXCELLENCE</span>
             </span>
           </h2>
-          <p className="text-xl text-gray-300 font-medium border-l-4 border-purple-400 pl-6 inline-block">
+          <p className="text-base sm:text-lg lg:text-xl text-gray-300 font-medium border-l-2 sm:border-l-4 border-purple-400 pl-3 sm:pl-4 lg:pl-6 inline-block px-2">
             15+ yıllık deneyimimizle binlerce öğrencinin hayalini gerçekleştirdik
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
           {stats.map((stat, index) => (
             <div
               key={index}
-              className={`${stat.bgColor} p-8 text-center border-4 border-gray-900 hover:border-purple-600 transition-all duration-200 shadow-[4px_4px_0_0_rgba(0,0,0,0.1)] hover:shadow-[8px_8px_0_0_rgba(147,51,234,0.2)] hover:-translate-x-1 hover:-translate-y-1`}
+              className={`${stat.bgColor} p-4 sm:p-6 lg:p-8 text-center border-2 sm:border-4 border-gray-900 hover:border-purple-600 transition-all duration-200 shadow-[2px_2px_0_0_rgba(0,0,0,0.1)] sm:shadow-[4px_4px_0_0_rgba(0,0,0,0.1)] hover:shadow-[4px_4px_0_0_rgba(147,51,234,0.2)] sm:hover:shadow-[8px_8px_0_0_rgba(147,51,234,0.2)] hover:-translate-x-1 hover:-translate-y-1`}
             >
-              <div className="text-5xl mb-4">{stat.icon}</div>
-              <div className={`text-5xl md:text-6xl font-black bg-gradient-to-r ${stat.color} bg-clip-text text-transparent mb-2`}>
+              <div className="text-3xl sm:text-4xl lg:text-5xl mb-2 sm:mb-3 lg:mb-4">{stat.icon}</div>
+              <div className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black bg-gradient-to-r ${stat.color} bg-clip-text text-transparent mb-1 sm:mb-2`}>
                 {stat.number}
               </div>
-              <div className="text-gray-800 font-black uppercase tracking-wide text-sm">
+              <div className="text-gray-800 font-black uppercase tracking-wide text-xs sm:text-sm">
                 {stat.label}
               </div>
             </div>

@@ -43,10 +43,10 @@ const Features = () => {
   ];
 
   return (
-    <section className="bg-white py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-5xl md:text-6xl font-black text-gray-900 mb-4 uppercase tracking-tight leading-tight">
+    <section className="bg-white py-12 sm:py-16 lg:py-20">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+        <div className="text-center mb-10 sm:mb-12 lg:mb-16">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-3 sm:mb-4 uppercase tracking-tight leading-tight px-2">
             Neden
             <br />
             <span className="relative inline-block">
@@ -54,27 +54,27 @@ const Features = () => {
               <span className="relative text-purple-600">EDU-EXCELLENCE?</span>
             </span>
           </h2>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto font-medium border-l-4 border-purple-600 pl-6 inline-block">
+          <p className="text-sm sm:text-base lg:text-lg text-gray-700 max-w-2xl mx-auto font-medium border-l-2 sm:border-l-4 border-purple-600 pl-3 sm:pl-4 lg:pl-6 inline-block px-2">
             Yurtdışı eğitim yolculuğunuzda yanınızdayız
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group relative bg-white p-8 border-4 border-gray-900 hover:border-purple-600 transition-all duration-200 shadow-[6px_6px_0_0_rgba(0,0,0,0.1)] hover:shadow-[10px_10px_0_0_rgba(147,51,234,0.2)] hover:-translate-x-1 hover:-translate-y-1"
+              className="group relative bg-white p-5 sm:p-6 lg:p-8 border-2 sm:border-4 border-gray-900 hover:border-purple-600 transition-all duration-200 shadow-[4px_4px_0_0_rgba(0,0,0,0.1)] sm:shadow-[6px_6px_0_0_rgba(0,0,0,0.1)] hover:shadow-[6px_6px_0_0_rgba(147,51,234,0.2)] sm:hover:shadow-[10px_10px_0_0_rgba(147,51,234,0.2)] hover:-translate-x-1 hover:-translate-y-1"
             >
-              <div className={`w-16 h-16 bg-gradient-to-br ${feature.gradient} flex items-center justify-center text-white mb-6 border-4 border-gray-900 group-hover:rotate-6 transition-transform duration-200`}>
+              <div className={`w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gradient-to-br ${feature.gradient} flex items-center justify-center text-white mb-4 sm:mb-5 lg:mb-6 border-2 sm:border-4 border-gray-900 group-hover:rotate-6 transition-transform duration-200`}>
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-black text-gray-900 mb-3 uppercase tracking-tight">
+              <h3 className="text-lg sm:text-xl font-black text-gray-900 mb-2 sm:mb-3 uppercase tracking-tight">
                 {feature.title}
               </h3>
-              <p className="text-gray-700 leading-relaxed font-medium">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed font-medium">
                 {feature.description}
               </p>
-              <div className={`absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-200`}></div>
+              <div className={`absolute -bottom-2 -right-2 w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-200`}></div>
             </div>
           ))}
         </div>

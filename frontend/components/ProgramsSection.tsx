@@ -83,10 +83,10 @@ const ProgramsSection = () => {
   ];
 
   return (
-    <section className="bg-gradient-to-b from-white to-purple-50 py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-5xl md:text-6xl font-black text-gray-900 mb-4 uppercase tracking-tight leading-tight">
+    <section className="bg-gradient-to-b from-white to-purple-50 py-12 sm:py-16 lg:py-20">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+        <div className="text-center mb-10 sm:mb-12 lg:mb-16">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-3 sm:mb-4 uppercase tracking-tight leading-tight px-2">
             Eğitim
             <br />
             <span className="relative inline-block">
@@ -94,12 +94,12 @@ const ProgramsSection = () => {
               <span className="relative text-purple-600">PROGRAMLARIMIZ</span>
             </span>
           </h2>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto font-medium border-l-4 border-purple-600 pl-6 inline-block">
+          <p className="text-sm sm:text-base lg:text-lg text-gray-700 max-w-2xl mx-auto font-medium border-l-2 sm:border-l-4 border-purple-600 pl-3 sm:pl-4 lg:pl-6 inline-block px-2">
             Yurtdışı eğitim yolculuğunuzda size rehberlik edecek tüm programlar
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {programs.map((program) => (
             <ProgramCard key={program.id} {...program} />
           ))}
