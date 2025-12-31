@@ -1,6 +1,6 @@
 # Edu-Excellence v2
 
-Modern yurtdışı eğitim danışmanlık platformu. React 19.2.1 ve Next.js 16.0.10 ile geliştirilmiştir.
+Modern yurtdışı eğitim danışmanlık platformu. React 19.2.3 ve Next.js 16.0.10 ile geliştirilmiştir.
 
 ## 🚀 Teknolojiler
 
