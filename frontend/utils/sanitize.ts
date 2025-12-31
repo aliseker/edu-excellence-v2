@@ -3,7 +3,26 @@
  * Prevents XSS attacks by cleaning user inputs
  */
 
-import DOMPurify from 'isomorphic-dompurify';
+// Dynamic import for DOMPurify to avoid server-side issues
+let DOMPurify: any = null;
+
+async function getDOMPurify() {
+  if (typeof window === 'undefined') {
+    return null; // Server-side: don't load
+  }
+  
+  // Client-side only
+  if (!DOMPurify) {
+    try {
+      const dompurify = await import('isomorphic-dompurify');
+      DOMPurify = dompurify.default;
+    } catch (error) {
+      console.warn('Failed to load DOMPurify:', error);
+      return null;
+    }
+  }
+  return DOMPurify;
+}
 
 /**
  * Sanitizes a string input by removing potentially dangerous characters
@@ -58,20 +77,38 @@ export function isValidPhone(phone: string): boolean {
 }
 
 /**
- * Sanitizes HTML content using DOMPurify
+ * Sanitizes HTML content using DOMPurify (client-side only)
  * This should be used for any HTML content that will be rendered
  * @param html - HTML string to sanitize
  * @returns Sanitized HTML string
  */
-export function sanitizeHTML(html: string): string {
+export async function sanitizeHTML(html: string): Promise<string> {
   if (!html || typeof html !== 'string') {
     return '';
   }
 
-  return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'blockquote'],
-    ALLOWED_ATTR: ['href', 'target', 'rel'],
-    ALLOW_DATA_ATTR: false,
-  });
+  // Only sanitize on client-side
+  if (typeof window === 'undefined') {
+    // Server-side: return basic sanitized version
+    return html
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/on\w+="[^"]*"/gi, '')
+      .replace(/javascript:/gi, '');
+  }
+
+  const purify = await getDOMPurify();
+  if (purify) {
+    return purify.sanitize(html, {
+      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'blockquote'],
+      ALLOWED_ATTR: ['href', 'target', 'rel'],
+      ALLOW_DATA_ATTR: false,
+    });
+  }
+
+  // Fallback
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/on\w+="[^"]*"/gi, '')
+    .replace(/javascript:/gi, '');
 }
 

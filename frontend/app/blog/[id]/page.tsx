@@ -1,7 +1,9 @@
+'use client';
+
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
-import { Metadata } from 'next';
+import { use, useState, useEffect } from 'react';
 import { sanitizeHTML } from '@/utils/sanitize';
 
 interface PageProps {
@@ -73,17 +75,10 @@ const blogPosts: Record<string, any> = {
   }
 };
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { id } = await params;
-  const post = blogPosts[id];
-  return {
-    title: post ? `${post.title} | Edu-Excellence Blog` : 'Blog | Edu-Excellence',
-    description: post ? post.content.substring(0, 160) : 'Edu-Excellence blog yazıları',
-  };
-}
-
-export default async function BlogDetailPage({ params }: PageProps) {
-  const { id } = await params;
+export default function BlogDetailPage({ params }: PageProps) {
+  const { id } = use(params);
+  const [sanitizedContent, setSanitizedContent] = useState<string>('');
+  
   const post = blogPosts[id] || {
     title: 'Yazı Bulunamadı',
     content: '<p>Bu yazı bulunamadı.</p>',
@@ -92,6 +87,10 @@ export default async function BlogDetailPage({ params }: PageProps) {
     author: '',
     image: '📄'
   };
+
+  useEffect(() => {
+    sanitizeHTML(post.content).then(setSanitizedContent);
+  }, [post.content]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -121,7 +120,7 @@ export default async function BlogDetailPage({ params }: PageProps) {
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div 
           className="bg-white rounded-xl shadow-lg p-8 prose prose-lg max-w-none"
-          dangerouslySetInnerHTML={{ __html: sanitizeHTML(post.content) }}
+          dangerouslySetInnerHTML={{ __html: sanitizedContent || post.content }}
         />
       </article>
 

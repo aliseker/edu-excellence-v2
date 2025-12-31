@@ -12,6 +12,9 @@ const nextConfig: NextConfig = {
     qualities: [100, 75],
   },
   
+  // External packages for server components
+  serverExternalPackages: ['isomorphic-dompurify'],
+  
   // Security headers
   async headers() {
     return [

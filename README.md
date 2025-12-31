@@ -10,65 +10,49 @@ Modern yurtdışı eğitim danışmanlık platformu. React 19.2.3 ve Next.js 16.
 - **Tailwind CSS** 4
 - **App Router**
 
+## 📁 Proje Yapısı
+
+```
+edu-excellence-v2/
+├── frontend/              # Next.js frontend uygulaması
+│   ├── app/              # Next.js App Router sayfaları
+│   ├── components/       # React bileşenleri
+│   ├── services/         # API servisleri
+│   ├── config/           # Konfigürasyon dosyaları
+│   ├── utils/            # Utility fonksiyonları
+│   └── public/           # Statik dosyalar
+└── backend/              # Backend API (ileride eklenecek)
+```
+
 ## 📋 Kurulum
 
-### 1. Bağımlılıkları Yükle
+### Frontend
 
 ```bash
+cd frontend
 npm install
 ```
 
-### 2. Environment Variables
+### Environment Variables
 
-`.env.local` dosyası oluşturun:
-
-```bash
-cp .env.local.example .env.local
-```
-
-`.env.local` dosyasını düzenleyin:
+`frontend/.env.local` dosyası oluşturun:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```
 
-### 3. Development Server
+### Development Server
 
 ```bash
+cd frontend
 npm run dev
 ```
 
 Tarayıcıda [http://localhost:3000](http://localhost:3000) adresini açın.
 
-## 📁 Proje Yapısı
+### Backend
 
-```
-edu-excellence-v2/
-├── app/                    # Next.js App Router sayfaları
-│   ├── page.tsx           # Ana sayfa
-│   ├── universite/         # Üniversite sayfaları
-│   ├── dil-okulu/         # Dil okulu sayfaları
-│   ├── yaz-okulu/         # Yaz okulu sayfaları
-│   ├── lise/              # Lise sayfaları
-│   ├── master-mba/        # Master/MBA sayfaları
-│   ├── vize/              # Vize sayfaları
-│   ├── iletisim/          # İletişim sayfası
-│   ├── hakkimizda/        # Hakkımızda sayfası
-│   └── blog/              # Blog sayfaları
-├── components/            # React bileşenleri
-│   ├── Navbar.tsx
-│   ├── Hero.tsx
-│   ├── Footer.tsx
-│   ├── UniversityFilter.tsx
-│   ├── Features.tsx
-│   ├── Testimonials.tsx
-│   └── SearchBar.tsx
-├── services/              # API servisleri
-│   └── api.ts
-├── config/                # Konfigürasyon dosyaları
-│   └── api.ts
-└── public/                # Statik dosyalar
-```
+Backend henüz eklenmedi. İleride buraya eklenecek.
 
 ## 🎨 Özellikler
 
@@ -83,13 +67,14 @@ edu-excellence-v2/
 ## 🔧 Build
 
 ```bash
+cd frontend
 npm run build
 npm start
 ```
 
 ## 📝 Notlar
 
-- Backend API entegrasyonu için `services/api.ts` dosyasını kullanın
+- Backend API entegrasyonu için `frontend/services/api.ts` dosyasını kullanın
 - Admin paneli backend'den sonra eklenecek
 - Tüm veriler şu an mock data olarak çalışıyor
 
