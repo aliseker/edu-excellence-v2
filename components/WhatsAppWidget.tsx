@@ -5,8 +5,8 @@ import { useState } from 'react';
 const WhatsAppWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // WhatsApp numarası - gerçek numara ile değiştirilecek
-  const whatsappNumber = '905551234567'; // Örnek: +90 555 123 45 67
+  // WhatsApp numarası
+  const whatsappNumber = '905054469007'; // +90 505 446 90 07
   const whatsappMessage = 'Merhaba, yurtdışı eğitim hakkında bilgi almak istiyorum.';
 
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;

@@ -5,13 +5,33 @@ import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
+import Image from 'next/image';
 import { use } from 'react';
 
+// Ülke kodları mapping
+const countryCodes: Record<string, string> = {
+  ingiltere: 'gb',
+  amerika: 'us',
+  kanada: 'ca',
+  almanya: 'de',
+  italya: 'it',
+  fransa: 'fr',
+  polonya: 'pl',
+  macaristan: 'hu',
+  avusturya: 'at',
+  litvanya: 'lt',
+  hollanda: 'nl',
+  avustralya: 'au',
+  irlanda: 'ie',
+  malta: 'mt',
+  ispanya: 'es',
+  isvicre: 'ch',
+};
+
 // Mock data - Later this will come from API
-const countryData: Record<string, { name: string; flag: string; regions: Array<{ name: string; schools: Array<{ name: string; slug: string; description: string; image?: string }> }> }> = {
+const countryData: Record<string, { name: string; regions: Array<{ name: string; schools: Array<{ name: string; slug: string; description: string; image?: string }> }> }> = {
   amerika: {
     name: 'Amerika',
-    flag: '🇺🇸',
     regions: [
       {
         name: 'New York',
@@ -38,7 +58,6 @@ const countryData: Record<string, { name: string; flag: string; regions: Array<{
   },
   ingiltere: {
     name: 'İngiltere',
-    flag: '🇬🇧',
     regions: [
       {
         name: 'Londra',
@@ -63,7 +82,6 @@ const countryData: Record<string, { name: string; flag: string; regions: Array<{
   },
   kanada: {
     name: 'Kanada',
-    flag: '🇨🇦',
     regions: [
       {
         name: 'Toronto',
@@ -83,7 +101,6 @@ const countryData: Record<string, { name: string; flag: string; regions: Array<{
   },
   irlanda: {
     name: 'İrlanda',
-    flag: '🇮🇪',
     regions: [
       {
         name: 'Dublin',
@@ -95,7 +112,6 @@ const countryData: Record<string, { name: string; flag: string; regions: Array<{
   },
   malta: {
     name: 'Malta',
-    flag: '🇲🇹',
     regions: [
       {
         name: 'St. Julian\'s',
@@ -107,7 +123,6 @@ const countryData: Record<string, { name: string; flag: string; regions: Array<{
   },
   avustralya: {
     name: 'Avustralya',
-    flag: '🇦🇺',
     regions: [
       {
         name: 'Sydney',
@@ -120,8 +135,10 @@ const countryData: Record<string, { name: string; flag: string; regions: Array<{
 };
 
 export default function CountryPage({ params }: { params: Promise<{ country: string }> }) {
-  const { country } = use(params);
-  const data = countryData[country.toLowerCase()];
+  const resolvedParams = use(params);
+  const country = resolvedParams.country;
+  const countryKey = country.toLowerCase();
+  const data = countryData[countryKey];
 
   if (!data) {
     return (
@@ -156,8 +173,17 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
           <Link href="/dil-okulu" className="inline-block mb-4 text-purple-100 hover:text-white font-bold transition-colors">
             ← Dil Okulları
           </Link>
-          <div className="inline-block px-5 py-2.5 bg-white/20 backdrop-blur-sm border-4 border-white/30 transform -skew-x-12 mb-6">
-            <span className="transform skew-x-12 text-sm font-black uppercase tracking-wider">{data.flag} {data.name}</span>
+          <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-white/20 backdrop-blur-sm border-4 border-white/30 transform -skew-x-12 mb-6">
+            <div className="transform skew-x-12 relative w-8 h-6 border border-white/50 rounded overflow-hidden flex-shrink-0">
+              <Image
+                src={`https://flagcdn.com/w80/${countryCodes[countryKey] || 'gb'}.png`}
+                alt={data.name}
+                fill
+                className="object-cover"
+                sizes="32px"
+              />
+            </div>
+            <span className="transform skew-x-12 text-sm font-black uppercase tracking-wider">{data.name}</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight drop-shadow-[4px_4px_0_rgba(0,0,0,0.3)]">
             {data.name.toUpperCase()}'DA
@@ -239,6 +265,8 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
     </div>
   );
 }
+
+
 
 
 

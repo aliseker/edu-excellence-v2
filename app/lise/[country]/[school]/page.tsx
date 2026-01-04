@@ -436,3 +436,5 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
 
 
 
+
+

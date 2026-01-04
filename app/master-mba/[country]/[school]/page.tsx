@@ -6,6 +6,7 @@ import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
 import { use } from 'react';
+import { convertYouTubeUrlToEmbed } from '@/utils/youtube';
 
 // Mock data - Later this will come from API
 const schoolData: Record<string, Record<string, {
@@ -145,6 +146,7 @@ const schoolData: Record<string, Record<string, {
       city: 'Londra',
       flag: '🇬🇧',
       description: 'Avrupa\'nın en prestijli işletme okullarından biri. Dünya çapında tanınan MBA programları ve güçlü kariyer desteği.',
+      videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
       intro: 'London Business School, Avrupa\'nın en prestijli işletme okullarından biri olarak, dünya çapında tanınan MBA programları sunar. Financial Times tarafından düzenli olarak dünyanın en iyi MBA programları arasında gösterilir. Regent\'s Park yakınında yer alan kampüs, öğrencilere hem akademik hem de profesyonel gelişim için eşsiz fırsatlar sunar. Güçlü mezun ağı ve iş dünyası bağlantıları ile mezunlar, global şirketlerde liderlik pozisyonlarında çalışırlar.',
       established: '1964',
       students: '2,000+',
@@ -314,7 +316,7 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
                   <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                     <iframe
                       className="absolute top-0 left-0 w-full h-full border-4 border-gray-900"
-                      src={data.videoUrl.replace('watch?v=', 'embed/')}
+                      src={convertYouTubeUrlToEmbed(data.videoUrl)}
                       title={`${data.name} Tanıtım Videosu`}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen

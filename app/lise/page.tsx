@@ -5,17 +5,18 @@ import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function LisePage() {
   const countries = [
-    { name: 'Amerika', flag: '🇺🇸', slug: 'amerika' },
-    { name: 'Kanada', flag: '🇨🇦', slug: 'kanada' },
-    { name: 'İngiltere', flag: '🇬🇧', slug: 'ingiltere' },
-    { name: 'İrlanda', flag: '🇮🇪', slug: 'irlanda' },
-    { name: 'Almanya', flag: '🇩🇪', slug: 'almanya' },
-    { name: 'İtalya', flag: '🇮🇹', slug: 'italya' },
-    { name: 'Fransa', flag: '🇫🇷', slug: 'fransa' },
-    { name: 'İspanya', flag: '🇪🇸', slug: 'ispanya' },
+    { name: 'Amerika', flag: '🇺🇸', slug: 'amerika', countryCode: 'us' },
+    { name: 'Kanada', flag: '🇨🇦', slug: 'kanada', countryCode: 'ca' },
+    { name: 'İngiltere', flag: '🇬🇧', slug: 'ingiltere', countryCode: 'gb' },
+    { name: 'İrlanda', flag: '🇮🇪', slug: 'irlanda', countryCode: 'ie' },
+    { name: 'Almanya', flag: '🇩🇪', slug: 'almanya', countryCode: 'de' },
+    { name: 'İtalya', flag: '🇮🇹', slug: 'italya', countryCode: 'it' },
+    { name: 'Fransa', flag: '🇫🇷', slug: 'fransa', countryCode: 'fr' },
+    { name: 'İspanya', flag: '🇪🇸', slug: 'ispanya', countryCode: 'es' },
   ];
 
   return (
@@ -255,7 +256,14 @@ export default function LisePage() {
                 href={`/lise/${country.slug}`}
                 className="group p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-4 border-green-300 hover:border-green-600 transition-all duration-200 transform hover:-translate-y-2 hover:shadow-[8px_8px_0_0_rgba(34,197,94,0.3)]"
               >
-                <div className="text-5xl mb-4 text-center">{country.flag}</div>
+                <div className="relative w-20 h-14 mx-auto mb-4">
+                  <Image
+                    src={`https://flagcdn.com/w80/${country.countryCode}.png`}
+                    alt={`${country.name} bayrağı`}
+                    fill
+                    className="object-cover rounded-md border border-gray-200"
+                  />
+                </div>
                 <h3 className="text-xl font-black text-gray-900 text-center uppercase tracking-wider group-hover:text-green-600 transition-colors">
                   {country.name}
                 </h3>

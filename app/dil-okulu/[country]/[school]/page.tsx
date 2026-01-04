@@ -134,7 +134,7 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-5 py-8 text-center">
           <h1 className="text-4xl font-black text-gray-900 mb-4">Dil Okulu Bulunamadı</h1>
           <Link href={`/dil-okulu/${country}`} className="text-purple-600 font-bold hover:underline">
             {country} dil okulları sayfasına dön
@@ -150,8 +150,8 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
       <Navbar />
       
       {/* Breadcrumb */}
-      <section className="bg-white border-b-4 border-gray-200 py-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="bg-white border-b-4 border-gray-200 py-3">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-5">
           <div className="flex items-center space-x-2 text-sm font-bold text-gray-600">
             <Link href="/dil-okulu" className="hover:text-purple-600 transition-colors">Dil Okulları</Link>
             <span>/</span>
@@ -163,7 +163,7 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
       </section>
 
       {/* Header */}
-      <section className="relative bg-gradient-to-br from-purple-600 via-violet-600 to-pink-600 text-white py-16 border-b-4 border-gray-900 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-purple-600 via-violet-600 to-pink-600 text-white py-8 border-b-4 border-gray-900 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
             backgroundImage: `linear-gradient(45deg, #fff 25%, transparent 25%), linear-gradient(-45deg, #fff 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #fff 75%), linear-gradient(-45deg, transparent 75%, #fff 75%)`,
@@ -172,14 +172,14 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
           }}></div>
         </div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
+        <div className="relative max-w-7xl mx-auto px-3 sm:px-4 lg:px-5 z-10">
           <div className="inline-block px-5 py-2.5 bg-white/20 backdrop-blur-sm border-4 border-white/30 transform -skew-x-12 mb-6">
             <span className="transform skew-x-12 text-sm font-black uppercase tracking-wider">{data.flag} {data.city}, {data.country}</span>
           </div>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-black mb-6 leading-tight drop-shadow-[4px_4px_0_rgba(0,0,0,0.3)]">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-black mb-4 leading-tight drop-shadow-[4px_4px_0_rgba(0,0,0,0.3)]">
             {data.name.toUpperCase()}
           </h1>
-          <p className="text-lg md:text-xl text-purple-100 font-medium max-w-3xl leading-relaxed">
+          <p className="text-base md:text-lg text-purple-100 font-medium max-w-3xl leading-relaxed">
             {data.description}
           </p>
         </div>
@@ -187,9 +187,9 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
 
       {/* Quick Info */}
       {data.established && (
-        <section className="bg-white border-b-4 border-gray-900 py-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <section className="bg-white border-b-4 border-gray-900 py-5">
+          <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-5">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {data.established && (
                 <div className="text-center">
                   <div className="text-3xl font-black text-purple-600 mb-2">{data.established}</div>
@@ -216,9 +216,9 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
       )}
 
       {/* Features */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
-          <div className="inline-block px-5 py-2.5 bg-purple-600 text-white border-4 border-purple-800 transform -skew-x-12 mb-6">
+      <section className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-5 py-8">
+        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-5 md:p-6 mb-6">
+          <div className="inline-block px-5 py-2.5 bg-purple-600 text-white border-4 border-purple-800 transform -skew-x-12 mb-4">
             <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">✨ Okul Özellikleri</h2>
           </div>
           
@@ -238,15 +238,15 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
       </section>
 
       {/* Courses */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
+      <section className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-5 py-8">
+        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-5 md:p-6 mb-6">
           <div className="inline-block px-5 py-2.5 bg-violet-600 text-white border-4 border-violet-800 transform -skew-x-12 mb-6">
             <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📚 Kurs Programları</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {data.courses.map((course, index) => (
-              <div key={index} className="p-6 bg-gray-50 border-4 border-gray-300 transform hover:-skew-x-1 transition-all duration-200">
+              <div key={index} className="p-5 bg-gray-50 border-4 border-gray-300 transform hover:-skew-x-1 transition-all duration-200">
                 <div className="transform skew-x-1">
                   <div className="flex items-start justify-between mb-3">
                     <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">{course.name}</h3>
@@ -261,15 +261,15 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
       </section>
 
       {/* Accommodation */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
+      <section className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-5 py-8">
+        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-5 md:p-6 mb-6">
           <div className="inline-block px-5 py-2.5 bg-pink-600 text-white border-4 border-pink-800 transform -skew-x-12 mb-6">
             <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🏠 Konaklama Seçenekleri</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {data.accommodation.map((acc, index) => (
-              <div key={index} className="p-6 bg-gray-50 border-4 border-gray-300 transform hover:-skew-x-1 transition-all duration-200">
+              <div key={index} className="p-5 bg-gray-50 border-4 border-gray-300 transform hover:-skew-x-1 transition-all duration-200">
                 <div className="transform skew-x-1">
                   <h3 className="text-xl font-black text-gray-900 mb-3 uppercase tracking-tight">{acc.type}</h3>
                   <p className="text-gray-700 font-medium leading-relaxed">{acc.description}</p>
@@ -281,10 +281,10 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
       </section>
 
       {/* Facilities & Location */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <section className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-5 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Facilities */}
-          <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10">
+          <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-5 md:p-6">
             <div className="inline-block px-5 py-2.5 bg-blue-600 text-white border-4 border-blue-800 transform -skew-x-12 mb-6">
               <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🏢 Tesisler</h2>
             </div>
@@ -302,8 +302,8 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
           </div>
 
           {/* Location & Accreditation */}
-          <div className="space-y-8">
-            <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10">
+          <div className="space-y-6">
+            <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-5 md:p-6">
               <div className="inline-block px-5 py-2.5 bg-green-600 text-white border-4 border-green-800 transform -skew-x-12 mb-6">
                 <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📍 Lokasyon</h2>
               </div>
@@ -311,7 +311,7 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
             </div>
 
             {data.accreditation && data.accreditation.length > 0 && (
-              <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10">
+              <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-5 md:p-6">
                 <div className="inline-block px-5 py-2.5 bg-yellow-600 text-white border-4 border-yellow-800 transform -skew-x-12 mb-6">
                   <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🏆 Akreditasyonlar</h2>
                 </div>
@@ -329,8 +329,8 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
       </section>
 
       {/* CTA */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-gradient-to-r from-purple-600 to-violet-600 border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-10 text-center">
+      <section className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-5 py-8">
+        <div className="bg-gradient-to-r from-purple-600 to-violet-600 border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 text-center">
           <h2 className="text-3xl md:text-4xl font-black text-white mb-4 uppercase tracking-wider">
             {data.name}'da Eğitim Almaya Hazır mısınız?
           </h2>
@@ -360,6 +360,8 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
     </div>
   );
 }
+
+
 
 
 

@@ -5,15 +5,16 @@ import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function DilOkuluPage() {
   const countries = [
-    { name: 'İngiltere', flag: '🇬🇧', slug: 'ingiltere' },
-    { name: 'Amerika', flag: '🇺🇸', slug: 'amerika' },
-    { name: 'Kanada', flag: '🇨🇦', slug: 'kanada' },
-    { name: 'İrlanda', flag: '🇮🇪', slug: 'irlanda' },
-    { name: 'Malta', flag: '🇲🇹', slug: 'malta' },
-    { name: 'Avustralya', flag: '🇦🇺', slug: 'avustralya' },
+    { name: 'İngiltere', flag: '🇬🇧', slug: 'ingiltere', countryCode: 'gb' },
+    { name: 'Amerika', flag: '🇺🇸', slug: 'amerika', countryCode: 'us' },
+    { name: 'Kanada', flag: '🇨🇦', slug: 'kanada', countryCode: 'ca' },
+    { name: 'İrlanda', flag: '🇮🇪', slug: 'irlanda', countryCode: 'ie' },
+    { name: 'Malta', flag: '🇲🇹', slug: 'malta', countryCode: 'mt' },
+    { name: 'Avustralya', flag: '🇦🇺', slug: 'avustralya', countryCode: 'au' },
   ];
 
   return (
@@ -21,7 +22,7 @@ export default function DilOkuluPage() {
       <Navbar />
       
       {/* Header - Geometric Style */}
-      <section className="relative bg-gradient-to-br from-purple-600 via-violet-600 to-pink-600 text-white py-12 border-b-4 border-gray-900 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-purple-600 via-violet-600 to-pink-600 text-white py-8 border-b-4 border-gray-900 overflow-hidden">
         {/* Geometric Pattern Overlay */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
@@ -31,11 +32,11 @@ export default function DilOkuluPage() {
           }}></div>
         </div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
+        <div className="relative max-w-7xl mx-auto px-3 sm:px-4 lg:px-5 z-10">
           <div className="inline-block px-5 py-2.5 bg-white/20 backdrop-blur-sm border-4 border-white/30 transform -skew-x-12 mb-6">
             <span className="transform skew-x-12 text-sm font-black uppercase tracking-wider">🌍 Dil Eğitimi</span>
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight drop-shadow-[4px_4px_0_rgba(0,0,0,0.3)]">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-black mb-3 leading-tight drop-shadow-[4px_4px_0_rgba(0,0,0,0.3)]">
             NEDEN DİL
             <br />
             <span className="relative inline-block">
@@ -43,15 +44,15 @@ export default function DilOkuluPage() {
               <span className="relative">EĞİTİMİ?</span>
             </span>
           </h1>
-          <p className="text-lg md:text-xl text-purple-100 font-medium max-w-2xl">
+          <p className="text-base md:text-lg text-purple-100 font-medium max-w-2xl">
             Yurtdışında dil öğrenerek kariyerinize yön verin. Profesyonel danışmanlık hizmetimizle yanınızdayız.
           </p>
         </div>
       </section>
 
       {/* Why Language Education */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
+      <section className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-5 py-10">
+        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-6 md:p-7 mb-8">
           <div className="inline-block px-5 py-2.5 bg-purple-600 text-white border-4 border-purple-800 transform -skew-x-12 mb-6">
             <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">💡 Neden Yurtdışında Dil Eğitimi?</h2>
           </div>
@@ -121,8 +122,8 @@ export default function DilOkuluPage() {
       </section>
 
       {/* Course Options */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
+      <section className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-5 py-10">
+        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-6 md:p-7 mb-8">
           <div className="inline-block px-5 py-2.5 bg-violet-600 text-white border-4 border-violet-800 transform -skew-x-12 mb-6">
             <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📖 Kurs Seçenekleri</h2>
           </div>
@@ -203,8 +204,8 @@ export default function DilOkuluPage() {
       </section>
 
       {/* Accommodation */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
+      <section className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-5 py-10">
+        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-6 md:p-7 mb-8">
           <div className="inline-block px-5 py-2.5 bg-pink-600 text-white border-4 border-pink-800 transform -skew-x-12 mb-6">
             <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🏠 Konaklama Olanakları</h2>
           </div>
@@ -286,8 +287,8 @@ export default function DilOkuluPage() {
       </section>
 
       {/* Countries */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-12">
+      <section className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-5 py-10">
+        <div className="text-center mb-8">
           <h2 className="text-4xl font-black text-gray-900 mb-4 uppercase tracking-wider">Ülkelere Göre Dil Okulları</h2>
           <p className="text-lg text-gray-600 font-medium">Size en uygun ülkeyi seçin</p>
         </div>
@@ -300,7 +301,14 @@ export default function DilOkuluPage() {
               className="group p-6 bg-white border-4 border-gray-900 hover:border-purple-600 transition-all duration-200 transform hover:-skew-x-2 hover:shadow-[8px_8px_0_0_rgba(0,0,0,0.1)]"
             >
               <div className="transform group-hover:skew-x-2 text-center">
-                <div className="text-5xl mb-3">{country.flag}</div>
+                <div className="relative w-20 h-14 mx-auto mb-3">
+                  <Image
+                    src={`https://flagcdn.com/w80/${country.countryCode}.png`}
+                    alt={`${country.name} bayrağı`}
+                    fill
+                    className="object-cover rounded-md border border-gray-200"
+                  />
+                </div>
                 <div className="text-lg font-black text-gray-900 uppercase tracking-wider group-hover:text-purple-600 transition-colors">
                   {country.name}
                 </div>
@@ -311,8 +319,8 @@ export default function DilOkuluPage() {
       </section>
 
       {/* CTA */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-gradient-to-r from-purple-600 to-violet-600 border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-10 text-center">
+      <section className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-5 py-10">
+        <div className="bg-gradient-to-r from-purple-600 to-violet-600 border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 text-center">
           <h2 className="text-3xl md:text-4xl font-black text-white mb-4 uppercase tracking-wider">
             Hayalinizdeki Dil Eğitimine Başlayın
           </h2>

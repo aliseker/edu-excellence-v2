@@ -6,6 +6,7 @@ import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
 import { use } from 'react';
+import { convertYouTubeUrlToEmbed } from '@/utils/youtube';
 
 // Mock data - Later this will come from API
 const universityData: Record<string, Record<string, {
@@ -99,6 +100,7 @@ const universityData: Record<string, Record<string, {
       city: 'Birmingham',
       flag: '🇬🇧',
       description: 'Russell Group üyesi, araştırma odaklı prestijli üniversite. Dünya çapında tanınan akademik programları ve güçlü araştırma altyapısı ile öne çıkar.',
+      // videoUrl: '', // Gerçek üniversite tanıtım video URL'si buraya eklenecek
       established: '1900',
       students: '34,000+',
       ranking: 'UK Top 20',
@@ -141,6 +143,7 @@ const universityData: Record<string, Record<string, {
       city: 'Londra',
       flag: '🇬🇧',
       description: 'Dünya çapında tanınan, merkezi Londra konumunda prestijli üniversite. Russell Group üyesi, güçlü araştırma programları ve çeşitli akademik disiplinler ile öne çıkar.',
+      // videoUrl: '', // Gerçek üniversite tanıtım video URL'si buraya eklenecek
       intro: 'King\'s College London, İngiltere\'nin en prestijli üniversitelerinden biri olarak, öğrencilerine Londra\'nın kalbinde eşsiz bir eğitim deneyimi sunar. Russell Group üyesi olan bu üniversite, özellikle sağlık bilimleri, hukuk, uluslararası ilişkiler ve beşeri bilimler alanlarında dünya çapında tanınır. Merkezi Londra konumu sayesinde öğrenciler, staj ve iş imkanlarına kolayca erişebilir. Kraliyet ailesi ile yakın bağları, zengin kütüphane kaynakları ve uluslararası öğrenci topluluğu ile King\'s College, global bir kariyer için ideal başlangıç noktasıdır.',
       established: '1829',
       students: '33,000+',
@@ -173,6 +176,7 @@ const universityData: Record<string, Record<string, {
       city: 'Londra',
       flag: '🇬🇧',
       description: 'QS sıralamasında ilk 10\'da yer alan, araştırma odaklı üniversite. Russell Group üyesi, dünya çapında tanınan akademik mükemmelliği ile öne çıkar.',
+      // videoUrl: '', // Gerçek üniversite tanıtım video URL'si buraya eklenecek
       intro: 'University College London (UCL), dünya sıralamalarında ilk 10\'da yer alan, İngiltere\'nin en prestijli ve araştırma odaklı üniversitelerinden biridir. Russell Group üyesi olan UCL, özellikle mimarlık, eğitim, tıp ve mühendislik alanlarında dünya lideridir. 30\'dan fazla Nobel ödüllü araştırmacı UCL ile bağlantılıdır. Londra\'nın merkezinde yer alan kampüs, öğrencilere hem akademik hem de kültürel bir deneyim sunar. Çeşitli program seçenekleri, uluslararası işbirlikleri ve güçlü mezun ağı ile UCL, kariyerinizin zirvesine çıkmanız için mükemmel bir fırsattır.',
       established: '1826',
       students: '41,000+',
@@ -205,6 +209,7 @@ const universityData: Record<string, Record<string, {
       city: 'Londra',
       flag: '🇬🇧',
       description: 'Sosyal bilimler alanında dünya lideri, prestijli üniversite. Russell Group üyesi, ekonomi, siyaset bilimi ve sosyal bilimler alanlarında güçlü programları ile öne çıkar.',
+      // videoUrl: '', // Gerçek üniversite tanıtım video URL'si buraya eklenecek
       established: '1895',
       students: '11,000+',
       ranking: 'UK Top 5, Dünya Top 50',
@@ -236,6 +241,7 @@ const universityData: Record<string, Record<string, {
       city: 'Manchester',
       flag: '🇬🇧',
       description: 'Russell Group üyesi, güçlü araştırma altyapısı. Dünya çapında tanınan akademik programları ve canlı şehir yaşamı ile öne çıkar.',
+      // videoUrl: '', // Gerçek üniversite tanıtım video URL'si buraya eklenecek
       intro: 'University of Manchester, İngiltere\'nin en büyük ve en prestijli üniversitelerinden biri olarak, öğrencilerine kapsamlı bir eğitim deneyimi sunar. Russell Group üyesi olan bu üniversite, güçlü araştırma altyapısı ve dünya çapında tanınan akademik programları ile öne çıkar. 25 Nobel ödüllü araştırmacı Manchester ile bağlantılıdır. Canlı şehir yaşamı, uygun yaşam maliyetleri ve güçlü endüstri bağlantıları ile Manchester, öğrenciler için ideal bir eğitim şehridir. Bu üniversitede aldığınız eğitim, size hem akademik hem de profesyonel kariyerinizde başarılı olmanız için gerekli tüm araçları sağlar.',
       established: '1824',
       students: '40,000+',
@@ -270,6 +276,7 @@ const universityData: Record<string, Record<string, {
       city: 'New York',
       flag: '🇺🇸',
       description: 'Manhattan merkezinde, dünya çapında tanınan NYU, çeşitli akademik programları ve güçlü şehir bağlantıları ile öne çıkar.',
+      // videoUrl: '', // Gerçek üniversite tanıtım video URL'si buraya eklenecek
       intro: 'New York University, dünyanın en dinamik şehirlerinden biri olan Manhattan\'ın kalbinde yer alan bir eğitim fırsatı sunuyor. Bu prestijli üniversite, öğrencilerine sadece sınıf içinde değil, şehrin kendisinde öğrenme imkanı sağlar. NYU\'nun güçlü endüstri bağlantıları, staj imkanları ve mezun ağı sayesinde öğrenciler kariyerlerine erken başlama şansı yakalar. Finans, medya, sanat ve teknoloji sektörlerinde lider konumda olan NYU, mezunlarının iş dünyasında öne çıkmalarını sağlar.',
       established: '1831',
       students: '50,000+',
@@ -300,6 +307,7 @@ const universityData: Record<string, Record<string, {
       city: 'New York',
       flag: '🇺🇸',
       description: 'Ivy League üyesi, dünyanın en prestijli üniversitelerinden biri. Manhattan\'da konumlanan Columbia, dünya çapında tanınan akademik mükemmelliği ile öne çıkar.',
+      // videoUrl: '', // Gerçek üniversite tanıtım video URL'si buraya eklenecek
       intro: 'Columbia University, 270 yılı aşkın tarihi ile dünyanın en prestijli eğitim kurumlarından biridir. Ivy League üyesi olan Columbia, akademik mükemmellik, araştırma kalitesi ve mezun başarıları ile küresel çapta tanınır. Manhattan\'ın kalbinde yer alan kampüs, öğrencilere hem akademik hem de profesyonel gelişim için eşsiz fırsatlar sunar. Nobel ödüllü öğretim kadrosu, zengin kütüphane kaynakları ve güçlü mezun ağı ile Columbia, kariyer hedeflerinize ulaşmanızda size en iyi desteği sağlar.',
       established: '1754',
       students: '33,000+',
@@ -333,6 +341,7 @@ const universityData: Record<string, Record<string, {
       city: 'Los Angeles',
       flag: '🇺🇸',
       description: 'Sunset Boulevard yakınında, California\'nın en prestijli üniversitelerinden biri. Güçlü akademik programlar, araştırma imkanları ve Los Angeles\'ın canlı kültürel ortamı ile öne çıkar.',
+      // videoUrl: '', // Gerçek üniversite tanıtım video URL'si buraya eklenecek
       intro: 'UCLA, dünyanın en iyi kamu araştırma üniversitelerinden biri olarak, öğrencilerine mükemmel bir eğitim deneyimi sunar. Los Angeles\'ın kalbinde yer alan kampüs, öğrencilere hem akademik hem de kültürel bir deneyim yaşatır. Film endüstrisi, teknoloji, işletme ve sağlık bilimleri gibi alanlarda lider konumda olan UCLA, mezunlarının kariyerlerinde başarılı olmalarını destekler. Çeşitli program seçenekleri, modern tesisler ve güçlü araştırma olanakları ile UCLA, eğitim hedeflerinizi gerçekleştirmeniz için ideal bir seçenektir.',
       established: '1919',
       students: '45,000+',
@@ -371,6 +380,7 @@ const universityData: Record<string, Record<string, {
       city: 'California',
       flag: '🇺🇸',
       description: 'Silicon Valley yakınında, teknoloji ve inovasyon merkezi. Dünyanın en prestijli üniversitelerinden biri, güçlü araştırma altyapısı ve girişimcilik kültürü ile öne çıkar.',
+      // videoUrl: '', // Gerçek üniversite tanıtım video URL'si buraya eklenecek
       intro: 'Stanford University, dünyanın en prestijli ve yenilikçi üniversitelerinden biridir. Silicon Valley\'in kalbinde yer alan Stanford, teknoloji, girişimcilik ve inovasyon alanlarında global bir liderdir. Google, Yahoo, Netflix gibi dünya devi şirketlerin kurucuları Stanford mezunudur. Bu üniversite sadece akademik bilgi vermez, aynı zamanda öğrencilerine girişimcilik ruhu kazandırır ve onları geleceğin liderleri olmaya hazırlar. Modern kampüs tesisleri, dünya standartlarında araştırma laboratuvarları ve güçlü endüstri bağlantıları ile Stanford, kariyerinizin zirvesine çıkmanızı sağlar.',
       established: '1885',
       students: '17,000+',
@@ -404,6 +414,7 @@ const universityData: Record<string, Record<string, {
       city: 'Massachusetts',
       flag: '🇺🇸',
       description: 'Ivy League üyesi, dünyanın en prestijli üniversitesi. Cambridge, Massachusetts\'te konumlanan Harvard, 380 yıllık tarihi, Nobel ödüllü öğretim kadrosu ve dünya çapında tanınan programları ile öne çıkar.',
+      // videoUrl: '', // Gerçek üniversite tanıtım video URL'si buraya eklenecek
       intro: 'Harvard University, 1636\'dan beri eğitim veren, dünyanın en prestijli ve tanınmış üniversitesidir. 380 yıllık köklü geçmişi, Nobel ödüllü öğretim kadrosu ve dünya çapında tanınan mezunları ile Harvard, akademik mükemmelliğin sembolüdür. 8 ABD Başkanı, 150 Nobel ödüllü ve sayısız lider Harvard mezunudur. Bu üniversitede eğitim almak sadece bir diploma almak değil, aynı zamanda dünyanın en seçkin akademik topluluklarından biri olmanın ayrıcalığını yaşamaktır. Harvard, size sadece bilgi değil, liderlik vasıfları, eleştirel düşünme yeteneği ve global bir vizyon kazandırır.',
       established: '1636',
       students: '23,000+',
@@ -437,6 +448,7 @@ const universityData: Record<string, Record<string, {
       city: 'Massachusetts',
       flag: '🇺🇸',
       description: 'Teknoloji ve mühendislik alanında dünya lideri. Cambridge, Massachusetts\'te konumlanan MIT, inovasyon, araştırma ve pratik uygulamalar odaklı eğitim anlayışı ile öne çıkar.',
+      // videoUrl: '', // Gerçek üniversite tanıtım video URL'si buraya eklenecek
       intro: 'MIT, dünyanın en iyi teknoloji ve mühendislik üniversitesi olarak, öğrencilerine teorik bilgiyi pratik uygulamalarla birleştiren bir eğitim sunar. 1861\'den beri inovasyon ve araştırma alanında öncü olan MIT, öğrencilerini geleceğin teknolojilerini geliştirmeye hazırlar. Robotik, yapay zeka, biyoteknoloji ve sürdürülebilir enerji gibi alanlarda dünya lideri olan MIT, mezunlarının kendi şirketlerini kurmalarına veya dünya devi teknoloji şirketlerinde çalışmalarına imkan sağlar. Burada aldığınız eğitim, size sadece bir kariyer değil, dünyayı değiştirme gücü verir.',
       established: '1861',
       students: '11,000+',
@@ -472,6 +484,7 @@ const universityData: Record<string, Record<string, {
       city: 'Toronto',
       flag: '🇨🇦',
       description: 'Kanada\'nın en prestijli üniversitesi, dünya çapında tanınan programlar. Güçlü araştırma altyapısı, çeşitli akademik disiplinler ve çok kültürlü şehir deneyimi sunar.',
+      // videoUrl: '', // Gerçek üniversite tanıtım video URL'si buraya eklenecek
       intro: 'University of Toronto, Kanada\'nın en prestijli ve en büyük üniversitesi olarak, öğrencilerine dünya standartlarında bir eğitim sunar. Dünya sıralamalarında ilk 20\'de yer alan bu üniversite, özellikle tıp, mühendislik, işletme ve beşeri bilimler alanlarında global bir liderdir. Toronto, dünyanın en çok kültürlü ve güvenli şehirlerinden biri olarak, öğrencilere hem eğitim hem de yaşam kalitesi açısından mükemmel bir deneyim sunar. Kanada\'nın göçmen dostu politikaları sayesinde, mezunlarının çoğu eğitim sonrası burada kalmayı seçer ve kariyerlerini Kanada\'da devam ettirir.',
       established: '1827',
       students: '90,000+',
@@ -504,6 +517,7 @@ const universityData: Record<string, Record<string, {
       city: 'Vancouver',
       flag: '🇨🇦',
       description: 'Körfez manzaralı kampüs, güçlü araştırma programları. Kanada\'nın en prestijli üniversitelerinden biri, doğal güzellikler ve modern şehir yaşamının birleştiği lokasyonda.',
+      // videoUrl: '', // Gerçek üniversite tanıtım video URL'si buraya eklenecek
       established: '1908',
       students: '66,000+',
       ranking: 'Kanada Top 3, Dünya Top 50',
@@ -537,6 +551,7 @@ const universityData: Record<string, Record<string, {
       city: 'Berlin',
       flag: '🇩🇪',
       description: 'Tarihi üniversite, güçlü araştırma altyapısı. Almanya\'nın en prestijli üniversitelerinden biri, araştırma ve öğretim geleneği ile öne çıkar.',
+      // videoUrl: '', // Gerçek üniversite tanıtım video URL'si buraya eklenecek
       intro: 'Humboldt University of Berlin, 1810\'da kurulmuş, dünyanın en prestijli üniversitelerinden biridir. Modern üniversite sisteminin doğduğu yer olarak kabul edilen bu üniversite, 29 Nobel ödüllü mezunu ile gurur duyar. Almanya\'nın başkenti Berlin\'de yer alan kampüs, öğrencilere hem tarihi hem de modern bir şehir deneyimi sunar. Almanya\'daki devlet üniversitelerinin çoğunda olduğu gibi, öğrenim ücreti düşük veya ücretsizdir, bu da kaliteli eğitimi herkese erişilebilir kılar. Güçlü araştırma altyapısı, çeşitli program seçenekleri ve Avrupa\'nın kalbinde yer alan konumu ile Humboldt, uluslararası öğrenciler için mükemmel bir seçenektir.',
       established: '1810',
       students: '35,000+',
@@ -568,6 +583,7 @@ const universityData: Record<string, Record<string, {
       city: 'Berlin',
       flag: '🇩🇪',
       description: 'Özgür araştırma geleneği, çeşitli program seçenekleri. Berlin\'de konumlanan prestijli üniversite, araştırma odaklı eğitim anlayışı ile öne çıkar.',
+      // videoUrl: '', // Gerçek üniversite tanıtım video URL'si buraya eklenecek
       established: '1948',
       students: '38,000+',
       ranking: 'Almanya Top 10',
@@ -661,6 +677,7 @@ const universityData: Record<string, Record<string, {
       city: 'Roma',
       flag: '🇮🇹',
       description: 'Avrupa\'nın en büyük üniversitelerinden biri, tarihi şehir merkezi. Çeşitli akademik programlar ve İtalyan kültürünü yakından tanıma fırsatı sunar.',
+      // videoUrl: '', // Gerçek üniversite tanıtım video URL'si buraya eklenecek
       established: '1303',
       students: '112,000+',
       ranking: 'İtalya Top 5',
@@ -854,7 +871,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
                   <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                     <iframe
                       className="absolute top-0 left-0 w-full h-full border-4 border-gray-900"
-                      src={data.videoUrl.replace('watch?v=', 'embed/')}
+                      src={convertYouTubeUrlToEmbed(data.videoUrl)}
                       title={`${data.name} Tanıtım Videosu`}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
@@ -1069,20 +1086,20 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
             <div className="space-y-6">
               {/* Same Country Universities */}
               {otherUniversities.length > 0 && (
-                <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-6">
-                  <div className="inline-block px-4 py-2 bg-blue-600 text-white border-4 border-blue-800 transform -skew-x-12 mb-4">
-                    <h3 className="transform skew-x-12 text-sm font-black uppercase tracking-wider">
+                <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-5">
+                  <div className="inline-block px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white border-4 border-blue-800 transform -skew-x-12 mb-4 shadow-[4px_4px_0_0_rgba(0,0,0,0.2)]">
+                    <h3 className="transform skew-x-12 text-xs font-black uppercase tracking-wider">
                       {data.country}'deki Diğer Üniversiteler
                     </h3>
                   </div>
-                  <ul className="space-y-2">
+                  <ul className="space-y-2.5">
                     {otherUniversities.slice(0, 5).map((uni, index) => (
                       <li key={index}>
                         <Link
                           href={uni.href}
-                          className="block p-3 bg-blue-50 border-2 border-blue-200 hover:border-blue-400 hover:bg-blue-100 transition-all duration-200 transform hover:-translate-x-1"
+                          className="block p-3 bg-gradient-to-r from-blue-50 to-blue-100/50 border-2 border-blue-300 hover:border-blue-500 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 hover:shadow-md transition-all duration-200 transform hover:-translate-x-1 hover:scale-[1.02] rounded-sm"
                         >
-                          <span className="font-bold text-sm text-gray-900">{uni.title}</span>
+                          <span className="font-bold text-sm text-gray-900 leading-tight">{uni.title}</span>
                         </Link>
                       </li>
                     ))}
@@ -1090,7 +1107,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
                   {currentCountryUniversities.length > 6 && (
                     <Link
                       href={`/universite/${country}`}
-                      className="block mt-4 text-center px-4 py-2 bg-blue-600 text-white font-black text-sm uppercase border-2 border-blue-800 hover:bg-blue-700 transition-colors"
+                      className="block mt-4 text-center px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-black text-xs uppercase border-2 border-blue-800 hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-[4px_4px_0_0_rgba(0,0,0,0.2)] hover:shadow-[2px_2px_0_0_rgba(0,0,0,0.2)] hover:translate-x-0.5 hover:translate-y-0.5 rounded-sm"
                     >
                       Tümünü Gör
                     </Link>
@@ -1099,9 +1116,9 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
               )}
 
               {/* Other Countries */}
-              <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-6">
-                <div className="inline-block px-4 py-2 bg-purple-600 text-white border-4 border-purple-800 transform -skew-x-12 mb-4">
-                  <h3 className="transform skew-x-12 text-sm font-black uppercase tracking-wider">
+              <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-5">
+                <div className="inline-block px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white border-4 border-purple-800 transform -skew-x-12 mb-4 shadow-[4px_4px_0_0_rgba(0,0,0,0.2)]">
+                  <h3 className="transform skew-x-12 text-xs font-black uppercase tracking-wider">
                     Diğer Ülkeler
                   </h3>
                 </div>
@@ -1112,18 +1129,18 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
                       <div key={countryKey}>
                         <Link
                           href={`/universite/${countryKey}`}
-                          className="block px-3 py-2 bg-purple-50 border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-100 transition-all duration-200 mb-2"
+                          className="block px-3 py-2.5 bg-gradient-to-r from-purple-50 to-purple-100/50 border-2 border-purple-300 hover:border-purple-500 hover:bg-gradient-to-r hover:from-purple-100 hover:to-purple-200 hover:shadow-md transition-all duration-200 mb-2.5 rounded-sm"
                         >
                           <span className="font-black text-sm text-gray-900 uppercase">
                             {countryName.charAt(0).toUpperCase() + countryName.slice(1)}
                           </span>
                         </Link>
-                        <ul className="ml-4 space-y-1">
+                        <ul className="ml-4 space-y-1.5">
                           {universities.slice(0, 3).map((uni, index) => (
                             <li key={index}>
                               <Link
                                 href={uni.href}
-                                className="block p-2 bg-gray-50 border-2 border-gray-200 hover:border-gray-400 hover:bg-gray-100 transition-all duration-200 text-xs font-bold text-gray-700"
+                                className="block p-2.5 bg-gradient-to-r from-gray-50 to-gray-100/50 border-2 border-gray-300 hover:border-gray-500 hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200 hover:shadow-sm transition-all duration-200 text-xs font-bold text-gray-800 rounded-sm transform hover:scale-[1.01]"
                               >
                                 {uni.title.length > 40 ? `${uni.title.substring(0, 40)}...` : uni.title}
                               </Link>

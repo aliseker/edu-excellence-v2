@@ -5,21 +5,22 @@ import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function UniversitiesPage() {
   const countries = [
-    { name: 'İngiltere', flag: '🇬🇧', slug: 'ingiltere' },
-    { name: 'Amerika', flag: '🇺🇸', slug: 'amerika' },
-    { name: 'Kanada', flag: '🇨🇦', slug: 'kanada' },
-    { name: 'Almanya', flag: '🇩🇪', slug: 'almanya' },
-    { name: 'İtalya', flag: '🇮🇹', slug: 'italya' },
-    { name: 'Fransa', flag: '🇫🇷', slug: 'fransa' },
-    { name: 'Polonya', flag: '🇵🇱', slug: 'polonya' },
-    { name: 'Macaristan', flag: '🇭🇺', slug: 'macaristan' },
-    { name: 'Avusturya', flag: '🇦🇹', slug: 'avusturya' },
-    { name: 'Litvanya', flag: '🇱🇹', slug: 'litvanya' },
-    { name: 'Hollanda', flag: '🇳🇱', slug: 'hollanda' },
-    { name: 'Avustralya', flag: '🇦🇺', slug: 'avustralya' },
+    { name: 'İngiltere', code: 'gb', slug: 'ingiltere' },
+    { name: 'Amerika', code: 'us', slug: 'amerika' },
+    { name: 'Kanada', code: 'ca', slug: 'kanada' },
+    { name: 'Almanya', code: 'de', slug: 'almanya' },
+    { name: 'İtalya', code: 'it', slug: 'italya' },
+    { name: 'Fransa', code: 'fr', slug: 'fransa' },
+    { name: 'Polonya', code: 'pl', slug: 'polonya' },
+    { name: 'Macaristan', code: 'hu', slug: 'macaristan' },
+    { name: 'Avusturya', code: 'at', slug: 'avusturya' },
+    { name: 'Litvanya', code: 'lt', slug: 'litvanya' },
+    { name: 'Hollanda', code: 'nl', slug: 'hollanda' },
+    { name: 'Avustralya', code: 'au', slug: 'avustralya' },
   ];
 
   return (
@@ -52,6 +53,41 @@ export default function UniversitiesPage() {
           <p className="text-lg md:text-xl text-blue-100 font-medium max-w-2xl">
             Dünyanın en prestijli üniversitelerinde eğitim alın. Kariyerinize yön verin.
           </p>
+        </div>
+      </section>
+
+      {/* Countries */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 uppercase tracking-wider">Ülkelere Göre Üniversiteler</h2>
+          <p className="text-lg text-gray-600 font-medium">Size en uygun ülkeyi seçin</p>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {countries.map((country) => (
+            <Link
+              key={country.slug}
+              href={`/universite/${country.slug}`}
+              className="group p-6 bg-white border-4 border-gray-900 hover:border-blue-600 transition-all duration-200 transform hover:-skew-x-2 hover:shadow-[8px_8px_0_0_rgba(0,0,0,0.1)]"
+            >
+              <div className="transform group-hover:skew-x-2 text-center">
+                <div className="flex justify-center mb-4">
+                  <div className="relative w-20 h-14 border-2 border-gray-200 rounded overflow-hidden">
+                    <Image
+                      src={`https://flagcdn.com/w160/${country.code}.png`}
+                      alt={country.name}
+                      fill
+                      className="object-cover"
+                      sizes="80px"
+                    />
+                  </div>
+                </div>
+                <div className="text-lg font-black text-gray-900 uppercase tracking-wider group-hover:text-blue-600 transition-colors">
+                  {country.name}
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
@@ -254,31 +290,6 @@ export default function UniversitiesPage() {
               </div>
             </Link>
           </div>
-        </div>
-      </section>
-
-      {/* Countries */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-black text-gray-900 mb-4 uppercase tracking-wider">Ülkelere Göre Üniversiteler</h2>
-          <p className="text-lg text-gray-600 font-medium">Size en uygun ülkeyi seçin</p>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {countries.map((country) => (
-            <Link
-              key={country.slug}
-              href={`/universite/${country.slug}`}
-              className="group p-6 bg-white border-4 border-gray-900 hover:border-blue-600 transition-all duration-200 transform hover:-skew-x-2 hover:shadow-[8px_8px_0_0_rgba(0,0,0,0.1)]"
-            >
-              <div className="transform group-hover:skew-x-2 text-center">
-                <div className="text-5xl mb-3">{country.flag}</div>
-                <div className="text-lg font-black text-gray-900 uppercase tracking-wider group-hover:text-blue-600 transition-colors">
-                  {country.name}
-                </div>
-              </div>
-            </Link>
-          ))}
         </div>
       </section>
 

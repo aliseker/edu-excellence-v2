@@ -5,26 +5,27 @@ import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function MasterMBAPage() {
   const countries = [
-    { name: 'Amerika', flag: '🇺🇸', slug: 'amerika' },
-    { name: 'İngiltere', flag: '🇬🇧', slug: 'ingiltere' },
-    { name: 'İtalya', flag: '🇮🇹', slug: 'italya' },
-    { name: 'İrlanda', flag: '🇮🇪', slug: 'irlanda' },
-    { name: 'Kanada', flag: '🇨🇦', slug: 'kanada' },
-    { name: 'Almanya', flag: '🇩🇪', slug: 'almanya' },
-    { name: 'Hollanda', flag: '🇳🇱', slug: 'hollanda' },
-    { name: 'Avustralya', flag: '🇦🇺', slug: 'avustralya' },
-    { name: 'İsveç', flag: '🇸🇪', slug: 'isvec' },
-    { name: 'Fransa', flag: '🇫🇷', slug: 'fransa' },
-    { name: 'Polonya', flag: '🇵🇱', slug: 'polonya' },
-    { name: 'Ukrayna', flag: '🇺🇦', slug: 'ukrayna' },
-    { name: 'Litvanya', flag: '🇱🇹', slug: 'litvanya' },
-    { name: 'İspanya', flag: '🇪🇸', slug: 'ispanya' },
-    { name: 'İsviçre', flag: '🇨🇭', slug: 'isvicre' },
-    { name: 'Dubai', flag: '🇦🇪', slug: 'dubai' },
-    { name: 'Malta', flag: '🇲🇹', slug: 'malta' },
+    { name: 'Amerika', flag: '🇺🇸', slug: 'amerika', countryCode: 'us' },
+    { name: 'İngiltere', flag: '🇬🇧', slug: 'ingiltere', countryCode: 'gb' },
+    { name: 'İtalya', flag: '🇮🇹', slug: 'italya', countryCode: 'it' },
+    { name: 'İrlanda', flag: '🇮🇪', slug: 'irlanda', countryCode: 'ie' },
+    { name: 'Kanada', flag: '🇨🇦', slug: 'kanada', countryCode: 'ca' },
+    { name: 'Almanya', flag: '🇩🇪', slug: 'almanya', countryCode: 'de' },
+    { name: 'Hollanda', flag: '🇳🇱', slug: 'hollanda', countryCode: 'nl' },
+    { name: 'Avustralya', flag: '🇦🇺', slug: 'avustralya', countryCode: 'au' },
+    { name: 'İsveç', flag: '🇸🇪', slug: 'isvec', countryCode: 'se' },
+    { name: 'Fransa', flag: '🇫🇷', slug: 'fransa', countryCode: 'fr' },
+    { name: 'Polonya', flag: '🇵🇱', slug: 'polonya', countryCode: 'pl' },
+    { name: 'Ukrayna', flag: '🇺🇦', slug: 'ukrayna', countryCode: 'ua' },
+    { name: 'Litvanya', flag: '🇱🇹', slug: 'litvanya', countryCode: 'lt' },
+    { name: 'İspanya', flag: '🇪🇸', slug: 'ispanya', countryCode: 'es' },
+    { name: 'İsviçre', flag: '🇨🇭', slug: 'isvicre', countryCode: 'ch' },
+    { name: 'Dubai', flag: '🇦🇪', slug: 'dubai', countryCode: 'ae' },
+    { name: 'Malta', flag: '🇲🇹', slug: 'malta', countryCode: 'mt' },
   ];
 
   return (
@@ -206,7 +207,14 @@ export default function MasterMBAPage() {
               className="group relative bg-white border-4 border-gray-900 shadow-[4px_4px_0_0_rgba(0,0,0,0.1)] p-6 transform hover:-skew-x-1 hover:shadow-[8px_8px_0_0_rgba(0,0,0,0.2)] transition-all duration-200"
             >
               <div className="transform group-hover:skew-x-1">
-                <div className="text-4xl mb-3">{country.flag}</div>
+                <div className="relative w-20 h-14 mx-auto mb-3">
+                  <Image
+                    src={`https://flagcdn.com/w80/${country.countryCode}.png`}
+                    alt={`${country.name} bayrağı`}
+                    fill
+                    className="object-cover rounded-md border border-gray-200"
+                  />
+                </div>
                 <h3 className="font-black text-gray-900 text-lg uppercase tracking-tight">{country.name}</h3>
               </div>
             </Link>

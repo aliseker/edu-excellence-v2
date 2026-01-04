@@ -1,5 +1,30 @@
 // API Configuration
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+// 
+// LOCAL DEVELOPMENT için:
+// .env.local dosyasında: NEXT_PUBLIC_API_URL=http://localhost:5000/api
+// Veya buradaki default değeri kullanır: http://localhost:5000/api
+//
+// PRODUCTION (Canlı) için:
+// VPS'te .env.local dosyasında: NEXT_PUBLIC_API_URL=https://your-backend-api.com/api
+// Örnek: NEXT_PUBLIC_API_URL=https://api.edu-excellence.net/api
+//
+// Elle değiştirmek istersen, aşağıdaki satırı düzenle:
+// const LOCAL_API_URL = 'http://localhost:5000/api';
+// const PRODUCTION_API_URL = 'https://your-backend-api.com/api';
+
+// Environment variable'dan al, yoksa localhost kullan (development için)
+const getApiUrl = (): string => {
+  // .env.local dosyasından NEXT_PUBLIC_API_URL değişkenini oku
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  
+  // Development için default localhost
+  // Production'da mutlaka .env.local dosyasında NEXT_PUBLIC_API_URL tanımla!
+  return 'http://localhost:5000/api';
+};
+
+export const API_BASE_URL = getApiUrl();
 
 export const API_ENDPOINTS = {
   // Universities

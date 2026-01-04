@@ -283,22 +283,18 @@ const Navbar = () => {
           : 'bg-white'
       }`}
     >
-      <div className="max-w-7xl mx-auto pl-0 pr-0.5 sm:pr-1 lg:pr-1.5">
-        <div className="flex items-center h-16">
-          {/* Logo Section - En sola yaslı */}
-          <Link href="/" className="flex items-center space-x-2 flex-shrink-0 mr-2 -ml-20 sm:-ml-24 lg:-ml-28">
-            <div className="relative h-12 w-12 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center h-16 justify-center">
+          {/* Logo Section */}
+          <Link href="/" className="flex items-center flex-shrink-0 mr-4">
+            <div className="relative h-16 w-16 overflow-hidden">
               <Image
-                src="/images/logo.jpg"
+                src="/images/logo2.png"
                 alt="Edu-Excellence Logo"
                 fill
                 className="object-cover"
                 priority
               />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-gray-900 font-black text-lg leading-tight uppercase tracking-tight">Edu-Excellence</span>
-              <span className="text-[10px] text-gray-600 leading-tight font-bold uppercase tracking-wider">Eğitimin Mükemmel Hali</span>
             </div>
           </Link>
 
@@ -312,15 +308,15 @@ const Navbar = () => {
                 <div key={item.href} className="relative group">
                   <Link
                     href={item.href}
-                    className={`px-1.5 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all duration-200 flex items-center gap-0.5 whitespace-nowrap border-2 ${
+                    className={`px-1.5 py-1.5 text-[11px] font-black uppercase tracking-wider transition-all duration-200 flex items-center gap-0.5 whitespace-nowrap border-2 transform -skew-x-12 ${
                       isActive
                         ? 'text-purple-600 border-purple-600 bg-purple-50'
                         : 'text-gray-900 border-transparent hover:text-purple-600 hover:border-purple-600 hover:bg-purple-50'
                     }`}
                   >
-                    {item.title}
+                    <span className="transform skew-x-12">{item.title}</span>
                     {hasDropdown && (
-                      <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                      <svg className="w-2.5 h-2.5 transform skew-x-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                       </svg>
                     )}
@@ -376,9 +372,9 @@ const Navbar = () => {
           {/* Diğer Hizmetlerimiz - Arama'nın solunda */}
           <div className="hidden lg:block flex-shrink-0 mr-1">
             <div className="relative group">
-              <button className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all duration-200 flex items-center gap-0.5 whitespace-nowrap border-2 text-gray-900 border-transparent hover:text-purple-600 hover:border-purple-600 hover:bg-purple-50">
-                DİĞER HİZMETLERİMİZ
-                <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+              <button className="px-2 py-1.5 text-[11px] font-black uppercase tracking-wider transition-all duration-200 flex items-center gap-0.5 whitespace-nowrap border-2 text-gray-900 border-transparent hover:text-purple-600 hover:border-purple-600 hover:bg-purple-50 transform -skew-x-12">
+                <span className="transform skew-x-12">DİĞER HİZMETLERİMİZ</span>
+                <svg className="w-2.5 h-2.5 transform skew-x-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>

@@ -55,6 +55,7 @@ const nextConfig: NextConfig = {
               "img-src 'self' data: https:",
               "font-src 'self' https://fonts.gstatic.com data:",
               "connect-src 'self' https:",
+              "frame-src 'self' https://www.youtube.com https://youtube.com",
               "frame-ancestors 'self'",
               "base-uri 'self'",
               "form-action 'self'"

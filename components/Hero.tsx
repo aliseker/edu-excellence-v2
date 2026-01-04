@@ -40,14 +40,14 @@ const Hero = () => {
             
             {/* Title - More Geometric, Bold */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-[0.9] tracking-tight drop-shadow-[4px_4px_0_rgba(0,0,0,0.5)]">
-              HAYALİNİZDEKİ
+              EĞİTİMİN
               <br />
               <span className="relative inline-block">
                 <span className="absolute inset-0 bg-purple-600 transform -skew-x-12 -z-10 opacity-80"></span>
-                <span className="relative text-purple-300">EĞİTİMİ</span>
+                <span className="relative text-purple-300">MÜKEMMEL</span>
               </span>
               <br />
-              <span className="text-white">BULUN</span>
+              <span className="text-white">HALİ</span>
             </h1>
             
             <p className="text-base md:text-lg text-white leading-relaxed max-w-2xl font-medium border-l-4 border-purple-400 pl-5 drop-shadow-[2px_2px_0_rgba(0,0,0,0.5)]">
