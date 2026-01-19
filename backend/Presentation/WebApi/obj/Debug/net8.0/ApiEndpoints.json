@@ -1,0 +1,508 @@
+[
+  {
+    "ContainingType": "Program\u002B\u003C\u003Ec",
+    "Method": "\u003C\u003CMain\u003E$\u003Eb__0_2",
+    "RelativePath": "",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.CitiesController",
+    "Method": "GetByCountry",
+    "RelativePath": "api/cities",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "countryId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.CitiesController",
+    "Method": "Create",
+    "RelativePath": "api/cities",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "EduExcellenceV2.Application.DTOs.CityCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.CitiesController",
+    "Method": "Update",
+    "RelativePath": "api/cities/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EduExcellenceV2.Application.DTOs.CityCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.CitiesController",
+    "Method": "Delete",
+    "RelativePath": "api/cities/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.CountriesController",
+    "Method": "GetAll",
+    "RelativePath": "api/countries",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.CountriesController",
+    "Method": "Create",
+    "RelativePath": "api/countries",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "EduExcellenceV2.Application.DTOs.CountryCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.CountriesController",
+    "Method": "GetById",
+    "RelativePath": "api/countries/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.CountriesController",
+    "Method": "Update",
+    "RelativePath": "api/countries/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EduExcellenceV2.Application.DTOs.CountryCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.CountriesController",
+    "Method": "Delete",
+    "RelativePath": "api/countries/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.LanguageSchoolsController",
+    "Method": "GetAll",
+    "RelativePath": "api/language-schools",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.LanguageSchoolsController",
+    "Method": "Create",
+    "RelativePath": "api/language-schools",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "EduExcellenceV2.Application.DTOs.LanguageSchoolCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.LanguageSchoolsController",
+    "Method": "GetById",
+    "RelativePath": "api/language-schools/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.LanguageSchoolsController",
+    "Method": "Update",
+    "RelativePath": "api/language-schools/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EduExcellenceV2.Application.DTOs.LanguageSchoolCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.LanguageSchoolsController",
+    "Method": "Delete",
+    "RelativePath": "api/language-schools/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.LocationsController",
+    "Method": "GetCities",
+    "RelativePath": "api/locations/cities",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "countryId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.LocationsController",
+    "Method": "GetCountries",
+    "RelativePath": "api/locations/countries",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.MasterProgramsController",
+    "Method": "GetAll",
+    "RelativePath": "api/master-programs",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.MasterProgramsController",
+    "Method": "Create",
+    "RelativePath": "api/master-programs",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "EduExcellenceV2.Application.DTOs.MasterProgramCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.MasterProgramsController",
+    "Method": "GetById",
+    "RelativePath": "api/master-programs/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.MasterProgramsController",
+    "Method": "Update",
+    "RelativePath": "api/master-programs/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EduExcellenceV2.Application.DTOs.MasterProgramCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.MasterProgramsController",
+    "Method": "Delete",
+    "RelativePath": "api/master-programs/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.SummerSchoolsController",
+    "Method": "GetAll",
+    "RelativePath": "api/summer-schools",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.SummerSchoolsController",
+    "Method": "Create",
+    "RelativePath": "api/summer-schools",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "EduExcellenceV2.Application.DTOs.SummerSchoolCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.SummerSchoolsController",
+    "Method": "GetById",
+    "RelativePath": "api/summer-schools/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.SummerSchoolsController",
+    "Method": "Update",
+    "RelativePath": "api/summer-schools/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EduExcellenceV2.Application.DTOs.SummerSchoolCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.SummerSchoolsController",
+    "Method": "Delete",
+    "RelativePath": "api/summer-schools/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.UniversitiesController",
+    "Method": "GetAll",
+    "RelativePath": "api/universities",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.UniversitiesController",
+    "Method": "Create",
+    "RelativePath": "api/universities",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "EduExcellenceV2.Application.DTOs.UniversityCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.UniversitiesController",
+    "Method": "GetById",
+    "RelativePath": "api/universities/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.UniversitiesController",
+    "Method": "Update",
+    "RelativePath": "api/universities/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EduExcellenceV2.Application.DTOs.UniversityCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.UniversitiesController",
+    "Method": "Delete",
+    "RelativePath": "api/universities/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

@@ -153,15 +153,15 @@ class ApiService {
 
   // Countries
   async getCountries() {
-    return this.request(API_ENDPOINTS.countries);
+    return this.request(API_ENDPOINTS.locationCountries);
   }
 
   // Cities
-  async getCities(country?: string) {
-    if (country) {
-      return this.request(API_ENDPOINTS.citiesByCountry(country));
+  async getCities(countryId?: number) {
+    if (countryId) {
+      return this.request(API_ENDPOINTS.locationCities(countryId));
     }
-    return this.request(API_ENDPOINTS.cities);
+    return [];
   }
 }
 
