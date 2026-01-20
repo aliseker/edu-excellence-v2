@@ -3,8 +3,8 @@ namespace EduExcellenceV2.Application.DTOs;
 public class SummerSchoolProgramDto
 {
     public string Lessons { get; set; } = string.Empty;
-    public string Activities { get; set; } = string.Empty;
-    public string Excursions { get; set; } = string.Empty;
+    public List<string> Activities { get; set; } = new();
+    public List<string> Excursions { get; set; } = new();
 }
 
 public class SummerSchoolAccommodationDto

@@ -37,6 +37,7 @@ export default function YeniYazOkuluPage() {
     duration: '',
     location: '',
     status: 'active',
+    imageBase64: '',
   });
   const [countries, setCountries] = useState<CountryOption[]>([]);
   const [cities, setCities] = useState<CityOption[]>([]);
@@ -88,6 +89,7 @@ export default function YeniYazOkuluPage() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
+        setFormData(prev => ({ ...prev, imageBase64: reader.result as string }));
       };
       reader.readAsDataURL(file);
     }
@@ -133,11 +135,22 @@ export default function YeniYazOkuluPage() {
         dates: dates.filter(d => d.trim() !== ''),
       };
       console.log('Form Data:', submitData);
-      
-      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.summerSchools}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(submitData),
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || 'Yaz okulu eklenemedi.');
+      }
+
       router.push('/admin/yaz-okullari');
     } catch (error) {
       console.error('Hata:', error);
+      alert('Yaz okulu eklenirken bir hata oluştu.');
     } finally {
       setIsLoading(false);
     }

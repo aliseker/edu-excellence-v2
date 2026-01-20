@@ -66,6 +66,9 @@ const Navbar = () => {
   const [languageSchoolDropdown, setLanguageSchoolDropdown] = useState<
     Array<{ title: string; href: string; submenu?: Array<{ title: string; href: string }> }>
   >([]);
+  const [summerSchoolDropdown, setSummerSchoolDropdown] = useState<
+    Array<{ title: string; href: string; submenu?: Array<{ title: string; href: string }> }>
+  >([]);
 
   useEffect(() => {
     const fetchLanguageSchools = async () => {
@@ -108,45 +111,46 @@ const Navbar = () => {
     fetchLanguageSchools();
   }, []);
 
-  // Yaz Okulu nested dropdown verileri
-  const summerSchoolCountries = {
-    ingiltere: [
-      { title: 'Kings London Central', href: '/yaz-okulu/ingiltere/kings-london-central' },
-      { title: 'EC English London', href: '/yaz-okulu/ingiltere/ec-english-london' },
-      { title: 'Cambridge Yaz Okulu', href: '/yaz-okulu/ingiltere/cambridge-yaz-okulu' },
-      { title: 'Brighton Yaz Okulu', href: '/yaz-okulu/ingiltere/brighton-yaz-okulu' },
-    ],
-    amerika: [
-      { title: 'New York Yaz Okulu', href: '/yaz-okulu/amerika/new-york-yaz-okulu' },
-      { title: 'Los Angeles Yaz Okulu', href: '/yaz-okulu/amerika/los-angeles-yaz-okulu' },
-    ],
-    kanada: [
-      { title: 'Toronto Yaz Okulu', href: '/yaz-okulu/kanada/toronto-yaz-okulu' },
-      { title: 'Vancouver Yaz Okulu', href: '/yaz-okulu/kanada/vancouver-yaz-okulu' },
-    ],
-    almanya: [
-      { title: 'Berlin Mitte Yaz Okulu', href: '/yaz-okulu/almanya/berlin-mitte' },
-      { title: 'Berlin Sprachcaffe', href: '/yaz-okulu/almanya/berlin-sprachcaffe' },
-      { title: 'Münih Yaz Okulu', href: '/yaz-okulu/almanya/munih-yaz-okulu' },
-    ],
-    fransa: [
-      { title: 'Paris Yaz Okulu', href: '/yaz-okulu/fransa/paris-yaz-okulu' },
-      { title: 'Nice Yaz Okulu', href: '/yaz-okulu/fransa/nice-yaz-okulu' },
-    ],
-    ispanya: [
-      { title: 'Barcelona Yaz Okulu', href: '/yaz-okulu/ispanya/barcelona-yaz-okulu' },
-      { title: 'Madrid Yaz Okulu', href: '/yaz-okulu/ispanya/madrid-yaz-okulu' },
-    ],
-    italya: [
-      { title: 'Roma Yaz Okulu', href: '/yaz-okulu/italya/roma-yaz-okulu' },
-    ],
-    isvicre: [
-      { title: 'Zürih Yaz Okulu', href: '/yaz-okulu/isvicre/zurih-yaz-okulu' },
-    ],
-    malta: [
-      { title: 'Malta Yaz Okulu', href: '/yaz-okulu/malta/malta-yaz-okulu' },
-    ],
-  };
+  useEffect(() => {
+    const fetchSummerSchools = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.summerSchools}`);
+        const data = await res.json();
+        const countryMap = new Map<string, { name: string; slug: string; schools: Array<{ title: string; href: string }> }>();
+
+        data.forEach((school: any) => {
+          const countrySlug = school.countrySlug || slugify(school.countryName || '');
+          if (!countrySlug) {
+            return;
+          }
+          const countryName = school.countryName || countrySlug;
+          const schoolHref = `/yaz-okulu/${countrySlug}/${school.id}`;
+
+          if (!countryMap.has(countrySlug)) {
+            countryMap.set(countrySlug, { name: countryName, slug: countrySlug, schools: [] });
+          }
+          countryMap.get(countrySlug)!.schools.push({
+            title: school.name,
+            href: schoolHref
+          });
+        });
+
+        const dropdown = Array.from(countryMap.values())
+          .sort((a, b) => a.name.localeCompare(b.name, 'tr'))
+          .map((country) => ({
+            title: country.name,
+            href: `/yaz-okulu/${country.slug}`,
+            submenu: country.schools
+          }));
+
+        setSummerSchoolDropdown(dropdown);
+      } catch (error) {
+        console.error('Yaz okulları menüsü yüklenemedi:', error);
+      }
+    };
+
+    fetchSummerSchools();
+  }, []);
 
   // Master/MBA nested dropdown verileri
   const masterMBACountries = {
@@ -208,15 +212,7 @@ const Navbar = () => {
       href: '/yaz-okulu',
       dropdown: [
         { title: 'Neden Yaz Okulu?', href: '/yaz-okulu' },
-        { title: 'İngiltere', href: '/yaz-okulu/ingiltere', submenu: summerSchoolCountries.ingiltere },
-        { title: 'Amerika', href: '/yaz-okulu/amerika', submenu: summerSchoolCountries.amerika },
-        { title: 'Kanada', href: '/yaz-okulu/kanada', submenu: summerSchoolCountries.kanada },
-        { title: 'Malta', href: '/yaz-okulu/malta', submenu: summerSchoolCountries.malta },
-        { title: 'Almanya', href: '/yaz-okulu/almanya', submenu: summerSchoolCountries.almanya },
-        { title: 'Fransa', href: '/yaz-okulu/fransa', submenu: summerSchoolCountries.fransa },
-        { title: 'İspanya', href: '/yaz-okulu/ispanya', submenu: summerSchoolCountries.ispanya },
-        { title: 'İtalya', href: '/yaz-okulu/italya', submenu: summerSchoolCountries.italya },
-        { title: 'İsviçre', href: '/yaz-okulu/isvicre', submenu: summerSchoolCountries.isvicre },
+        ...summerSchoolDropdown,
       ]
     },
     { 

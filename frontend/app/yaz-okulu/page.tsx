@@ -5,19 +5,63 @@ import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
+import { apiService } from '@/services/api';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+
+interface Country {
+  id: number;
+  name: string;
+  slug: string;
+  flagEmoji?: string;
+}
+
+interface SummerSchool {
+  id: number;
+  countryId: number;
+}
 
 export default function YazOkuluPage() {
-  const countries = [
-    { name: 'İngiltere', flag: '🇬🇧', slug: 'ingiltere' },
-    { name: 'Amerika', flag: '🇺🇸', slug: 'amerika' },
-    { name: 'Kanada', flag: '🇨🇦', slug: 'kanada' },
-    { name: 'Malta', flag: '🇲🇹', slug: 'malta' },
-    { name: 'Almanya', flag: '🇩🇪', slug: 'almanya' },
-    { name: 'Fransa', flag: '🇫🇷', slug: 'fransa' },
-    { name: 'İspanya', flag: '🇪🇸', slug: 'ispanya' },
-    { name: 'İtalya', flag: '🇮🇹', slug: 'italya' },
-    { name: 'İsviçre', flag: '🇨🇭', slug: 'isvicre' },
-  ];
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [summerSchools, setSummerSchools] = useState<SummerSchool[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const [countriesRes, fetchedSummerSchools] = await Promise.all([
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.countries}`),
+          apiService.getSummerSchools(),
+        ]);
+        if (!countriesRes.ok) {
+          throw new Error('Ülkeler yüklenemedi.');
+        }
+        const fetchedCountries: Country[] = await countriesRes.json();
+        setCountries(fetchedCountries);
+        setSummerSchools(fetchedSummerSchools);
+      } catch (fetchError) {
+        console.error('Yaz okulları verileri yüklenemedi:', fetchError);
+        setError('Veriler yüklenirken bir hata oluştu.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const availableCountries = useMemo(() => {
+    if (!summerSchools.length) {
+      return countries;
+    }
+    const countryIds = new Set(summerSchools.map((school) => school.countryId));
+    return countries.filter((country) => countryIds.has(country.id));
+  }, [countries, summerSchools]);
+
+  if (isLoading) return <div className="text-center py-8">Yükleniyor...</div>;
+  if (error) return <div className="text-center py-8 text-red-600">{error}</div>;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -360,14 +404,14 @@ export default function YazOkuluPage() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {countries.map((country) => (
+          {availableCountries.map((country) => (
             <Link
-              key={country.slug}
+              key={country.id}
               href={`/yaz-okulu/${country.slug}`}
               className="group p-6 bg-white border-4 border-gray-900 hover:border-orange-600 transition-all duration-200 transform hover:-skew-x-2 hover:shadow-[8px_8px_0_0_rgba(0,0,0,0.1)]"
             >
               <div className="transform group-hover:skew-x-2 text-center">
-                <div className="text-5xl mb-3">{country.flag}</div>
+                <div className="text-5xl mb-3">{country.flagEmoji || '🌍'}</div>
                 <div className="text-lg font-black text-gray-900 uppercase tracking-wider group-hover:text-orange-600 transition-colors">
                   {country.name}
                 </div>

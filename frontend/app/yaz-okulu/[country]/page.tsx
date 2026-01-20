@@ -5,169 +5,96 @@ import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
-import { use } from 'react';
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { apiService } from '@/services/api';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 
-// Mock data - Later this will come from API
-const countryData: Record<string, { name: string; flag: string; cities: Array<{ name: string; schools: Array<{ name: string; slug: string; description: string; ageRange: string; duration: string }> }> }> = {
-  almanya: {
-    name: 'Almanya',
-    flag: '🇩🇪',
-    cities: [
-      {
-        name: 'Berlin',
-        schools: [
-          { name: 'Berlin Mitte Yaz Okulu', slug: 'berlin-mitte', description: 'Berlin şehir merkezinde, modern tesisler ve deneyimli eğitmenlerle Almanca öğrenin.', ageRange: '12-17', duration: '2-4 hafta' },
-          { name: 'Berlin Sprachcaffe', slug: 'berlin-sprachcaffe', description: 'Gençler için eğlenceli Almanca programı, sosyal aktiviteler ve şehir gezileri.', ageRange: '14-17', duration: '2-3 hafta' },
-        ]
-      },
-      {
-        name: 'Münih',
-        schools: [
-          { name: 'Münih Yaz Okulu', slug: 'munih-yaz-okulu', description: 'Bavyera\'nın başkentinde, kültürel aktiviteler ve dil eğitimi.', ageRange: '13-17', duration: '2-4 hafta' },
-        ]
-      },
-    ]
-  },
-  ingiltere: {
-    name: 'İngiltere',
-    flag: '🇬🇧',
-    cities: [
-      {
-        name: 'Londra',
-        schools: [
-          { name: 'Kings London Central', slug: 'kings-london-central', description: 'London South Bank University kampüsünde, merkezi konum ve modern tesisler.', ageRange: '13-17', duration: '2-4 hafta' },
-          { name: 'EC English London', slug: 'ec-english-london', description: 'Covent Garden yakınında, İngiliz kültürünü keşfedin.', ageRange: '12-17', duration: '2-3 hafta' },
-        ]
-      },
-      {
-        name: 'Cambridge',
-        schools: [
-          { name: 'Cambridge Yaz Okulu', slug: 'cambridge-yaz-okulu', description: 'Üniversite şehri atmosferinde akademik odaklı program.', ageRange: '15-17', duration: '3-4 hafta' },
-        ]
-      },
-      {
-        name: 'Brighton',
-        schools: [
-          { name: 'Brighton Yaz Okulu', slug: 'brighton-yaz-okulu', description: 'Sahil kenti, plaj aktiviteleri ve rahat atmosfer.', ageRange: '10-17', duration: '2-3 hafta' },
-        ]
-      },
-    ]
-  },
-  amerika: {
-    name: 'Amerika',
-    flag: '🇺🇸',
-    cities: [
-      {
-        name: 'New York',
-        schools: [
-          { name: 'New York Yaz Okulu', slug: 'new-york-yaz-okulu', description: 'Manhattan merkezinde, unutulmaz bir yaz deneyimi.', ageRange: '13-17', duration: '3-6 hafta' },
-        ]
-      },
-      {
-        name: 'Los Angeles',
-        schools: [
-          { name: 'Los Angeles Yaz Okulu', slug: 'los-angeles-yaz-okulu', description: 'Hollywood yakınında, güneşli iklim ve eğlenceli aktiviteler.', ageRange: '12-17', duration: '2-4 hafta' },
-        ]
-      },
-    ]
-  },
-  kanada: {
-    name: 'Kanada',
-    flag: '🇨🇦',
-    cities: [
-      {
-        name: 'Toronto',
-        schools: [
-          { name: 'Toronto Yaz Okulu', slug: 'toronto-yaz-okulu', description: 'Çok kültürlü şehir, güvenli ortam ve kaliteli eğitim.', ageRange: '10-17', duration: '2-4 hafta' },
-        ]
-      },
-      {
-        name: 'Vancouver',
-        schools: [
-          { name: 'Vancouver Yaz Okulu', slug: 'vancouver-yaz-okulu', description: 'Doğal güzellikler ve modern şehir yaşamı.', ageRange: '12-17', duration: '2-3 hafta' },
-        ]
-      },
-    ]
-  },
-  malta: {
-    name: 'Malta',
-    flag: '🇲🇹',
-    cities: [
-      {
-        name: 'St. Julian\'s',
-        schools: [
-          { name: 'Malta Yaz Okulu', slug: 'malta-yaz-okulu', description: 'Akdeniz iklimi, plaj aktiviteleri ve İngilizce eğitimi.', ageRange: '8-16', duration: '1-3 hafta' },
-        ]
-      },
-    ]
-  },
-  fransa: {
-    name: 'Fransa',
-    flag: '🇫🇷',
-    cities: [
-      {
-        name: 'Paris',
-        schools: [
-          { name: 'Paris Yaz Okulu', slug: 'paris-yaz-okulu', description: 'Şehrin ışıkları arasında Fransızca öğrenin.', ageRange: '12-18', duration: '2-3 hafta' },
-        ]
-      },
-      {
-        name: 'Nice',
-        schools: [
-          { name: 'Nice Yaz Okulu', slug: 'nice-yaz-okulu', description: 'Riviera\'da, plaj ve kültür bir arada.', ageRange: '10-17', duration: '2-3 hafta' },
-        ]
-      },
-    ]
-  },
-  ispanya: {
-    name: 'İspanya',
-    flag: '🇪🇸',
-    cities: [
-      {
-        name: 'Barcelona',
-        schools: [
-          { name: 'Barcelona Yaz Okulu', slug: 'barcelona-yaz-okulu', description: 'Katalonya\'nın başkentinde İspanyolca ve kültür.', ageRange: '12-17', duration: '2-4 hafta' },
-        ]
-      },
-      {
-        name: 'Madrid',
-        schools: [
-          { name: 'Madrid Yaz Okulu', slug: 'madrid-yaz-okulu', description: 'İspanya\'nın başkentinde yoğun İspanyolca programı.', ageRange: '13-17', duration: '2-3 hafta' },
-        ]
-      },
-    ]
-  },
-  italya: {
-    name: 'İtalya',
-    flag: '🇮🇹',
-    cities: [
-      {
-        name: 'Roma',
-        schools: [
-          { name: 'Roma Yaz Okulu', slug: 'roma-yaz-okulu', description: 'Tarihi şehir merkezinde İtalyanca öğrenin.', ageRange: '12-17', duration: '2-3 hafta' },
-        ]
-      },
-    ]
-  },
-  isvicre: {
-    name: 'İsviçre',
-    flag: '🇨🇭',
-    cities: [
-      {
-        name: 'Zürih',
-        schools: [
-          { name: 'Zürih Yaz Okulu', slug: 'zurih-yaz-okulu', description: 'Alp manzaralı, çok dilli ortam.', ageRange: '13-17', duration: '2-4 hafta' },
-        ]
-      },
-    ]
-  },
-};
+interface Country {
+  id: number;
+  name: string;
+  slug: string;
+  flagEmoji: string;
+}
 
-export default function CountryPage({ params }: { params: Promise<{ country: string }> }) {
-  const { country } = use(params);
-  const data = countryData[country.toLowerCase()];
+interface City {
+  id: number;
+  name: string;
+}
 
-  if (!data) {
+interface SummerSchool {
+  id: number;
+  name: string;
+  description?: string;
+  ageRange?: string;
+  duration?: string;
+  countryId: number;
+  cityId?: number | null;
+}
+
+export default function CountryPage() {
+  const params = useParams();
+  const countrySlug = params.country as string;
+
+  const [country, setCountry] = useState<Country | null>(null);
+  const [cities, setCities] = useState<City[]>([]);
+  const [summerSchools, setSummerSchools] = useState<SummerSchool[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const countriesRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.countries}`);
+        if (!countriesRes.ok) {
+          throw new Error('Ülkeler yüklenemedi.');
+        }
+        const allCountries: Country[] = await countriesRes.json();
+        const currentCountry = allCountries.find(c => c.slug === countrySlug);
+        if (!currentCountry) {
+          setError('Ülke bulunamadı.');
+          setIsLoading(false);
+          return;
+        }
+        setCountry(currentCountry);
+
+        const fetchedCities = await apiService.getCities(currentCountry.id);
+        setCities(fetchedCities);
+
+        const allSchools: SummerSchool[] = await apiService.getSummerSchools();
+        const filteredSchools = allSchools.filter(school => school.countryId === currentCountry.id);
+        setSummerSchools(filteredSchools);
+      } catch (err) {
+        console.error('Veriler yüklenemedi:', err);
+        setError('Veriler yüklenirken bir hata oluştu.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [countrySlug]);
+
+  if (isLoading) return <div className="text-center py-8">Yükleniyor...</div>;
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+          <h1 className="text-4xl font-black text-gray-900 mb-4">Yaz Okulu Bulunamadı</h1>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <Link href="/yaz-okulu" className="text-orange-600 font-bold hover:underline">
+            Yaz Okulları sayfasına dön
+          </Link>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!country) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
@@ -180,6 +107,21 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
         <Footer />
       </div>
     );
+  }
+
+  const schoolsGroupedByCity = cities.reduce((acc, city) => {
+    const schoolsInCity = summerSchools.filter(school => school.cityId === city.id);
+    if (schoolsInCity.length > 0) {
+      acc.push({ city: city.name, schools: schoolsInCity });
+    }
+    return acc;
+  }, [] as { city: string; schools: SummerSchool[] }[]);
+
+  const schoolsWithoutCity = summerSchools.filter(
+    school => !school.cityId || !cities.find(city => city.id === school.cityId)
+  );
+  if (schoolsWithoutCity.length > 0) {
+    schoolsGroupedByCity.push({ city: 'Diğer', schools: schoolsWithoutCity });
   }
 
   return (
@@ -201,10 +143,10 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
             ← Yaz Okulları
           </Link>
           <div className="inline-block px-5 py-2.5 bg-white/20 backdrop-blur-sm border-4 border-white/30 transform -skew-x-12 mb-6">
-            <span className="transform skew-x-12 text-sm font-black uppercase tracking-wider">{data.flag} {data.name}</span>
+            <span className="transform skew-x-12 text-sm font-black uppercase tracking-wider">{country.flagEmoji} {country.name}</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight drop-shadow-[4px_4px_0_rgba(0,0,0,0.3)]">
-            {data.name.toUpperCase()}'DA
+            {country.name.toUpperCase()}'DA
             <br />
             <span className="relative inline-block">
               <span className="absolute inset-0 bg-white/30 transform -skew-x-12 -z-10"></span>
@@ -212,7 +154,7 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
             </span>
           </h1>
           <p className="text-lg md:text-xl text-orange-100 font-medium max-w-2xl">
-            {data.name}'daki tüm yaz okullarımızı şehirlere göre keşfedin.
+            {country.name}'daki tüm yaz okullarımızı şehirlere göre keşfedin.
           </p>
         </div>
       </section>
@@ -220,21 +162,27 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
       {/* Cities & Schools */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="space-y-12">
-          {data.cities.map((city, cityIndex) => (
-            <div key={cityIndex} className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10">
+          {schoolsGroupedByCity.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <div className="text-4xl mb-4">😔</div>
+              <p className="font-semibold">Bu ülkede henüz yaz okulu bulunmamaktadır.</p>
+            </div>
+          ) : (
+            schoolsGroupedByCity.map((group, groupIndex) => (
+            <div key={groupIndex} className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10">
               {/* City Header */}
               <div className="inline-block px-5 py-2.5 bg-orange-600 text-white border-4 border-orange-800 transform -skew-x-12 mb-6">
                 <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">
-                  📍 {city.name}
+                  📍 {group.city}
                 </h2>
               </div>
 
               {/* Schools Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {city.schools.map((school, schoolIndex) => (
+                {group.schools.map((school, schoolIndex) => (
                   <Link
                     key={schoolIndex}
-                    href={`/yaz-okulu/${country}/${school.slug}`}
+                    href={`/yaz-okulu/${country.slug}/${school.id}`}
                     className="group p-6 bg-gray-50 border-4 border-gray-300 hover:border-orange-600 transition-all duration-200 transform hover:-skew-x-1 hover:shadow-lg"
                   >
                     <div className="transform group-hover:skew-x-1">
@@ -242,16 +190,16 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
                         {school.name}
                       </h3>
                       <p className="text-gray-700 font-medium leading-relaxed mb-4">
-                        {school.description}
+                        {school.description || 'Detaylı bilgi için tıklayın.'}
                       </p>
                       <div className="flex items-center gap-4 mb-4 text-sm">
                         <div className="flex items-center text-gray-600">
                           <span className="font-bold mr-2">Yaş:</span>
-                          <span>{school.ageRange}</span>
+                          <span>{school.ageRange || '-'}</span>
                         </div>
                         <div className="flex items-center text-gray-600">
                           <span className="font-bold mr-2">Süre:</span>
-                          <span>{school.duration}</span>
+                          <span>{school.duration || '-'}</span>
                         </div>
                       </div>
                       <div className="flex items-center text-orange-600 font-bold group-hover:text-orange-700">
@@ -265,7 +213,8 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
                 ))}
               </div>
             </div>
-          ))}
+          ))
+          )}
         </div>
       </section>
 
@@ -273,7 +222,7 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="bg-gradient-to-r from-orange-500 to-red-500 border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-10 text-center">
           <h2 className="text-3xl md:text-4xl font-black text-white mb-4 uppercase tracking-wider">
-            {data.name}'da Yaz Okulu Deneyimi
+            {country.name}'da Yaz Okulu Deneyimi
           </h2>
           <p className="text-xl text-orange-100 mb-8 font-medium">
             Size en uygun programı seçin ve başvurunuzu yapın

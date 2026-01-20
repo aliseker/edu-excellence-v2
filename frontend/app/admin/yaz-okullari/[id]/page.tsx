@@ -39,6 +39,7 @@ export default function YazOkuluDuzenlePage() {
     duration: '',
     location: '',
     status: 'active',
+    imageBase64: '',
   });
   const [countries, setCountries] = useState<CountryOption[]>([]);
   const [cities, setCities] = useState<CityOption[]>([]);
@@ -53,7 +54,50 @@ export default function YazOkuluDuzenlePage() {
 
   useEffect(() => {
     if (id !== 'yeni') {
-      // TODO: Backend'den veri çek
+      const fetchSchool = async () => {
+        setIsLoading(true);
+        try {
+          const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.summerSchoolById(Number(id))}`);
+          if (!res.ok) {
+            throw new Error('Yaz okulu bulunamadı.');
+          }
+          const data = await res.json();
+
+          setFormData({
+            name: data.name || '',
+            countryId: data.countryId || 0,
+            cityId: data.cityId || 0,
+            flag: data.flag || '🇬🇧',
+            description: data.description || '',
+            ageRange: data.ageRange || '',
+            duration: data.duration || '',
+            location: data.location || '',
+            status: data.status || 'active',
+            imageBase64: data.imageBase64 || '',
+          });
+
+          setFeatures(data.features?.length ? data.features : ['']);
+          setLessons(data.program?.lessons || '');
+          setActivities(data.program?.activities?.length ? data.program.activities : ['']);
+          setExcursions(data.program?.excursions?.length ? data.program.excursions : ['']);
+          setAccommodation(data.accommodation?.length ? data.accommodation : [{ type: '', description: '', meals: '' }]);
+          setIncluded(data.included?.length ? data.included : ['']);
+          setDates(data.dates?.length ? data.dates : ['']);
+
+          if (data.imageBase64) {
+            setImagePreview(
+              data.imageBase64.startsWith('data:')
+                ? data.imageBase64
+                : `data:image/jpeg;base64,${data.imageBase64}`
+            );
+          }
+        } catch (error) {
+          console.error('Yaz okulu verisi yüklenemedi:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchSchool();
     }
   }, [id]);
 
@@ -94,7 +138,10 @@ export default function YazOkuluDuzenlePage() {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => setImagePreview(reader.result as string);
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+        setFormData(prev => ({ ...prev, imageBase64: reader.result as string }));
+      };
       reader.readAsDataURL(file);
     }
   };
@@ -125,11 +172,19 @@ export default function YazOkuluDuzenlePage() {
         included: included.filter(i => i.trim() !== ''),
         dates: dates.filter(d => d.trim() !== ''),
       };
-      console.log('Form Data:', submitData);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.summerSchoolById(Number(id))}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(submitData),
+      });
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || 'Güncelleme başarısız.');
+      }
       router.push('/admin/yaz-okullari');
     } catch (error) {
       console.error('Hata:', error);
+      alert('Yaz okulu güncellenirken bir hata oluştu.');
     } finally {
       setIsLoading(false);
     }

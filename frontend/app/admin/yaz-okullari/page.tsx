@@ -1,13 +1,80 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { apiService } from '@/services/api';
+
+interface SummerSchoolRow {
+  id: number;
+  name: string;
+  countryId: number;
+  countryName?: string;
+  ageRange?: string;
+  status: string;
+}
+
+interface CountryOption {
+  id: number;
+  label: string;
+}
 
 export default function YazOkullariPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState<number | ''>('');
 
-  const yazOkullari: any[] = [];
+  const [yazOkullari, setYazOkullari] = useState<SummerSchoolRow[]>([]);
+  const [countries, setCountries] = useState<CountryOption[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const schools = await fetch(`${API_BASE_URL}${API_ENDPOINTS.summerSchools}`)
+          .then(res => res.json() as Promise<SummerSchoolRow[]>);
+        const countryOptions = (await apiService.getCountries()) as CountryOption[];
+
+        setYazOkullari(schools);
+        setCountries(countryOptions);
+      } catch (fetchError) {
+        console.error('Yaz okulları yüklenemedi:', fetchError);
+        setError('Yaz okulları yüklenirken bir hata oluştu.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const filteredSchools = useMemo(() => {
+    return yazOkullari.filter((school) => {
+      const matchesSearch = searchQuery
+        ? school.name.toLowerCase().includes(searchQuery.toLowerCase())
+        : true;
+      const matchesCountry = selectedCountry ? school.countryId === selectedCountry : true;
+      return matchesSearch && matchesCountry;
+    });
+  }, [yazOkullari, searchQuery, selectedCountry]);
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('Bu yaz okulunu silmek istediğinize emin misiniz?')) {
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.summerSchoolById(id)}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) {
+        throw new Error('Silme başarısız.');
+      }
+      setYazOkullari(prev => prev.filter(item => item.id !== id));
+    } catch (deleteError) {
+      console.error('Silme hatası:', deleteError);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -40,13 +107,13 @@ export default function YazOkullariPage() {
             <label className="block text-sm font-semibold text-gray-700 mb-2">Ülke</label>
             <select
               value={selectedCountry}
-              onChange={(e) => setSelectedCountry(e.target.value)}
+              onChange={(e) => setSelectedCountry(e.target.value ? Number(e.target.value) : '')}
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-orange-600"
             >
               <option value="">Tüm Ülkeler</option>
-              <option value="ingiltere">İngiltere</option>
-              <option value="amerika">Amerika</option>
-              <option value="kanada">Kanada</option>
+              {countries.map((country) => (
+                <option key={country.id} value={country.id}>{country.label}</option>
+              ))}
             </select>
           </div>
           <div className="flex items-end">
@@ -62,7 +129,6 @@ export default function YazOkullariPage() {
           <table className="w-full">
             <thead className="bg-gray-900 text-white">
               <tr>
-                <th className="px-6 py-4 text-left font-black">ID</th>
                 <th className="px-6 py-4 text-left font-black">Okul Adı</th>
                 <th className="px-6 py-4 text-left font-black">Ülke</th>
                 <th className="px-6 py-4 text-left font-black">Yaş Grubu</th>
@@ -71,24 +137,35 @@ export default function YazOkullariPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {yazOkullari.length === 0 ? (
+              {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                    Yükleniyor...
+                  </td>
+                </tr>
+              ) : error ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center text-red-600">
+                    {error}
+                  </td>
+                </tr>
+              ) : filteredSchools.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
                     <div className="text-4xl mb-4">☀️</div>
                     <p className="font-semibold">Henüz yaz okulu eklenmemiş</p>
                     <p className="text-sm mt-2">İlk yaz okulunu eklemek için "Yeni Yaz Okulu Ekle" butonuna tıklayın</p>
                   </td>
                 </tr>
               ) : (
-                yazOkullari.map((okul) => (
+                filteredSchools.map((okul) => (
                   <tr key={okul.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 font-semibold">{okul.id}</td>
                     <td className="px-6 py-4 font-semibold">{okul.name}</td>
-                    <td className="px-6 py-4">{okul.country}</td>
-                    <td className="px-6 py-4">{okul.ageGroup}</td>
+                    <td className="px-6 py-4">{okul.countryName ?? '-'}</td>
+                    <td className="px-6 py-4">{okul.ageRange ?? '-'}</td>
                     <td className="px-6 py-4">
-                      <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">
-                        Aktif
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${okul.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-700'}`}>
+                        {okul.status === 'active' ? 'Aktif' : 'Pasif'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
@@ -99,7 +176,11 @@ export default function YazOkullariPage() {
                         >
                           Düzenle
                         </Link>
-                        <button className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold">
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(okul.id)}
+                          className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold"
+                        >
                           Sil
                         </button>
                       </div>

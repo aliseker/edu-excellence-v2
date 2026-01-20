@@ -108,7 +108,6 @@ export default function DilOkullariPage() {
           <table className="w-full">
             <thead className="bg-gray-900 text-white">
               <tr>
-                <th className="px-6 py-4 text-left font-black">ID</th>
                 <th className="px-6 py-4 text-left font-black">Okul Adı</th>
                 <th className="px-6 py-4 text-left font-black">Ülke</th>
                 <th className="px-6 py-4 text-left font-black">Şehir</th>
@@ -119,13 +118,13 @@ export default function DilOkullariPage() {
             <tbody className="divide-y divide-gray-200">
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
                     Yükleniyor...
                   </td>
                 </tr>
               ) : dilOkullari.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
                     <div className="text-4xl mb-4">📚</div>
                     <p className="font-semibold">Henüz dil okulu eklenmemiş</p>
                     <p className="text-sm mt-2">İlk dil okulunu eklemek için "Yeni Dil Okulu Ekle" butonuna tıklayın</p>
@@ -134,7 +133,6 @@ export default function DilOkullariPage() {
               ) : (
                 dilOkullari.map((okul) => (
                   <tr key={okul.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 font-semibold">{okul.id}</td>
                     <td className="px-6 py-4 font-semibold">{okul.name}</td>
                     <td className="px-6 py-4">{okul.countryName ?? '-'}</td>
                     <td className="px-6 py-4">{okul.cityName ?? '-'}</td>
