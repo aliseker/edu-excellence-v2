@@ -5,27 +5,45 @@ import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
+import { apiService } from '@/services/api';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 
 export default function MasterMBAPage() {
-  const countries = [
-    { name: 'Amerika', flag: '🇺🇸', slug: 'amerika' },
-    { name: 'İngiltere', flag: '🇬🇧', slug: 'ingiltere' },
-    { name: 'İtalya', flag: '🇮🇹', slug: 'italya' },
-    { name: 'İrlanda', flag: '🇮🇪', slug: 'irlanda' },
-    { name: 'Kanada', flag: '🇨🇦', slug: 'kanada' },
-    { name: 'Almanya', flag: '🇩🇪', slug: 'almanya' },
-    { name: 'Hollanda', flag: '🇳🇱', slug: 'hollanda' },
-    { name: 'Avustralya', flag: '🇦🇺', slug: 'avustralya' },
-    { name: 'İsveç', flag: '🇸🇪', slug: 'isvec' },
-    { name: 'Fransa', flag: '🇫🇷', slug: 'fransa' },
-    { name: 'Polonya', flag: '🇵🇱', slug: 'polonya' },
-    { name: 'Ukrayna', flag: '🇺🇦', slug: 'ukrayna' },
-    { name: 'Litvanya', flag: '🇱🇹', slug: 'litvanya' },
-    { name: 'İspanya', flag: '🇪🇸', slug: 'ispanya' },
-    { name: 'İsviçre', flag: '🇨🇭', slug: 'isvicre' },
-    { name: 'Dubai', flag: '🇦🇪', slug: 'dubai' },
-    { name: 'Malta', flag: '🇲🇹', slug: 'malta' },
-  ];
+  const [countries, setCountries] = useState<any[]>([]);
+  const [programs, setPrograms] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const [countriesRes, fetchedPrograms] = await Promise.all([
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.countries}`),
+          apiService.getMasterPrograms(),
+        ]);
+        const fetchedCountries = await countriesRes.json();
+        setCountries(fetchedCountries);
+        setPrograms(fetchedPrograms);
+      } catch (fetchError) {
+        console.error('Master/MBA verileri yüklenemedi:', fetchError);
+        setError('Veriler yüklenirken bir hata oluştu.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const availableCountries = useMemo(() => {
+    if (!programs.length) {
+      return countries;
+    }
+    const countryIds = new Set(programs.map((program: any) => program.countryId));
+    return countries.filter((country: any) => countryIds.has(country.id));
+  }, [countries, programs]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -198,20 +216,30 @@ export default function MasterMBAPage() {
           <h2 className="transform skew-x-12 text-2xl font-black uppercase tracking-wider">🌍 ÜLKELER</h2>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-          {countries.map((country) => (
-            <Link
-              key={country.slug}
-              href={`/master-mba/${country.slug}`}
-              className="group relative bg-white border-4 border-gray-900 shadow-[4px_4px_0_0_rgba(0,0,0,0.1)] p-6 transform hover:-skew-x-1 hover:shadow-[8px_8px_0_0_rgba(0,0,0,0.2)] transition-all duration-200"
-            >
-              <div className="transform group-hover:skew-x-1">
-                <div className="text-4xl mb-3">{country.flag}</div>
-                <h3 className="font-black text-gray-900 text-lg uppercase tracking-tight">{country.name}</h3>
-              </div>
-            </Link>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="text-center py-8">Yükleniyor...</div>
+        ) : error ? (
+          <div className="text-center py-8 text-red-600">{error}</div>
+        ) : availableCountries.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            <p className="font-semibold">Henüz program eklenmemiş.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+            {availableCountries.map((country: any) => (
+              <Link
+                key={country.id}
+                href={`/master-mba/${country.slug}`}
+                className="group relative bg-white border-4 border-gray-900 shadow-[4px_4px_0_0_rgba(0,0,0,0.1)] p-6 transform hover:-skew-x-1 hover:shadow-[8px_8px_0_0_rgba(0,0,0,0.2)] transition-all duration-200"
+              >
+                <div className="transform group-hover:skew-x-1">
+                  <div className="text-4xl mb-3">{country.flagEmoji || '🌍'}</div>
+                  <h3 className="font-black text-gray-900 text-lg uppercase tracking-tight">{country.name}</h3>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* CTA Section */}

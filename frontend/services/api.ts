@@ -127,6 +127,10 @@ class ApiService {
     });
   }
 
+  async getMasterProgramById(id: number) {
+    return this.request(API_ENDPOINTS.masterProgramById(id));
+  }
+
   // Visa Services
   async getVisaServices(filters?: {
     country?: string;

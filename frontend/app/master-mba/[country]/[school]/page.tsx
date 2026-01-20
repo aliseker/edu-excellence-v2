@@ -5,9 +5,11 @@ import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
-import { use } from 'react';
+import { use, useEffect, useState } from 'react';
+import { apiService } from '@/services/api';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 
-// Mock data - Later this will come from API
+/* // Mock data - Later this will come from API
 const schoolData: Record<string, Record<string, {
   name: string;
   country: string;
@@ -188,48 +190,149 @@ const schoolData: Record<string, Record<string, {
     },
   },
 };
+*/
+
+interface Country {
+  id: number;
+  name: string;
+  slug: string;
+  flagEmoji: string;
+}
+
+interface City {
+  id: number;
+  name: string;
+}
+
+interface MasterProgram {
+  id: number;
+  name: string;
+  countryId: number;
+  countryName?: string;
+  countrySlug?: string;
+  cityId?: number | null;
+  cityName?: string;
+  description?: string;
+  intro?: string;
+  videoUrl?: string;
+  established?: string;
+  students?: string;
+  ranking?: string;
+  features?: string[];
+  programs?: Array<{ name: string; type: string; duration: string; description: string; concentrations?: string[] }>;
+  requirements?: {
+    language?: string[];
+    academic?: string[];
+    documents?: string[];
+  };
+  location?: string;
+  campus?: string[];
+  careerServices?: string[];
+  accreditation?: string[];
+}
 
 export default function MasterMBADetailPage({ params }: { params: Promise<{ country: string; school: string }> }) {
   const resolvedParams = use(params);
-  const country = resolvedParams.country;
-  const school = resolvedParams.school;
-  const countryKey = country.toLowerCase();
-  const schoolKey = school.toLowerCase();
-  const data = schoolData[countryKey]?.[schoolKey];
+  const countrySlug = resolvedParams.country.toLowerCase();
+  const programId = Number(resolvedParams.school);
 
-  // School data for sidebar
-  const masterMBACountries = {
-    amerika: [
-      { title: 'Berkeley College', href: '/master-mba/amerika/berkeley-college', slug: 'berkeley-college' },
-      { title: 'New York University (NYU)', href: '/master-mba/amerika/nyu', slug: 'nyu' },
-    ],
-    ingiltere: [
-      { title: 'London Business School', href: '/master-mba/ingiltere/london-business-school', slug: 'london-business-school' },
-      { title: 'Imperial College Business School', href: '/master-mba/ingiltere/imperial-college-business', slug: 'imperial-college-business' },
-      { title: 'Cambridge Judge Business School', href: '/master-mba/ingiltere/cambridge-judge-business', slug: 'cambridge-judge-business' },
-    ],
-    italya: [
-      { title: 'Bocconi University', href: '/master-mba/italya/bocconi-university', slug: 'bocconi-university' },
-      { title: 'Sapienza University of Rome', href: '/master-mba/italya/sapienza-university-rome', slug: 'sapienza-university-rome' },
-    ],
-    almanya: [
-      { title: 'Humboldt University of Berlin', href: '/master-mba/almanya/humboldt-university-berlin', slug: 'humboldt-university-berlin' },
-      { title: 'Technical University of Munich', href: '/master-mba/almanya/technical-university-munich', slug: 'technical-university-munich' },
-    ],
-  };
+  const [programData, setProgramData] = useState<MasterProgram | null>(null);
+  const [country, setCountry] = useState<Country | null>(null);
+  const [city, setCity] = useState<City | null>(null);
+  const [allPrograms, setAllPrograms] = useState<MasterProgram[]>([]);
+  const [allCountries, setAllCountries] = useState<Country[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const currentCountrySchools = masterMBACountries[countryKey as keyof typeof masterMBACountries] || [];
-  const otherSchools = currentCountrySchools.filter(s => s.slug !== schoolKey);
-  const otherCountries = Object.entries(masterMBACountries).filter(([key]) => key !== countryKey);
+  useEffect(() => {
+    const fetchProgramData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        if (!programId || Number.isNaN(programId)) {
+          setError('Program bulunamadı.');
+          setIsLoading(false);
+          return;
+        }
 
-  if (!data) {
+        const fetchedProgram: MasterProgram = await apiService.getMasterProgramById(programId);
+        if (!fetchedProgram) {
+          setError('Program bulunamadı.');
+          setIsLoading(false);
+          return;
+        }
+        setProgramData(fetchedProgram);
+
+        const [countriesRes, programsRes] = await Promise.all([
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.countries}`),
+          apiService.getMasterPrograms(),
+        ]);
+        const allCountriesData: Country[] = await countriesRes.json();
+        setAllCountries(allCountriesData);
+        setAllPrograms(programsRes);
+
+        const matchedCountry = allCountriesData.find((c: Country) => c.id === fetchedProgram.countryId);
+        if (matchedCountry) {
+          setCountry(matchedCountry);
+          if (fetchedProgram.cityId) {
+            const fetchedCities = await apiService.getCities(matchedCountry.id);
+            const matchedCity = fetchedCities.find((c: City) => c.id === fetchedProgram.cityId);
+            setCity(matchedCity || null);
+          }
+        }
+      } catch (err) {
+        console.error('Master/MBA detayları yüklenemedi:', err);
+        setError('Program detayları yüklenirken bir hata oluştu.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProgramData();
+  }, [programId]);
+
+  const normalizedProgram = programData || {};
+  const features = normalizedProgram.features || [];
+  const programs = normalizedProgram.programs || [];
+  const requirements = normalizedProgram.requirements || { language: [], academic: [], documents: [] };
+  const campus = normalizedProgram.campus || [];
+  const careerServices = normalizedProgram.careerServices || [];
+  const accreditation = normalizedProgram.accreditation || [];
+
+  const currentCountryPrograms = allPrograms
+    .filter((program) => program.countryId === country?.id && program.id !== normalizedProgram.id)
+    .map((program) => ({
+      title: program.name,
+      href: `/master-mba/${country?.slug}/${program.id}`,
+    }));
+
+  const otherCountries = allCountries
+    .filter((c) => c.id !== country?.id && allPrograms.some((program) => program.countryId === c.id))
+    .map((c) => {
+      const programsInCountry = allPrograms
+        .filter((program) => program.countryId === c.id)
+        .map((program) => ({
+          title: program.name,
+          href: `/master-mba/${c.slug}/${program.id}`,
+        }));
+      return {
+        countryId: c.id,
+        countryName: c.name,
+        countrySlug: c.slug,
+        programs: programsInCountry,
+      };
+    });
+
+  if (isLoading) return <div className="text-center py-8">Yükleniyor...</div>;
+  if (error || !programData || !country) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-          <h1 className="text-4xl font-black text-gray-900 mb-4">Okul Bulunamadı</h1>
-          <Link href={`/master-mba/${country}`} className="text-blue-600 font-bold hover:underline">
-            {country} master/MBA sayfasına dön
+          <h1 className="text-4xl font-black text-gray-900 mb-4">Program Bulunamadı</h1>
+          <p className="text-gray-600 mb-4">{error || 'Program bulunamadı.'}</p>
+          <Link href={`/master-mba/${countrySlug}`} className="text-blue-600 font-bold hover:underline">
+            {countrySlug} master/MBA sayfasına dön
           </Link>
         </div>
         <Footer />
@@ -249,9 +352,9 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
           <div className="flex items-center space-x-2 text-sm font-bold text-gray-600">
             <Link href="/master-mba" className="hover:text-blue-600 transition-colors">Master / MBA</Link>
             <span>/</span>
-            <Link href={`/master-mba/${country}`} className="hover:text-blue-600 transition-colors">{data.country}</Link>
+            <Link href={`/master-mba/${countrySlug}`} className="hover:text-blue-600 transition-colors">{country.name}</Link>
             <span>/</span>
-            <span className="text-gray-900">{data.name}</span>
+            <span className="text-gray-900">{programData.name}</span>
           </div>
         </div>
       </section>
@@ -268,31 +371,33 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
           <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm border-4 border-white/30 transform -skew-x-12 mb-3">
-            <span className="transform skew-x-12 text-xs font-black uppercase tracking-wider">{data.flag} {data.city}, {data.country}</span>
+            <span className="transform skew-x-12 text-xs font-black uppercase tracking-wider">
+              {country.flagEmoji || '🌍'} {city?.name || ''}{city?.name ? ', ' : ''}{country.name}
+            </span>
           </div>
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-black mb-3 leading-tight drop-shadow-[4px_4px_0_rgba(0,0,0,0.3)]">
-            {data.name.toUpperCase()}
+            {programData.name.toUpperCase()}
           </h1>
           <p className="text-base md:text-lg text-purple-100 font-medium max-w-3xl leading-relaxed mb-4">
-            {data.description}
+            {programData.description}
           </p>
           <div className="flex flex-wrap gap-4">
-            {data.established && (
+            {programData.established && (
               <div className="px-4 py-2 bg-white/20 backdrop-blur-sm border-2 border-white/30">
                 <div className="text-sm font-bold text-purple-100">Kuruluş</div>
-                <div className="text-lg font-black">{data.established}</div>
+                <div className="text-lg font-black">{programData.established}</div>
               </div>
             )}
-            {data.students && (
+            {programData.students && (
               <div className="px-4 py-2 bg-white/20 backdrop-blur-sm border-2 border-white/30">
                 <div className="text-sm font-bold text-purple-100">Öğrenci</div>
-                <div className="text-lg font-black">{data.students}</div>
+                <div className="text-lg font-black">{programData.students}</div>
               </div>
             )}
-            {data.ranking && (
+            {programData.ranking && (
               <div className="px-4 py-2 bg-white/20 backdrop-blur-sm border-2 border-white/30">
                 <div className="text-sm font-bold text-purple-100">Sıralama</div>
-                <div className="text-lg font-black">{data.ranking}</div>
+                <div className="text-lg font-black">{programData.ranking}</div>
               </div>
             )}
           </div>
@@ -305,7 +410,7 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
           {/* Main Content */}
           <div className="lg:col-span-3">
             {/* Video Section - Hero'dan hemen sonra */}
-            {data.videoUrl && (
+            {programData.videoUrl && (
               <section className="py-6">
                 <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-6 md:p-8">
                   <div className="inline-block px-5 py-2.5 bg-red-600 text-white border-4 border-red-800 transform -skew-x-12 mb-6">
@@ -314,8 +419,8 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
                   <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                     <iframe
                       className="absolute top-0 left-0 w-full h-full border-4 border-gray-900"
-                      src={data.videoUrl.replace('watch?v=', 'embed/')}
-                      title={`${data.name} Tanıtım Videosu`}
+                      src={programData.videoUrl.replace('watch?v=', 'embed/')}
+                      title={`${programData.name} Tanıtım Videosu`}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                     ></iframe>
@@ -325,7 +430,7 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
             )}
 
             {/* Intro Section */}
-            {data.intro && (
+            {programData.intro && (
               <section className="py-6">
                 <div className="bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 border-4 border-purple-200 shadow-[8px_8px_0_0_rgba(147,51,234,0.2)] p-8 md:p-12">
                   <div className="max-w-4xl mx-auto">
@@ -334,7 +439,7 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
                     </div>
                     <div className="prose prose-lg max-w-none">
                       <p className="text-gray-800 text-lg md:text-xl leading-relaxed font-medium">
-                        {data.intro}
+                        {programData.intro}
                       </p>
                     </div>
                   </div>
@@ -343,191 +448,207 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
             )}
 
             {/* Features */}
-            <section className="py-6">
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-8">
-          <div className="inline-block px-5 py-2.5 bg-purple-600 text-white border-4 border-purple-800 transform -skew-x-12 mb-6">
-            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">✨ Okul Özellikleri</h2>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {data.features.map((feature, index) => (
-              <div key={index} className="p-4 bg-purple-50 border-4 border-purple-200 transform hover:-skew-x-1 transition-all duration-200">
-                <div className="transform skew-x-1">
-                  <div className="flex items-start">
-                    <span className="text-purple-600 mr-3 font-black text-xl">✓</span>
-                    <span className="font-bold text-gray-900">{feature}</span>
+            {features.length > 0 && (
+              <section className="py-6">
+                <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-8">
+                  <div className="inline-block px-5 py-2.5 bg-purple-600 text-white border-4 border-purple-800 transform -skew-x-12 mb-6">
+                    <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">✨ Okul Özellikleri</h2>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {features.map((feature, index) => (
+                      <div key={index} className="p-4 bg-purple-50 border-4 border-purple-200 transform hover:-skew-x-1 transition-all duration-200">
+                        <div className="transform skew-x-1">
+                          <div className="flex items-start">
+                            <span className="text-purple-600 mr-3 font-black text-xl">✓</span>
+                            <span className="font-bold text-gray-900">{feature}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+              </section>
+            )}
 
             {/* Programs */}
-            <section className="py-6">
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-8">
-          <div className="inline-block px-5 py-2.5 bg-indigo-600 text-white border-4 border-indigo-800 transform -skew-x-12 mb-6">
-            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📚 Programlar</h2>
-          </div>
+            {programs.length > 0 && (
+              <section className="py-6">
+                <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-8">
+                  <div className="inline-block px-5 py-2.5 bg-indigo-600 text-white border-4 border-indigo-800 transform -skew-x-12 mb-6">
+                    <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📚 Programlar</h2>
+                  </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {data.programs.map((program, index) => (
-              <div key={index} className="p-6 bg-gray-50 border-4 border-gray-300 transform hover:-skew-x-1 transition-all duration-200">
-                <div className="transform skew-x-1">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">{program.name}</h3>
-                    <span className="px-3 py-1 bg-indigo-100 border-2 border-indigo-300 text-sm font-black text-gray-900">
-                      {program.type}
-                    </span>
-                  </div>
-                  <p className="text-gray-700 font-medium leading-relaxed mb-3">{program.description}</p>
-                  <div className="px-3 py-1 bg-indigo-100 border-2 border-indigo-300 inline-block mb-3">
-                    <span className="text-sm font-black text-gray-900">Süre: {program.duration}</span>
-                  </div>
-                  {program.concentrations && program.concentrations.length > 0 && (
-                    <div className="mt-4">
-                      <h4 className="font-black text-gray-900 mb-2 text-sm uppercase">Konsantrasyon Alanları:</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {program.concentrations.map((conc, i) => (
-                          <span key={i} className="px-2 py-1 bg-purple-100 border-2 border-purple-300 text-xs font-bold text-gray-900">
-                            {conc}
-                          </span>
-                        ))}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {programs.map((program, index) => (
+                      <div key={index} className="p-6 bg-gray-50 border-4 border-gray-300 transform hover:-skew-x-1 transition-all duration-200">
+                        <div className="transform skew-x-1">
+                          <div className="flex items-center justify-between mb-3">
+                            <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">{program.name}</h3>
+                            <span className="px-3 py-1 bg-indigo-100 border-2 border-indigo-300 text-sm font-black text-gray-900">
+                              {program.type}
+                            </span>
+                          </div>
+                          <p className="text-gray-700 font-medium leading-relaxed mb-3">{program.description}</p>
+                          <div className="px-3 py-1 bg-indigo-100 border-2 border-indigo-300 inline-block mb-3">
+                            <span className="text-sm font-black text-gray-900">Süre: {program.duration}</span>
+                          </div>
+                          {program.concentrations && program.concentrations.length > 0 && (
+                            <div className="mt-4">
+                              <h4 className="font-black text-gray-900 mb-2 text-sm uppercase">Konsantrasyon Alanları:</h4>
+                              <div className="flex flex-wrap gap-2">
+                                {program.concentrations.map((conc, i) => (
+                                  <span key={i} className="px-2 py-1 bg-purple-100 border-2 border-purple-300 text-xs font-bold text-gray-900">
+                                    {conc}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+              </section>
+            )}
 
             {/* Requirements */}
-            <section className="py-6">
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-8">
-          <div className="inline-block px-5 py-2.5 bg-red-600 text-white border-4 border-red-800 transform -skew-x-12 mb-6">
-            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📋 Başvuru Şartları</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <h3 className="font-black text-gray-900 mb-4 text-lg uppercase border-b-4 border-red-200 pb-2">Dil Yeterliliği</h3>
-              <ul className="space-y-2">
-                {data.requirements.language.map((req, index) => (
-                  <li key={index} className="flex items-start">
-                    <span className="text-red-600 mr-2 font-black">•</span>
-                    <span className="font-medium text-gray-700">{req}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-black text-gray-900 mb-4 text-lg uppercase border-b-4 border-red-200 pb-2">Akademik Şartlar</h3>
-              <ul className="space-y-2">
-                {data.requirements.academic.map((req, index) => (
-                  <li key={index} className="flex items-start">
-                    <span className="text-red-600 mr-2 font-black">•</span>
-                    <span className="font-medium text-gray-700">{req}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-black text-gray-900 mb-4 text-lg uppercase border-b-4 border-red-200 pb-2">Gerekli Belgeler</h3>
-              <ul className="space-y-2">
-                {data.requirements.documents.map((doc, index) => (
-                  <li key={index} className="flex items-start">
-                    <span className="text-red-600 mr-2 font-black">•</span>
-                    <span className="font-medium text-gray-700">{doc}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-            {/* Career Services */}
-            {data.careerServices && data.careerServices.length > 0 && (
+            {(requirements.language?.length || requirements.academic?.length || requirements.documents?.length) ? (
               <section className="py-6">
-          <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-8">
-            <div className="inline-block px-5 py-2.5 bg-green-600 text-white border-4 border-green-800 transform -skew-x-12 mb-6">
-              <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">💼 Kariyer Hizmetleri</h2>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {data.careerServices.map((service, index) => (
-                <div key={index} className="p-4 bg-green-50 border-4 border-green-200 transform hover:-skew-x-1 transition-all duration-200">
-                  <div className="transform skew-x-1">
-                    <div className="flex items-start">
-                      <span className="text-green-600 mr-3 font-black text-xl">✓</span>
-                      <span className="font-bold text-gray-900">{service}</span>
-                    </div>
+                <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-8">
+                  <div className="inline-block px-5 py-2.5 bg-red-600 text-white border-4 border-red-800 transform -skew-x-12 mb-6">
+                    <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📋 Başvuru Şartları</h2>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {requirements.language?.length ? (
+                      <div>
+                        <h3 className="font-black text-gray-900 mb-4 text-lg uppercase border-b-4 border-red-200 pb-2">Dil Yeterliliği</h3>
+                        <ul className="space-y-2">
+                          {requirements.language.map((req, index) => (
+                            <li key={index} className="flex items-start">
+                              <span className="text-red-600 mr-2 font-black">•</span>
+                              <span className="font-medium text-gray-700">{req}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+
+                    {requirements.academic?.length ? (
+                      <div>
+                        <h3 className="font-black text-gray-900 mb-4 text-lg uppercase border-b-4 border-red-200 pb-2">Akademik Şartlar</h3>
+                        <ul className="space-y-2">
+                          {requirements.academic.map((req, index) => (
+                            <li key={index} className="flex items-start">
+                              <span className="text-red-600 mr-2 font-black">•</span>
+                              <span className="font-medium text-gray-700">{req}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+
+                    {requirements.documents?.length ? (
+                      <div>
+                        <h3 className="font-black text-gray-900 mb-4 text-lg uppercase border-b-4 border-red-200 pb-2">Gerekli Belgeler</h3>
+                        <ul className="space-y-2">
+                          {requirements.documents.map((doc, index) => (
+                            <li key={index} className="flex items-start">
+                              <span className="text-red-600 mr-2 font-black">•</span>
+                              <span className="font-medium text-gray-700">{doc}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+              </section>
+            ) : null}
+
+            {/* Career Services */}
+            {careerServices.length > 0 && (
+              <section className="py-6">
+                <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-8">
+                  <div className="inline-block px-5 py-2.5 bg-green-600 text-white border-4 border-green-800 transform -skew-x-12 mb-6">
+                    <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">💼 Kariyer Hizmetleri</h2>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {careerServices.map((service, index) => (
+                      <div key={index} className="p-4 bg-green-50 border-4 border-green-200 transform hover:-skew-x-1 transition-all duration-200">
+                        <div className="transform skew-x-1">
+                          <div className="flex items-start">
+                            <span className="text-green-600 mr-3 font-black text-xl">✓</span>
+                            <span className="font-bold text-gray-900">{service}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            )}
 
             {/* Location & Campus */}
-            <section className="py-6">
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-8">
-          <div className="inline-block px-5 py-2.5 bg-blue-600 text-white border-4 border-blue-800 transform -skew-x-12 mb-6">
-            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📍 Konum & Kampüs</h2>
-          </div>
-          
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-black text-gray-900 mb-2 text-lg">Konum</h3>
-              <p className="text-gray-700 font-medium">{data.location}</p>
-            </div>
-            {data.campus && data.campus.length > 0 && (
-              <div>
-                <h3 className="font-black text-gray-900 mb-2 text-lg">Kampüsler</h3>
-                <div className="flex flex-wrap gap-2">
-                  {data.campus.map((campus, index) => (
-                    <span key={index} className="px-4 py-2 bg-blue-100 border-2 border-blue-300 font-bold text-gray-900">
-                      {campus}
-                    </span>
-                  ))}
+            {(programData.location || campus.length > 0) && (
+              <section className="py-6">
+                <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-8">
+                  <div className="inline-block px-5 py-2.5 bg-blue-600 text-white border-4 border-blue-800 transform -skew-x-12 mb-6">
+                    <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📍 Konum & Kampüs</h2>
+                  </div>
+
+                  <div className="space-y-4">
+                    {programData.location && (
+                      <div>
+                        <h3 className="font-black text-gray-900 mb-2 text-lg">Konum</h3>
+                        <p className="text-gray-700 font-medium">{programData.location}</p>
+                      </div>
+                    )}
+                    {campus.length > 0 && (
+                      <div>
+                        <h3 className="font-black text-gray-900 mb-2 text-lg">Kampüsler</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {campus.map((campusItem, index) => (
+                            <span key={index} className="px-4 py-2 bg-blue-100 border-2 border-blue-300 font-bold text-gray-900">
+                              {campusItem}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
+              </section>
             )}
-          </div>
-        </div>
-      </section>
 
             {/* Accreditation */}
-            {data.accreditation && data.accreditation.length > 0 && (
+            {accreditation.length > 0 && (
               <section className="py-6">
-          <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-8">
-            <div className="inline-block px-5 py-2.5 bg-yellow-600 text-white border-4 border-yellow-800 transform -skew-x-12 mb-6">
-              <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🏆 Akreditasyon</h2>
-            </div>
-            
-            <div className="flex flex-wrap gap-4">
-              {data.accreditation.map((acc, index) => (
-                <div key={index} className="px-6 py-3 bg-yellow-100 border-4 border-yellow-300 font-black text-gray-900">
-                  {acc}
+                <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-8">
+                  <div className="inline-block px-5 py-2.5 bg-yellow-600 text-white border-4 border-yellow-800 transform -skew-x-12 mb-6">
+                    <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🏆 Akreditasyon</h2>
+                  </div>
+
+                  <div className="flex flex-wrap gap-4">
+                    {accreditation.map((acc, index) => (
+                      <div key={index} className="px-6 py-3 bg-yellow-100 border-4 border-yellow-300 font-black text-gray-900">
+                        {acc}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+              </section>
+            )}
 
             {/* CTA */}
             <section className="py-6">
         <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600 text-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.2)] p-12 text-center">
           <h2 className="text-3xl md:text-4xl font-black mb-6">Hemen Başvuru Yapın</h2>
           <p className="text-xl text-purple-100 mb-8 font-medium max-w-2xl mx-auto">
-            {data.name}'da master veya MBA eğitimi için hemen başvuru yapın. Tüm işlemleriniz ücretsiz!
+            {programData.name}'da master veya MBA eğitimi için hemen başvuru yapın. Tüm işlemleriniz ücretsiz!
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
@@ -537,7 +658,7 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
               <span className="transform skew-x-1 block">BAŞVURU YAP</span>
             </Link>
             <Link
-              href={`/master-mba/${country}`}
+              href={`/master-mba/${countrySlug}`}
               className="inline-block px-10 py-5 bg-transparent text-white font-black text-lg uppercase tracking-wider border-4 border-white hover:bg-white/10 transition-all duration-200"
             >
               Diğer Okulları Gör
@@ -551,27 +672,27 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
           <div className="lg:col-span-1">
             <div className="space-y-6">
               {/* Same Country Schools */}
-              {otherSchools.length > 0 && (
+              {currentCountryPrograms.length > 0 && (
                 <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-6">
                   <div className="inline-block px-4 py-2 bg-purple-600 text-white border-4 border-purple-800 transform -skew-x-12 mb-4">
                     <h3 className="transform skew-x-12 text-sm font-black uppercase tracking-wider">
-                      {data.country}'deki Diğer Okullar
+                      {country.name}'deki Diğer Programlar
                     </h3>
                   </div>
                   <ul className="space-y-2">
-                    {otherSchools.map((school, index) => (
+                    {currentCountryPrograms.map((program, index) => (
                       <li key={index}>
                         <Link
-                          href={school.href}
+                          href={program.href}
                           className="block p-3 bg-purple-50 border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-100 transition-all duration-200 transform hover:-translate-x-1"
                         >
-                          <span className="font-bold text-sm text-gray-900">{school.title}</span>
+                          <span className="font-bold text-sm text-gray-900">{program.title}</span>
                         </Link>
                       </li>
                     ))}
                   </ul>
                   <Link
-                    href={`/master-mba/${country}`}
+                    href={`/master-mba/${countrySlug}`}
                     className="block mt-4 text-center px-4 py-2 bg-purple-600 text-white font-black text-sm uppercase border-2 border-purple-800 hover:bg-purple-700 transition-colors"
                   >
                     Tümünü Gör
@@ -587,33 +708,30 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
                   </h3>
                 </div>
                 <div className="space-y-4">
-                  {otherCountries.map(([countryKey, schools]) => {
-                    const countryName = schools[0]?.href.split('/')[2] || countryKey;
-                    return (
-                      <div key={countryKey}>
-                        <Link
-                          href={`/master-mba/${countryKey}`}
-                          className="block px-3 py-2 bg-indigo-50 border-2 border-indigo-200 hover:border-indigo-400 hover:bg-indigo-100 transition-all duration-200 mb-2"
-                        >
-                          <span className="font-black text-sm text-gray-900 uppercase">
-                            {countryName.charAt(0).toUpperCase() + countryName.slice(1)}
-                          </span>
-                        </Link>
-                        <ul className="ml-4 space-y-1">
-                          {schools.slice(0, 3).map((school, index) => (
-                            <li key={index}>
-                              <Link
-                                href={school.href}
-                                className="block p-2 bg-gray-50 border-2 border-gray-200 hover:border-gray-400 hover:bg-gray-100 transition-all duration-200 text-xs font-bold text-gray-700"
-                              >
-                                {school.title.length > 40 ? `${school.title.substring(0, 40)}...` : school.title}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    );
-                  })}
+                  {otherCountries.map((countryGroup) => (
+                    <div key={countryGroup.countryId}>
+                      <Link
+                        href={`/master-mba/${countryGroup.countrySlug}`}
+                        className="block px-3 py-2 bg-indigo-50 border-2 border-indigo-200 hover:border-indigo-400 hover:bg-indigo-100 transition-all duration-200 mb-2"
+                      >
+                        <span className="font-black text-sm text-gray-900 uppercase">
+                          {countryGroup.countryName}
+                        </span>
+                      </Link>
+                      <ul className="ml-4 space-y-1">
+                        {countryGroup.programs.slice(0, 3).map((program, index) => (
+                          <li key={index}>
+                            <Link
+                              href={program.href}
+                              className="block p-2 bg-gray-50 border-2 border-gray-200 hover:border-gray-400 hover:bg-gray-100 transition-all duration-200 text-xs font-bold text-gray-700"
+                            >
+                              {program.title.length > 40 ? `${program.title.substring(0, 40)}...` : program.title}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

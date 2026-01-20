@@ -1041,10 +1041,10 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
       </section>
 
             {/* Accommodation & Scholarships */}
-            {(data.accommodation || data.scholarships) && (
+            {(data.accommodation && data.accommodation.length > 0) || (data.scholarships && data.scholarships.length > 0) ? (
               <section className="py-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {data.accommodation && (
+            {data.accommodation && data.accommodation.length > 0 && (
               <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10">
                 <div className="inline-block px-5 py-2.5 bg-pink-600 text-white border-4 border-pink-800 transform -skew-x-12 mb-6">
                   <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🏠 Konaklama</h2>
@@ -1060,7 +1060,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
               </div>
             )}
 
-            {data.scholarships && (
+            {data.scholarships && data.scholarships.length > 0 && (
               <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10">
                 <div className="inline-block px-5 py-2.5 bg-teal-600 text-white border-4 border-teal-800 transform -skew-x-12 mb-6">
                   <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🎓 Burslar</h2>
@@ -1076,7 +1076,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
             )}
               </div>
               </section>
-            )}
+            ) : null}
 
             {/* CTA */}
             <section className="py-6">

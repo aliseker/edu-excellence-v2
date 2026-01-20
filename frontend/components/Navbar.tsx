@@ -38,6 +38,9 @@ const Navbar = () => {
   const [universityDropdown, setUniversityDropdown] = useState<
     Array<{ title: string; href: string; submenu?: Array<{ title: string; href: string }> }>
   >([]);
+  const [masterMbaDropdown, setMasterMbaDropdown] = useState<
+    Array<{ title: string; href: string; submenu?: Array<{ title: string; href: string }> }>
+  >([]);
 
   useEffect(() => {
     const fetchLanguageSchools = async () => {
@@ -169,26 +172,53 @@ const Navbar = () => {
     fetchUniversities();
   }, []);
 
-  // Master/MBA nested dropdown verileri
-  const masterMBACountries = {
-    amerika: [
-      { title: 'Berkeley College', href: '/master-mba/amerika/berkeley-college' },
-      { title: 'New York University (NYU)', href: '/master-mba/amerika/nyu' },
-    ],
-    ingiltere: [
-      { title: 'London Business School', href: '/master-mba/ingiltere/london-business-school' },
-      { title: 'Imperial College Business School', href: '/master-mba/ingiltere/imperial-college-business' },
-      { title: 'Cambridge Judge Business School', href: '/master-mba/ingiltere/cambridge-judge-business' },
-    ],
-    italya: [
-      { title: 'Bocconi University', href: '/master-mba/italya/bocconi-university' },
-      { title: 'Sapienza University of Rome', href: '/master-mba/italya/sapienza-university-rome' },
-    ],
-    almanya: [
-      { title: 'Humboldt University of Berlin', href: '/master-mba/almanya/humboldt-university-berlin' },
-      { title: 'Technical University of Munich', href: '/master-mba/almanya/technical-university-munich' },
-    ],
-  };
+  useEffect(() => {
+    const fetchMasterPrograms = async () => {
+      try {
+        const [programsRes, countriesRes] = await Promise.all([
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.masterPrograms}`),
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.countries}`)
+        ]);
+        const programs = await programsRes.json();
+        const countries = await countriesRes.json();
+        const countryMap = new Map<string, { name: string; slug: string; programs: Array<{ title: string; href: string }> }>();
+
+        programs.forEach((program: any) => {
+          const country = countries.find((c: any) => c.id === program.countryId);
+          if (!country) {
+            return;
+          }
+          const countrySlug = country.slug || slugify(country.name || '');
+          if (!countrySlug) {
+            return;
+          }
+          const programHref = `/master-mba/${countrySlug}/${program.id}`;
+
+          if (!countryMap.has(countrySlug)) {
+            countryMap.set(countrySlug, { name: country.name, slug: countrySlug, programs: [] });
+          }
+          countryMap.get(countrySlug)!.programs.push({
+            title: program.name,
+            href: programHref
+          });
+        });
+
+        const dropdown = Array.from(countryMap.values())
+          .sort((a, b) => a.name.localeCompare(b.name, 'tr'))
+          .map((country) => ({
+            title: country.name,
+            href: `/master-mba/${country.slug}`,
+            submenu: country.programs
+          }));
+
+        setMasterMbaDropdown(dropdown);
+      } catch (error) {
+        console.error('Master/MBA menüsü yüklenemedi:', error);
+      }
+    };
+
+    fetchMasterPrograms();
+  }, []);
 
   // Lise nested dropdown verileri
   const highSchoolCountries = {
@@ -245,17 +275,7 @@ const Navbar = () => {
       href: '/master-mba',
       dropdown: [
         { title: 'Neden Yurtdışında Master/MBA?', href: '/master-mba' },
-        { title: 'Amerika', href: '/master-mba/amerika', submenu: masterMBACountries.amerika },
-        { title: 'İngiltere', href: '/master-mba/ingiltere', submenu: masterMBACountries.ingiltere },
-        { title: 'İtalya', href: '/master-mba/italya', submenu: masterMBACountries.italya },
-        { title: 'İrlanda', href: '/master-mba/irlanda' },
-        { title: 'Kanada', href: '/master-mba/kanada' },
-        { title: 'Almanya', href: '/master-mba/almanya', submenu: masterMBACountries.almanya },
-        { title: 'Hollanda', href: '/master-mba/hollanda' },
-        { title: 'Avustralya', href: '/master-mba/avustralya' },
-        { title: 'İsveç', href: '/master-mba/isvec' },
-        { title: 'Fransa', href: '/master-mba/fransa' },
-        { title: 'Polonya', href: '/master-mba/polonya' },
+        ...masterMbaDropdown,
       ]
     },
     { 

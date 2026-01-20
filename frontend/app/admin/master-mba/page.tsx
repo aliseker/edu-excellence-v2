@@ -1,13 +1,63 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 
 export default function MasterMBAPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState('');
+  const [programs, setPrograms] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const masterMba: any[] = [];
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.masterPrograms}`);
+        if (!res.ok) {
+          throw new Error('Programlar yüklenemedi.');
+        }
+        const data = await res.json();
+        setPrograms(data);
+      } catch (err) {
+        console.error('Programlar yüklenemedi:', err);
+        setError('Programlar yüklenirken bir hata oluştu.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchPrograms();
+  }, []);
+
+  const filteredPrograms = useMemo(() => {
+    return programs.filter((program) => {
+      const matchesSearch = searchQuery
+        ? program.name.toLowerCase().includes(searchQuery.toLowerCase())
+        : true;
+      const matchesType = selectedType ? program.programType === selectedType : true;
+      return matchesSearch && matchesType;
+    });
+  }, [programs, searchQuery, selectedType]);
+
+  const handleDelete = async (id: number) => {
+    if (window.confirm('Bu programı silmek istediğinizden emin misiniz?')) {
+      try {
+        const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.masterProgramById(id)}`, {
+          method: 'DELETE',
+        });
+        if (!res.ok) {
+          throw new Error('Program silinemedi.');
+        }
+        setPrograms(prev => prev.filter(item => item.id !== id));
+      } catch (err) {
+        console.error('Program silinirken hata oluştu:', err);
+        alert('Program silinirken bir hata oluştu.');
+      }
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -61,7 +111,6 @@ export default function MasterMBAPage() {
           <table className="w-full">
             <thead className="bg-gray-900 text-white">
               <tr>
-                <th className="px-6 py-4 text-left font-black">ID</th>
                 <th className="px-6 py-4 text-left font-black">Program Adı</th>
                 <th className="px-6 py-4 text-left font-black">Tip</th>
                 <th className="px-6 py-4 text-left font-black">Üniversite</th>
@@ -70,24 +119,35 @@ export default function MasterMBAPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {masterMba.length === 0 ? (
+              {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                    Yükleniyor...
+                  </td>
+                </tr>
+              ) : error ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center text-red-600">
+                    {error}
+                  </td>
+                </tr>
+              ) : filteredPrograms.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
                     <div className="text-4xl mb-4">🎓</div>
                     <p className="font-semibold">Henüz program eklenmemiş</p>
                     <p className="text-sm mt-2">İlk programı eklemek için "Yeni Program Ekle" butonuna tıklayın</p>
                   </td>
                 </tr>
               ) : (
-                masterMba.map((program) => (
+                filteredPrograms.map((program) => (
                   <tr key={program.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 font-semibold">{program.id}</td>
                     <td className="px-6 py-4 font-semibold">{program.name}</td>
-                    <td className="px-6 py-4">{program.type}</td>
+                    <td className="px-6 py-4">{program.programType}</td>
                     <td className="px-6 py-4">{program.university}</td>
                     <td className="px-6 py-4">
-                      <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">
-                        Aktif
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${program.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-700'}`}>
+                        {program.status === 'active' ? 'Aktif' : 'Pasif'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
@@ -98,7 +158,11 @@ export default function MasterMBAPage() {
                         >
                           Düzenle
                         </Link>
-                        <button className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold">
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(program.id)}
+                          className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold"
+                        >
                           Sil
                         </button>
                       </div>

@@ -32,7 +32,7 @@ export default function MasterMBADuzenlePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    programType: '',
+    programType: 'master',
     university: '',
     countryId: 0,
     cityId: 0,
@@ -44,6 +44,7 @@ export default function MasterMBADuzenlePage() {
     intro: '',
     location: '',
     status: 'active',
+    imageBase64: '',
   });
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [features, setFeatures] = useState<string[]>(['']);
@@ -70,15 +71,72 @@ export default function MasterMBADuzenlePage() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
+        setFormData(prev => ({ ...prev, imageBase64: reader.result as string }));
       };
       reader.readAsDataURL(file);
     }
   };
 
   useEffect(() => {
-    if (id !== 'yeni') {
-      // TODO: API'den veri çek
-    }
+    const fetchProgram = async () => {
+      if (!id || id === 'yeni') {
+        return;
+      }
+      setIsLoading(true);
+      try {
+        const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.masterProgramById(Number(id))}`);
+        if (!res.ok) {
+          throw new Error('Program bulunamadı.');
+        }
+        const data = await res.json();
+
+        setFormData({
+          name: data.name || '',
+          programType: data.programType || '',
+          university: data.university || '',
+          countryId: data.countryId || 0,
+          cityId: data.cityId || 0,
+          duration: data.duration || '',
+          shortDescription: data.shortDescription || '',
+          established: data.established || '',
+          students: data.students || '',
+          ranking: data.ranking || '',
+          intro: data.intro || '',
+          location: data.location || '',
+          status: data.status || 'active',
+          imageBase64: data.imageBase64 || '',
+        });
+
+        setFeatures(data.features?.length ? data.features : ['']);
+        setPrograms(data.programs?.length ? data.programs : [{
+          name: '',
+          type: 'MBA',
+          duration: '',
+          description: '',
+          concentrations: [''],
+        }]);
+        setRequirementsLanguage(data.requirements?.language?.length ? data.requirements.language : ['']);
+        setRequirementsAcademic(data.requirements?.academic?.length ? data.requirements.academic : ['']);
+        setRequirementsDocuments(data.requirements?.documents?.length ? data.requirements.documents : ['']);
+        setCareerServices(data.careerServices?.length ? data.careerServices : ['']);
+        setCampus(data.campus?.length ? data.campus : ['']);
+        setAccreditation(data.accreditation?.length ? data.accreditation : ['']);
+
+        if (data.imageBase64) {
+          const imageSrc = data.imageBase64.startsWith('data:')
+            ? data.imageBase64
+            : `data:image/jpeg;base64,${data.imageBase64}`;
+          setImagePreview(imageSrc);
+        }
+      } catch (error) {
+        console.error('Program yüklenemedi:', error);
+        alert('Program yüklenirken bir hata oluştu.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProgram();
   }, [id]);
 
   useEffect(() => {
@@ -173,9 +231,23 @@ export default function MasterMBADuzenlePage() {
         campus: campus.filter(c => c.trim() !== ''),
         accreditation: accreditation.filter(a => a.trim() !== ''),
       };
-      console.log('Form Data:', submitData);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.masterProgramById(Number(id))}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submitData),
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || 'Program güncellenemedi.');
+      }
+
       router.push('/admin/master-mba');
+    } catch (error: any) {
+      console.error('Hata:', error);
+      alert(`Program güncellenirken bir hata oluştu: ${error.message || error}`);
     } finally {
       setIsLoading(false);
     }
@@ -193,7 +265,7 @@ export default function MasterMBADuzenlePage() {
           <h2 className="text-xl font-black text-gray-900 mb-4">Temel Bilgiler</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div><label className="block text-sm font-bold text-gray-700 mb-2">Program Adı <span className="text-red-500">*</span></label><input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-600" required /></div>
-            <div><label className="block text-sm font-bold text-gray-700 mb-2">Program Türü <span className="text-red-500">*</span></label><select value={formData.programType} onChange={(e) => setFormData({ ...formData, programType: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-600" required><option value="">Seçiniz</option><option value="master">Master</option><option value="mba">MBA</option></select></div>
+            <div><label className="block text-sm font-bold text-gray-700 mb-2">Program Türü <span className="text-red-500">*</span></label><select value={formData.programType} onChange={(e) => setFormData({ ...formData, programType: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-600" required><option value="master">Master / MBA</option></select></div>
             <div><label className="block text-sm font-bold text-gray-700 mb-2">Üniversite <span className="text-red-500">*</span></label><input type="text" value={formData.university} onChange={(e) => setFormData({ ...formData, university: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-600" required /></div>
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">Ülke <span className="text-red-500">*</span></label>
