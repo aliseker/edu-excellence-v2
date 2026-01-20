@@ -45,6 +45,7 @@ export default function UniversiteDuzenlePage() {
     videoUrl: '',
     location: '',
     status: 'active',
+    imageBase64: '',
   });
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [features, setFeatures] = useState<string[]>(['']);
@@ -65,6 +66,7 @@ export default function UniversiteDuzenlePage() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
+        setFormData(prev => ({ ...prev, imageBase64: reader.result as string }));
       };
       reader.readAsDataURL(file);
     }
@@ -72,7 +74,53 @@ export default function UniversiteDuzenlePage() {
 
   useEffect(() => {
     if (id !== 'yeni') {
-      // TODO: API'den veri çek
+      const fetchUniversity = async () => {
+        setIsLoading(true);
+        try {
+          const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.universityById(Number(id))}`);
+          if (!res.ok) {
+            throw new Error('Üniversite bulunamadı.');
+          }
+          const data = await res.json();
+
+          setFormData({
+            name: data.name || '',
+            countryId: data.countryId || 0,
+            cityId: data.cityId || 0,
+            ranking: data.ranking || '',
+            established: data.established || '',
+            students: data.students || '',
+            description: data.description || '',
+            intro: data.intro || '',
+            videoUrl: data.videoUrl || '',
+            location: data.location || '',
+            status: data.status || 'active',
+            imageBase64: data.imageBase64 || '',
+          });
+
+          setFeatures(data.features?.length ? data.features : ['']);
+          setPrograms(data.programs?.length ? data.programs : [{ name: '', description: '', level: '' }]);
+          setRequirementsLanguage(data.requirements?.language?.length ? data.requirements.language : ['']);
+          setRequirementsAcademic(data.requirements?.academic?.length ? data.requirements.academic : ['']);
+          setRequirementsDocuments(data.requirements?.documents?.length ? data.requirements.documents : ['']);
+          setCampus(data.campus?.length ? data.campus : ['']);
+          setAccommodation(data.accommodation?.length ? data.accommodation : [{ type: '', description: '' }]);
+          setScholarships(data.scholarships?.length ? data.scholarships : ['']);
+
+          if (data.imageBase64) {
+            setImagePreview(
+              data.imageBase64.startsWith('data:')
+                ? data.imageBase64
+                : `data:image/jpeg;base64,${data.imageBase64}`
+            );
+          }
+        } catch (error) {
+          console.error('Üniversite verisi yüklenemedi:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchUniversity();
     }
   }, [id]);
 
@@ -156,9 +204,19 @@ export default function UniversiteDuzenlePage() {
         accommodation: accommodation.filter(a => a.type.trim() !== ''),
         scholarships: scholarships.filter(s => s.trim() !== ''),
       };
-      console.log('Form Data:', submitData);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.universityById(Number(id))}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(submitData),
+      });
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || 'Güncelleme başarısız.');
+      }
       router.push('/admin/universite');
+    } catch (error) {
+      console.error('Üniversite güncellenirken hata oluştu:', error);
+      alert('Üniversite güncellenirken bir hata oluştu.');
     } finally {
       setIsLoading(false);
     }

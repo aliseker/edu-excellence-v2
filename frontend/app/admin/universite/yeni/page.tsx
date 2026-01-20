@@ -43,6 +43,7 @@ export default function YeniUniversitePage() {
     videoUrl: '',
     location: '',
     status: 'active',
+    imageBase64: '',
   });
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [features, setFeatures] = useState<string[]>(['']);
@@ -63,6 +64,7 @@ export default function YeniUniversitePage() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
+        setFormData(prev => ({ ...prev, imageBase64: reader.result as string }));
       };
       reader.readAsDataURL(file);
     }
@@ -148,9 +150,19 @@ export default function YeniUniversitePage() {
         accommodation: accommodation.filter(a => a.type.trim() !== ''),
         scholarships: scholarships.filter(s => s.trim() !== ''),
       };
-      console.log('Form Data:', submitData);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.universities}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(submitData),
+      });
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || 'Üniversite eklenemedi.');
+      }
       router.push('/admin/universite');
+    } catch (error) {
+      console.error('Üniversite eklenirken hata oluştu:', error);
+      alert('Üniversite eklenirken bir hata oluştu.');
     } finally {
       setIsLoading(false);
     }

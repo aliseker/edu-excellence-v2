@@ -5,10 +5,13 @@ import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
-import { use } from 'react';
+import { use, useEffect, useState } from 'react';
+import { apiService } from '@/services/api';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 
 // Mock data - Later this will come from API
-const universityData: Record<string, Record<string, {
+/*
+const mockUniversityData: Record<string, Record<string, {
   name: string;
   country: string;
   city: string;
@@ -717,67 +720,105 @@ const universityData: Record<string, Record<string, {
     },
   },
 };
+*/
 
 export default function UniversityDetailPage({ params }: { params: Promise<{ country: string; university: string }> }) {
   const resolvedParams = use(params);
-  const country = resolvedParams.country;
-  const university = resolvedParams.university;
-  const countryKey = country.toLowerCase();
-  const universityKey = university.toLowerCase();
-  const data = universityData[countryKey]?.[universityKey];
+  const countrySlug = resolvedParams.country;
+  const universityId = Number(resolvedParams.university);
 
-  // University data for sidebar
-  const universityCountries = {
-    ingiltere: [
-      { title: 'Birmingham City University', href: '/universite/ingiltere/birmingham-city-university', slug: 'birmingham-city-university' },
-      { title: 'University of Birmingham', href: '/universite/ingiltere/university-of-birmingham', slug: 'university-of-birmingham' },
-      { title: 'King\'s College London', href: '/universite/ingiltere/kings-college-london', slug: 'kings-college-london' },
-      { title: 'University College London (UCL)', href: '/universite/ingiltere/university-college-london', slug: 'university-college-london' },
-      { title: 'London School of Economics (LSE)', href: '/universite/ingiltere/london-school-of-economics', slug: 'london-school-of-economics' },
-      { title: 'University of Manchester', href: '/universite/ingiltere/university-of-manchester', slug: 'university-of-manchester' },
-    ],
-    amerika: [
-      { title: 'New York University (NYU)', href: '/universite/amerika/new-york-university', slug: 'new-york-university' },
-      { title: 'Columbia University', href: '/universite/amerika/columbia-university', slug: 'columbia-university' },
-      { title: 'University of California, Los Angeles (UCLA)', href: '/universite/amerika/ucla', slug: 'ucla' },
-      { title: 'Stanford University', href: '/universite/amerika/stanford-university', slug: 'stanford-university' },
-      { title: 'Harvard University', href: '/universite/amerika/harvard-university', slug: 'harvard-university' },
-      { title: 'Massachusetts Institute of Technology (MIT)', href: '/universite/amerika/mit', slug: 'mit' },
-    ],
-    kanada: [
-      { title: 'University of Toronto', href: '/universite/kanada/university-of-toronto', slug: 'university-of-toronto' },
-      { title: 'University of British Columbia (UBC)', href: '/universite/kanada/ubc', slug: 'ubc' },
-    ],
-    almanya: [
-      { title: 'Humboldt University of Berlin', href: '/universite/almanya/humboldt-university-berlin', slug: 'humboldt-university-berlin' },
-      { title: 'Free University of Berlin', href: '/universite/almanya/free-university-berlin', slug: 'free-university-berlin' },
-      { title: 'Technical University of Munich', href: '/universite/almanya/technical-university-munich', slug: 'technical-university-munich' },
-      { title: 'Ludwig Maximilian University of Munich', href: '/universite/almanya/lmu-munich', slug: 'lmu-munich' },
-    ],
-    italya: [
-      { title: 'Sapienza University of Rome', href: '/universite/italya/sapienza-university-rome', slug: 'sapienza-university-rome' },
-      { title: 'Bocconi University', href: '/universite/italya/bocconi-university', slug: 'bocconi-university' },
-    ],
-  };
+  const [universityData, setUniversityData] = useState<any>(null);
+  const [country, setCountry] = useState<any>(null);
+  const [city, setCity] = useState<any>(null);
+  const [allUniversities, setAllUniversities] = useState<any[]>([]);
+  const [allCountries, setAllCountries] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const currentCountryUniversities = universityCountries[countryKey as keyof typeof universityCountries] || [];
-  const otherUniversities = currentCountryUniversities.filter(u => u.slug !== universityKey);
-  const otherCountries = Object.entries(universityCountries).filter(([key]) => key !== countryKey);
+  useEffect(() => {
+    const fetchUniversityData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        if (!universityId || isNaN(universityId)) {
+          setError('Üniversite bulunamadı.');
+          setIsLoading(false);
+          return;
+        }
 
-  if (!data) {
+        const fetchedUniversity = await apiService.getUniversityById(universityId);
+        if (!fetchedUniversity) {
+          setError('Üniversite bulunamadı.');
+          setIsLoading(false);
+          return;
+        }
+        setUniversityData(fetchedUniversity);
+
+        const countriesRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.countries}`);
+        const fetchedCountries = await countriesRes.json();
+        setAllCountries(fetchedCountries);
+        const matchedCountry = fetchedCountries.find((c: any) => c.id === fetchedUniversity.countryId);
+        if (matchedCountry) {
+          setCountry(matchedCountry);
+          if (fetchedUniversity.cityId) {
+            const fetchedCities = await apiService.getCities(matchedCountry.id);
+            const matchedCity = fetchedCities.find((c: any) => c.id === fetchedUniversity.cityId);
+            setCity(matchedCity || null);
+          }
+        }
+
+        const allUnis = await apiService.getUniversities();
+        setAllUniversities(allUnis);
+      } catch (err) {
+        console.error('Üniversite detayları yüklenemedi:', err);
+        setError('Üniversite detayları yüklenirken bir hata oluştu.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUniversityData();
+  }, [universityId]);
+
+  if (isLoading) return <div className="text-center py-8">Yükleniyor...</div>;
+  if (error || !universityData) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
           <h1 className="text-4xl font-black text-gray-900 mb-4">Üniversite Bulunamadı</h1>
-          <Link href={`/universite/${country}`} className="text-blue-600 font-bold hover:underline">
-            {country} üniversiteleri sayfasına dön
+          <Link href={`/universite/${countrySlug}`} className="text-blue-600 font-bold hover:underline">
+            {countrySlug} üniversiteleri sayfasına dön
           </Link>
         </div>
         <Footer />
       </div>
     );
   }
+
+  const data = {
+    ...universityData,
+    country: country?.name || universityData.countryName || countrySlug,
+    city: city?.name || universityData.cityName || '',
+    flag: country?.flagEmoji || '🌍',
+    features: universityData.features ?? [],
+    programs: universityData.programs ?? [],
+    requirements: universityData.requirements ?? { language: [], academic: [], documents: [] },
+    campus: universityData.campus ?? [],
+    accommodation: universityData.accommodation ?? [],
+    scholarships: universityData.scholarships ?? []
+  };
+
+  const currentCountryUniversities = allUniversities.filter(
+    (u: any) => u.countryId === universityData.countryId && u.id !== universityData.id
+  );
+  const otherCountries = allCountries
+    .filter((c: any) => c.id !== universityData.countryId)
+    .map((c: any) => ({
+      country: c,
+      universities: allUniversities.filter((u: any) => u.countryId === c.id)
+    }))
+    .filter((group: any) => group.universities.length > 0);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -789,7 +830,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
           <div className="flex items-center space-x-2 text-sm font-bold text-gray-600">
             <Link href="/universite" className="hover:text-blue-600 transition-colors">Üniversiteler</Link>
             <span>/</span>
-            <Link href={`/universite/${country}`} className="hover:text-blue-600 transition-colors">{data.country}</Link>
+            <Link href={`/universite/${countrySlug}`} className="hover:text-blue-600 transition-colors">{data.country}</Link>
             <span>/</span>
             <span className="text-gray-900">{data.name}</span>
           </div>
@@ -1054,7 +1095,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
               Hemen Başvur
             </Link>
             <Link
-              href={`/universite/${country}`}
+              href={`/universite/${countrySlug}`}
               className="inline-block px-10 py-5 bg-transparent text-white font-black text-lg uppercase tracking-wider border-4 border-white hover:bg-white/10 transition-all duration-200"
             >
               Diğer Üniversiteleri Gör
@@ -1068,7 +1109,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
           <div className="lg:col-span-1">
             <div className="space-y-6">
               {/* Same Country Universities */}
-              {otherUniversities.length > 0 && (
+              {currentCountryUniversities.length > 0 && (
                 <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-6">
                   <div className="inline-block px-4 py-2 bg-blue-600 text-white border-4 border-blue-800 transform -skew-x-12 mb-4">
                     <h3 className="transform skew-x-12 text-sm font-black uppercase tracking-wider">
@@ -1076,20 +1117,20 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
                     </h3>
                   </div>
                   <ul className="space-y-2">
-                    {otherUniversities.slice(0, 5).map((uni, index) => (
-                      <li key={index}>
+                    {currentCountryUniversities.slice(0, 5).map((uni) => (
+                      <li key={uni.id}>
                         <Link
-                          href={uni.href}
+                          href={`/universite/${countrySlug}/${uni.id}`}
                           className="block p-3 bg-blue-50 border-2 border-blue-200 hover:border-blue-400 hover:bg-blue-100 transition-all duration-200 transform hover:-translate-x-1"
                         >
-                          <span className="font-bold text-sm text-gray-900">{uni.title}</span>
+                          <span className="font-bold text-sm text-gray-900">{uni.name}</span>
                         </Link>
                       </li>
                     ))}
                   </ul>
-                  {currentCountryUniversities.length > 6 && (
+                  {currentCountryUniversities.length > 5 && (
                     <Link
-                      href={`/universite/${country}`}
+                      href={`/universite/${countrySlug}`}
                       className="block mt-4 text-center px-4 py-2 bg-blue-600 text-white font-black text-sm uppercase border-2 border-blue-800 hover:bg-blue-700 transition-colors"
                     >
                       Tümünü Gör
@@ -1099,6 +1140,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
               )}
 
               {/* Other Countries */}
+              {otherCountries.length > 0 && (
               <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-6">
                 <div className="inline-block px-4 py-2 bg-purple-600 text-white border-4 border-purple-800 transform -skew-x-12 mb-4">
                   <h3 className="transform skew-x-12 text-sm font-black uppercase tracking-wider">
@@ -1106,26 +1148,27 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
                   </h3>
                 </div>
                 <div className="space-y-4">
-                  {otherCountries.map(([countryKey, universities]) => {
-                    const countryName = universities[0]?.href.split('/')[2] || countryKey;
+                  {otherCountries.map((group: any) => {
+                    const countryName = group.country?.name || '';
+                    const countrySlugValue = group.country?.slug || '';
                     return (
-                      <div key={countryKey}>
+                      <div key={group.country?.id || countryName}>
                         <Link
-                          href={`/universite/${countryKey}`}
+                          href={`/universite/${countrySlugValue}`}
                           className="block px-3 py-2 bg-purple-50 border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-100 transition-all duration-200 mb-2"
                         >
                           <span className="font-black text-sm text-gray-900 uppercase">
-                            {countryName.charAt(0).toUpperCase() + countryName.slice(1)}
+                            {countryName || 'Diğer'}
                           </span>
                         </Link>
                         <ul className="ml-4 space-y-1">
-                          {universities.slice(0, 3).map((uni, index) => (
-                            <li key={index}>
+                          {group.universities.slice(0, 3).map((uni: any) => (
+                            <li key={uni.id}>
                               <Link
-                                href={uni.href}
+                                href={`/universite/${countrySlugValue}/${uni.id}`}
                                 className="block p-2 bg-gray-50 border-2 border-gray-200 hover:border-gray-400 hover:bg-gray-100 transition-all duration-200 text-xs font-bold text-gray-700"
                               >
-                                {uni.title.length > 40 ? `${uni.title.substring(0, 40)}...` : uni.title}
+                                {uni.name.length > 40 ? `${uni.name.substring(0, 40)}...` : uni.name}
                               </Link>
                             </li>
                           ))}
@@ -1135,6 +1178,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
                   })}
                 </div>
               </div>
+              )}
             </div>
           </div>
         </div>

@@ -5,22 +5,57 @@ import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
+import { apiService } from '@/services/api';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+
+interface Country {
+  id: number;
+  name: string;
+  slug: string;
+  flagEmoji: string;
+}
+
+interface University {
+  id: number;
+  countryId: number;
+}
 
 export default function UniversitiesPage() {
-  const countries = [
-    { name: 'İngiltere', flag: '🇬🇧', slug: 'ingiltere' },
-    { name: 'Amerika', flag: '🇺🇸', slug: 'amerika' },
-    { name: 'Kanada', flag: '🇨🇦', slug: 'kanada' },
-    { name: 'Almanya', flag: '🇩🇪', slug: 'almanya' },
-    { name: 'İtalya', flag: '🇮🇹', slug: 'italya' },
-    { name: 'Fransa', flag: '🇫🇷', slug: 'fransa' },
-    { name: 'Polonya', flag: '🇵🇱', slug: 'polonya' },
-    { name: 'Macaristan', flag: '🇭🇺', slug: 'macaristan' },
-    { name: 'Avusturya', flag: '🇦🇹', slug: 'avusturya' },
-    { name: 'Litvanya', flag: '🇱🇹', slug: 'litvanya' },
-    { name: 'Hollanda', flag: '🇳🇱', slug: 'hollanda' },
-    { name: 'Avustralya', flag: '🇦🇺', slug: 'avustralya' },
-  ];
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [universities, setUniversities] = useState<University[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const [countriesRes, universitiesRes] = await Promise.all([
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.countries}`),
+          apiService.getUniversities(),
+        ]);
+        const fetchedCountries: Country[] = await countriesRes.json();
+        setCountries(fetchedCountries);
+        setUniversities(universitiesRes);
+      } catch (fetchError) {
+        console.error('Üniversite verileri yüklenemedi:', fetchError);
+        setError('Veriler yüklenirken bir hata oluştu.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const availableCountries = useMemo(() => {
+    if (!universities.length) {
+      return countries;
+    }
+    const countryIds = new Set(universities.map((uni) => uni.countryId));
+    return countries.filter((country) => countryIds.has(country.id));
+  }, [countries, universities]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -264,22 +299,32 @@ export default function UniversitiesPage() {
           <p className="text-lg text-gray-600 font-medium">Size en uygun ülkeyi seçin</p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {countries.map((country) => (
-            <Link
-              key={country.slug}
-              href={`/universite/${country.slug}`}
-              className="group p-6 bg-white border-4 border-gray-900 hover:border-blue-600 transition-all duration-200 transform hover:-skew-x-2 hover:shadow-[8px_8px_0_0_rgba(0,0,0,0.1)]"
-            >
-              <div className="transform group-hover:skew-x-2 text-center">
-                <div className="text-5xl mb-3">{country.flag}</div>
-                <div className="text-lg font-black text-gray-900 uppercase tracking-wider group-hover:text-blue-600 transition-colors">
-                  {country.name}
+        {isLoading ? (
+          <div className="text-center py-8">Yükleniyor...</div>
+        ) : error ? (
+          <div className="text-center py-8 text-red-600">{error}</div>
+        ) : availableCountries.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            <p className="font-semibold">Henüz üniversite eklenmemiş.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {availableCountries.map((country) => (
+              <Link
+                key={country.id}
+                href={`/universite/${country.slug}`}
+                className="group p-6 bg-white border-4 border-gray-900 hover:border-blue-600 transition-all duration-200 transform hover:-skew-x-2 hover:shadow-[8px_8px_0_0_rgba(0,0,0,0.1)]"
+              >
+                <div className="transform group-hover:skew-x-2 text-center">
+                  <div className="text-5xl mb-3">{country.flagEmoji || '🌍'}</div>
+                  <div className="text-lg font-black text-gray-900 uppercase tracking-wider group-hover:text-blue-600 transition-colors">
+                    {country.name}
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* CTA */}

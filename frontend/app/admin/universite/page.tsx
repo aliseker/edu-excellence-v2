@@ -1,13 +1,88 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+
+interface UniversityRow {
+  id: number;
+  name: string;
+  countryId: number;
+  countryName?: string;
+  cityName?: string;
+  status: string;
+}
+
+interface CountryOption {
+  id: number;
+  name: string;
+}
 
 export default function UniversitePage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState<number | ''>('');
 
-  const universiteler: any[] = [];
+  const [universiteler, setUniversiteler] = useState<UniversityRow[]>([]);
+  const [countries, setCountries] = useState<CountryOption[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const [universitiesRes, countriesRes] = await Promise.all([
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.universities}`),
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.countries}`),
+        ]);
+        if (!universitiesRes.ok) {
+          throw new Error('Üniversiteler yüklenemedi.');
+        }
+        if (!countriesRes.ok) {
+          throw new Error('Ülkeler yüklenemedi.');
+        }
+        const universitiesData = await universitiesRes.json();
+        const countriesData = await countriesRes.json();
+
+        setUniversiteler(universitiesData);
+        setCountries(countriesData);
+      } catch (fetchError) {
+        console.error('Üniversiteler yüklenemedi:', fetchError);
+        setError('Üniversiteler yüklenirken bir hata oluştu.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const filteredUniversities = useMemo(() => {
+    return universiteler.filter((uni) => {
+      const matchesSearch = searchQuery
+        ? uni.name.toLowerCase().includes(searchQuery.toLowerCase())
+        : true;
+      const matchesCountry = selectedCountry ? uni.countryId === selectedCountry : true;
+      return matchesSearch && matchesCountry;
+    });
+  }, [universiteler, searchQuery, selectedCountry]);
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('Bu üniversiteyi silmek istediğinize emin misiniz?')) {
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.universityById(id)}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) {
+        throw new Error('Silme başarısız.');
+      }
+      setUniversiteler(prev => prev.filter(item => item.id !== id));
+    } catch (deleteError) {
+      console.error('Silme hatası:', deleteError);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -40,13 +115,13 @@ export default function UniversitePage() {
             <label className="block text-sm font-semibold text-gray-700 mb-2">Ülke</label>
             <select
               value={selectedCountry}
-              onChange={(e) => setSelectedCountry(e.target.value)}
+              onChange={(e) => setSelectedCountry(e.target.value ? Number(e.target.value) : '')}
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-600"
             >
               <option value="">Tüm Ülkeler</option>
-              <option value="ingiltere">İngiltere</option>
-              <option value="amerika">Amerika</option>
-              <option value="kanada">Kanada</option>
+              {countries.map((country) => (
+                <option key={country.id} value={country.id}>{country.name}</option>
+              ))}
             </select>
           </div>
           <div className="flex items-end">
@@ -62,7 +137,6 @@ export default function UniversitePage() {
           <table className="w-full">
             <thead className="bg-gray-900 text-white">
               <tr>
-                <th className="px-6 py-4 text-left font-black">ID</th>
                 <th className="px-6 py-4 text-left font-black">Üniversite Adı</th>
                 <th className="px-6 py-4 text-left font-black">Ülke</th>
                 <th className="px-6 py-4 text-left font-black">Şehir</th>
@@ -71,24 +145,35 @@ export default function UniversitePage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {universiteler.length === 0 ? (
+              {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                    Yükleniyor...
+                  </td>
+                </tr>
+              ) : error ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center text-red-600">
+                    {error}
+                  </td>
+                </tr>
+              ) : filteredUniversities.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
                     <div className="text-4xl mb-4">🏛️</div>
                     <p className="font-semibold">Henüz üniversite eklenmemiş</p>
                     <p className="text-sm mt-2">İlk üniversiteyi eklemek için "Yeni Üniversite Ekle" butonuna tıklayın</p>
                   </td>
                 </tr>
               ) : (
-                universiteler.map((uni) => (
+                filteredUniversities.map((uni) => (
                   <tr key={uni.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 font-semibold">{uni.id}</td>
                     <td className="px-6 py-4 font-semibold">{uni.name}</td>
-                    <td className="px-6 py-4">{uni.country}</td>
-                    <td className="px-6 py-4">{uni.city}</td>
+                    <td className="px-6 py-4">{uni.countryName ?? '-'}</td>
+                    <td className="px-6 py-4">{uni.cityName ?? '-'}</td>
                     <td className="px-6 py-4">
-                      <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">
-                        Aktif
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${uni.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-700'}`}>
+                        {uni.status === 'active' ? 'Aktif' : 'Pasif'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
@@ -99,7 +184,11 @@ export default function UniversitePage() {
                         >
                           Düzenle
                         </Link>
-                        <button className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold">
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(uni.id)}
+                          className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold"
+                        >
                           Sil
                         </button>
                       </div>

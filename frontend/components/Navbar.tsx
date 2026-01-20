@@ -29,44 +29,13 @@ const Navbar = () => {
     }
   };
 
-  // Üniversite nested dropdown verileri
-  const universityCountries = {
-    ingiltere: [
-      { title: 'Birmingham City University', href: '/universite/ingiltere/birmingham-city-university' },
-      { title: 'University of Birmingham', href: '/universite/ingiltere/university-of-birmingham' },
-      { title: 'King\'s College London', href: '/universite/ingiltere/kings-college-london' },
-      { title: 'University College London (UCL)', href: '/universite/ingiltere/university-college-london' },
-      { title: 'London School of Economics (LSE)', href: '/universite/ingiltere/london-school-of-economics' },
-      { title: 'University of Manchester', href: '/universite/ingiltere/university-of-manchester' },
-    ],
-    amerika: [
-      { title: 'New York University (NYU)', href: '/universite/amerika/new-york-university' },
-      { title: 'Columbia University', href: '/universite/amerika/columbia-university' },
-      { title: 'University of California, Los Angeles (UCLA)', href: '/universite/amerika/ucla' },
-      { title: 'Stanford University', href: '/universite/amerika/stanford-university' },
-      { title: 'Harvard University', href: '/universite/amerika/harvard-university' },
-      { title: 'Massachusetts Institute of Technology (MIT)', href: '/universite/amerika/mit' },
-    ],
-    kanada: [
-      { title: 'University of Toronto', href: '/universite/kanada/university-of-toronto' },
-      { title: 'University of British Columbia (UBC)', href: '/universite/kanada/ubc' },
-    ],
-    almanya: [
-      { title: 'Humboldt University of Berlin', href: '/universite/almanya/humboldt-university-berlin' },
-      { title: 'Free University of Berlin', href: '/universite/almanya/free-university-berlin' },
-      { title: 'Technical University of Munich', href: '/universite/almanya/technical-university-munich' },
-      { title: 'Ludwig Maximilian University of Munich', href: '/universite/almanya/lmu-munich' },
-    ],
-    italya: [
-      { title: 'Sapienza University of Rome', href: '/universite/italya/sapienza-university-rome' },
-      { title: 'Bocconi University', href: '/universite/italya/bocconi-university' },
-    ],
-  };
-
   const [languageSchoolDropdown, setLanguageSchoolDropdown] = useState<
     Array<{ title: string; href: string; submenu?: Array<{ title: string; href: string }> }>
   >([]);
   const [summerSchoolDropdown, setSummerSchoolDropdown] = useState<
+    Array<{ title: string; href: string; submenu?: Array<{ title: string; href: string }> }>
+  >([]);
+  const [universityDropdown, setUniversityDropdown] = useState<
     Array<{ title: string; href: string; submenu?: Array<{ title: string; href: string }> }>
   >([]);
 
@@ -152,6 +121,54 @@ const Navbar = () => {
     fetchSummerSchools();
   }, []);
 
+  useEffect(() => {
+    const fetchUniversities = async () => {
+      try {
+        const [universitiesRes, countriesRes] = await Promise.all([
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.universities}`),
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.countries}`)
+        ]);
+        const universities = await universitiesRes.json();
+        const countries = await countriesRes.json();
+        const countryMap = new Map<string, { name: string; slug: string; universities: Array<{ title: string; href: string }> }>();
+
+        universities.forEach((uni: any) => {
+          const country = countries.find((c: any) => c.id === uni.countryId);
+          if (!country) {
+            return;
+          }
+          const countrySlug = country.slug || slugify(country.name || '');
+          if (!countrySlug) {
+            return;
+          }
+          const uniHref = `/universite/${countrySlug}/${uni.id}`;
+
+          if (!countryMap.has(countrySlug)) {
+            countryMap.set(countrySlug, { name: country.name, slug: countrySlug, universities: [] });
+          }
+          countryMap.get(countrySlug)!.universities.push({
+            title: uni.name,
+            href: uniHref
+          });
+        });
+
+        const dropdown = Array.from(countryMap.values())
+          .sort((a, b) => a.name.localeCompare(b.name, 'tr'))
+          .map((country) => ({
+            title: country.name,
+            href: `/universite/${country.slug}`,
+            submenu: country.universities
+          }));
+
+        setUniversityDropdown(dropdown);
+      } catch (error) {
+        console.error('Üniversite menüsü yüklenemedi:', error);
+      }
+    };
+
+    fetchUniversities();
+  }, []);
+
   // Master/MBA nested dropdown verileri
   const masterMBACountries = {
     amerika: [
@@ -220,18 +237,7 @@ const Navbar = () => {
       href: '/universite',
       dropdown: [
         { title: 'Neden Yurtdışında Üniversite?', href: '/universite' },
-        { title: 'İngiltere', href: '/universite/ingiltere', submenu: universityCountries.ingiltere },
-        { title: 'Amerika', href: '/universite/amerika', submenu: universityCountries.amerika },
-        { title: 'Kanada', href: '/universite/kanada', submenu: universityCountries.kanada },
-        { title: 'Almanya', href: '/universite/almanya', submenu: universityCountries.almanya },
-        { title: 'İtalya', href: '/universite/italya', submenu: universityCountries.italya },
-        { title: 'Fransa', href: '/universite/fransa' },
-        { title: 'Polonya', href: '/universite/polonya' },
-        { title: 'Macaristan', href: '/universite/macaristan' },
-        { title: 'Avusturya', href: '/universite/avusturya' },
-        { title: 'Litvanya', href: '/universite/litvanya' },
-        { title: 'Hollanda', href: '/universite/hollanda' },
-        { title: 'Avustralya', href: '/universite/avustralya' },
+        ...universityDropdown,
       ]
     },
     { 
