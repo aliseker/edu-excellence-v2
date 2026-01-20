@@ -5,130 +5,102 @@ import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
-import { use } from 'react';
-import Image from 'next/image';
-
-// Mock data - Later this will come from API
-const schoolData: Record<string, Record<string, {
-  name: string;
-  country: string;
-  city: string;
-  flag: string;
-  description: string;
-  image?: string;
-  features: string[];
-  courses: Array<{ name: string; description: string; hours: string }>;
-  accommodation: Array<{ type: string; description: string }>;
-  facilities: string[];
-  location: string;
-  established?: string;
-  students?: string;
-  accreditation?: string[];
-}>> = {
-  amerika: {
-    'lsi-language-studies-international-boston': {
-      name: 'LSI Language Studies International - Boston',
-      country: 'Amerika',
-      city: 'Boston',
-      flag: '🇺🇸',
-      description: 'LSI Boston, tarihi şehir merkezinde, üniversite ortamında dil öğrenme imkanı sunan prestijli bir dil okuludur. Modern tesisler, deneyimli öğretmen kadrosu ve çeşitli kurs seçenekleri ile öğrencilerine kapsamlı bir eğitim deneyimi sunar.',
-      features: [
-        'Merkezi konum - şehir merkezine yürüme mesafesi',
-        'Modern teknoloji ile donatılmış sınıflar',
-        'Deneyimli ve sertifikalı öğretmen kadrosu',
-        'Küçük sınıflar - maksimum 15 öğrenci',
-        'Ücretsiz WiFi ve öğrenci salonları',
-        'Sosyal aktivite programları',
-      ],
-      courses: [
-        { name: 'Genel İngilizce', description: 'Haftada 20 ders temel İngilizce eğitimi', hours: '20 ders/hafta' },
-        { name: 'Yoğun İngilizce', description: 'Haftada 30 ders yoğun program', hours: '30 ders/hafta' },
-        { name: 'IELTS Hazırlık', description: 'IELTS sınavına yönelik hazırlık kursu', hours: '20 ders/hafta' },
-        { name: 'TOEFL Hazırlık', description: 'TOEFL sınavına yönelik hazırlık kursu', hours: '20 ders/hafta' },
-        { name: 'Business English', description: 'İş İngilizcesi programı', hours: '20 ders/hafta' },
-      ],
-      accommodation: [
-        { type: 'Aile Yanı', description: 'Yerel ailelerin yanında konaklama, kahvaltı ve akşam yemeği dahil' },
-        { type: 'Öğrenci Yurdu', description: 'Diğer uluslararası öğrencilerle birlikte, ortak mutfak ve salonlar' },
-        { type: 'Apartman', description: 'Tek veya çift kişilik stüdyo daireler, tam bağımsız' },
-      ],
-      facilities: [
-        'Bilgisayar laboratuvarı',
-        'Kütüphane',
-        'Öğrenci salonu',
-        'Kafeterya',
-        'WiFi',
-        'Öğrenci danışmanlık hizmeti',
-      ],
-      location: 'Boston şehir merkezi, üniversite bölgesi yakını',
-      established: '1965',
-      students: '200-300',
-      accreditation: ['ACCET', 'CEA', 'English USA'],
-    },
-    'lsi-language-studies-international-new-york': {
-      name: 'LSI Language Studies International - New York',
-      country: 'Amerika',
-      city: 'New York',
-      flag: '🇺🇸',
-      description: 'Manhattan merkezinde, Empire State Building yakınında konumlanan LSI New York, modern tesisler ve deneyimli öğretmen kadrosu ile İngilizce eğitimi sunar.',
-      features: [
-        'Manhattan merkezi konum',
-        'Empire State Building yakını',
-        'Modern sınıflar ve teknoloji',
-        'Küçük sınıflar',
-        'Geniş kurs seçenekleri',
-      ],
-      courses: [
-        { name: 'Genel İngilizce', description: 'Haftada 20 ders', hours: '20 ders/hafta' },
-        { name: 'Yoğun İngilizce', description: 'Haftada 30 ders', hours: '30 ders/hafta' },
-        { name: 'IELTS Hazırlık', description: 'IELTS sınav hazırlığı', hours: '20 ders/hafta' },
-      ],
-      accommodation: [
-        { type: 'Aile Yanı', description: 'Kahvaltı ve akşam yemeği dahil' },
-        { type: 'Öğrenci Yurdu', description: 'Manhattan\'da öğrenci yurdu' },
-      ],
-      facilities: [
-        'Modern sınıflar',
-        'Öğrenci salonu',
-        'WiFi',
-      ],
-      location: 'Manhattan, New York',
-      accreditation: ['ACCET', 'CEA'],
-    },
-  },
-  ingiltere: {
-    'ec-english-london': {
-      name: 'EC English - London',
-      country: 'İngiltere',
-      city: 'Londra',
-      flag: '🇬🇧',
-      description: 'Covent Garden merkezinde konumlanan EC English London, İngiliz kültürünü yakından tanıma fırsatı sunan modern bir dil okuludur.',
-      features: [
-        'Covent Garden merkezi',
-        'Tarihi bölge yakını',
-        'Modern tesisler',
-        'Deneyimli öğretmenler',
-      ],
-      courses: [
-        { name: 'Genel İngilizce', description: 'Haftada 20 ders', hours: '20 ders/hafta' },
-        { name: 'Yoğun İngilizce', description: 'Haftada 30 ders', hours: '30 ders/hafta' },
-      ],
-      accommodation: [
-        { type: 'Aile Yanı', description: 'Yerel aile yanında konaklama' },
-      ],
-      facilities: [
-        'Modern sınıflar',
-        'WiFi',
-      ],
-      location: 'Covent Garden, Londra',
-      accreditation: ['British Council'],
-    },
-  },
-};
+import { use, useEffect, useState } from 'react';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { slugify } from '@/utils/format';
 
 export default function SchoolDetailPage({ params }: { params: Promise<{ country: string; school: string }> }) {
   const { country, school } = use(params);
-  const data = schoolData[country.toLowerCase()]?.[school.toLowerCase()];
+  const [data, setData] = useState<{
+    name: string;
+    country: string;
+    city: string;
+    flag: string;
+    description: string;
+    features: string[];
+    courses: Array<{ name: string; description: string; hours: string }>;
+    accommodation: Array<{ type: string; description: string }>;
+    facilities: string[];
+    location: string;
+    established?: string;
+    students?: string;
+    accreditation?: string[];
+  } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDetail = async () => {
+      setIsLoading(true);
+      try {
+        const schoolId = Number(school);
+        if (!Number.isNaN(schoolId)) {
+          const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.languageSchoolById(schoolId)}`);
+          const schoolData = await res.json();
+          setData({
+            name: schoolData.name,
+            country: schoolData.countryName || country,
+            city: schoolData.cityName || '',
+            flag: schoolData.flag || '🌍',
+            description: schoolData.description || '',
+            features: schoolData.features || [],
+            courses: schoolData.courses || [],
+            accommodation: schoolData.accommodation || [],
+            facilities: schoolData.facilities || [],
+            location: schoolData.location || '',
+            established: schoolData.established,
+            students: schoolData.students,
+            accreditation: schoolData.accreditation || []
+          });
+          return;
+        }
+
+        const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.languageSchools}`);
+        const list = await res.json();
+        const match = list.find((item: any) => {
+          const itemCountrySlug = item.countrySlug || slugify(item.countryName || '');
+          return itemCountrySlug === country.toLowerCase() && slugify(item.name || '') === school.toLowerCase();
+        });
+
+        if (match) {
+          setData({
+            name: match.name,
+            country: match.countryName || country,
+            city: match.cityName || '',
+            flag: match.flag || '🌍',
+            description: match.description || '',
+            features: match.features || [],
+            courses: match.courses || [],
+            accommodation: match.accommodation || [],
+            facilities: match.facilities || [],
+            location: match.location || '',
+            established: match.established,
+            students: match.students,
+            accreditation: match.accreditation || []
+          });
+        } else {
+          setData(null);
+        }
+      } catch (error) {
+        console.error('Dil okulu detay yüklenemedi:', error);
+        setData(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchDetail();
+  }, [country, school]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+          <p className="text-gray-600 font-bold">Yükleniyor...</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!data) {
     return (
@@ -222,9 +194,9 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
             <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">✨ Okul Özellikleri</h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {data.features.map((feature, index) => (
-              <div key={index} className="p-4 bg-purple-50 border-4 border-purple-200 transform hover:-skew-x-1 transition-all duration-200">
+              <div key={index} className="p-3 bg-purple-50 border-4 border-purple-200 transform hover:-skew-x-1 transition-all duration-200">
                 <div className="transform skew-x-1">
                   <div className="flex items-start">
                     <span className="text-purple-600 mr-3 font-black text-xl">✓</span>
@@ -244,9 +216,9 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
             <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📚 Kurs Programları</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {data.courses.map((course, index) => (
-              <div key={index} className="p-6 bg-gray-50 border-4 border-gray-300 transform hover:-skew-x-1 transition-all duration-200">
+              <div key={index} className="p-5 bg-gray-50 border-4 border-gray-300 transform hover:-skew-x-1 transition-all duration-200">
                 <div className="transform skew-x-1">
                   <div className="flex items-start justify-between mb-3">
                     <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">{course.name}</h3>
@@ -267,9 +239,9 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
             <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🏠 Konaklama Seçenekleri</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {data.accommodation.map((acc, index) => (
-              <div key={index} className="p-6 bg-gray-50 border-4 border-gray-300 transform hover:-skew-x-1 transition-all duration-200">
+              <div key={index} className="p-5 bg-gray-50 border-4 border-gray-300 transform hover:-skew-x-1 transition-all duration-200">
                 <div className="transform skew-x-1">
                   <h3 className="text-xl font-black text-gray-900 mb-3 uppercase tracking-tight">{acc.type}</h3>
                   <p className="text-gray-700 font-medium leading-relaxed">{acc.description}</p>
@@ -289,7 +261,7 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
               <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🏢 Tesisler</h2>
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               {data.facilities.map((facility, index) => (
                 <div key={index} className="p-4 bg-blue-50 border-2 border-blue-200">
                   <div className="flex items-center">

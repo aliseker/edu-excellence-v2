@@ -5,125 +5,82 @@ import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
-import { use } from 'react';
-
-// Mock data - Later this will come from API
-const countryData: Record<string, { name: string; flag: string; regions: Array<{ name: string; schools: Array<{ name: string; slug: string; description: string; image?: string }> }> }> = {
-  amerika: {
-    name: 'Amerika',
-    flag: '🇺🇸',
-    regions: [
-      {
-        name: 'New York',
-        schools: [
-          { name: 'LSI Language Studies International - New York', slug: 'lsi-language-studies-international-new-york', description: 'Manhattan merkezinde, modern tesisler ve deneyimli öğretmen kadrosu ile İngilizce eğitimi.' },
-          { name: 'Kaplan International - New York', slug: 'kaplan-international-new-york', description: 'Empire State Building yakınında, yoğun ve genel İngilizce programları.' },
-        ]
-      },
-      {
-        name: 'Boston',
-        schools: [
-          { name: 'LSI Language Studies International - Boston', slug: 'lsi-language-studies-international-boston', description: 'Tarihi şehir merkezinde, üniversite ortamında dil öğrenme imkanı.' },
-          { name: 'EC English - Boston', slug: 'ec-english-boston', description: 'Prestijli Back Bay bölgesinde, modern sınıflar ve kültürel aktiviteler.' },
-        ]
-      },
-      {
-        name: 'Los Angeles',
-        schools: [
-          { name: 'Kaplan International - Los Angeles', slug: 'kaplan-international-los-angeles', description: 'Hollywood yakınında, güneşli iklim ve plaj aktiviteleri ile birleşen eğitim.' },
-          { name: 'EC English - Los Angeles', slug: 'ec-english-los-angeles', description: 'Santa Monica bölgesinde, eğlence ve eğitimin birleştiği okul.' },
-        ]
-      },
-    ]
-  },
-  ingiltere: {
-    name: 'İngiltere',
-    flag: '🇬🇧',
-    regions: [
-      {
-        name: 'Londra',
-        schools: [
-          { name: 'EC English - London', slug: 'ec-english-london', description: 'Covent Garden merkezinde, İngiliz kültürünü yakından tanıma fırsatı.' },
-          { name: 'Kaplan International - London', slug: 'kaplan-international-london', description: 'Trafalgar Square yakınında, şehir merkezi konumu.' },
-        ]
-      },
-      {
-        name: 'Cambridge',
-        schools: [
-          { name: 'EC English - Cambridge', slug: 'ec-english-cambridge', description: 'Üniversite şehri atmosferinde, akademik İngilizce programları.' },
-        ]
-      },
-      {
-        name: 'Brighton',
-        schools: [
-          { name: 'EC English - Brighton', slug: 'ec-english-brighton', description: 'Sahil kenti, rahat atmosfer ve plaj aktiviteleri.' },
-        ]
-      },
-    ]
-  },
-  kanada: {
-    name: 'Kanada',
-    flag: '🇨🇦',
-    regions: [
-      {
-        name: 'Toronto',
-        schools: [
-          { name: 'ILAC - Toronto', slug: 'ilac-toronto', description: 'Dünya standartlarında eğitim, çok kültürlü şehir deneyimi.' },
-          { name: 'EC English - Toronto', slug: 'ec-english-toronto', description: 'Downtown konumu, modern tesisler ve profesyonel eğitim.' },
-        ]
-      },
-      {
-        name: 'Vancouver',
-        schools: [
-          { name: 'ILAC - Vancouver', slug: 'ilac-vancouver', description: 'Doğal güzellikler ve modern şehir yaşamının birleştiği okul.' },
-          { name: 'Kaplan International - Vancouver', slug: 'kaplan-international-vancouver', description: 'Körfez manzaralı, sıcak atmosfer ve kaliteli eğitim.' },
-        ]
-      },
-    ]
-  },
-  irlanda: {
-    name: 'İrlanda',
-    flag: '🇮🇪',
-    regions: [
-      {
-        name: 'Dublin',
-        schools: [
-          { name: 'EC English - Dublin', slug: 'ec-english-dublin', description: 'Tarihi şehir merkezinde, İrlanda kültürünü keşfedin.' },
-        ]
-      },
-    ]
-  },
-  malta: {
-    name: 'Malta',
-    flag: '🇲🇹',
-    regions: [
-      {
-        name: 'St. Julian\'s',
-        schools: [
-          { name: 'EC English - Malta', slug: 'ec-english-malta', description: 'Akdeniz iklimi, plaj aktiviteleri ve İngilizce eğitimi.' },
-        ]
-      },
-    ]
-  },
-  avustralya: {
-    name: 'Avustralya',
-    flag: '🇦🇺',
-    regions: [
-      {
-        name: 'Sydney',
-        schools: [
-          { name: 'EC English - Sydney', slug: 'ec-english-sydney', description: 'Opera House yakınında, muhteşem liman manzarası.' },
-        ]
-      },
-    ]
-  },
-};
+import { use, useEffect, useState } from 'react';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { slugify } from '@/utils/format';
 
 export default function CountryPage({ params }: { params: Promise<{ country: string }> }) {
   const { country } = use(params);
-  const data = countryData[country.toLowerCase()];
+  const [countryName, setCountryName] = useState('');
+  const [countryFlag, setCountryFlag] = useState('🌍');
+  const [regions, setRegions] = useState<Array<{ name: string; schools: Array<{ id: number; name: string; description: string }> }>>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
-  if (!data) {
+  useEffect(() => {
+    const fetchSchools = async () => {
+      setIsLoading(true);
+      setNotFound(false);
+      try {
+        const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.languageSchools}`);
+        const data = await res.json();
+        const slug = country.toLowerCase();
+        const filtered = data.filter((school: any) => {
+          const schoolCountrySlug = school.countrySlug || slugify(school.countryName || '');
+          return schoolCountrySlug === slug;
+        });
+
+        if (filtered.length === 0) {
+          setNotFound(true);
+          setRegions([]);
+          return;
+        }
+
+        setCountryName(filtered[0].countryName || slug);
+        setCountryFlag(filtered[0].flag || '🌍');
+
+        const regionMap = new Map<string, Array<{ id: number; name: string; description: string }>>();
+        filtered.forEach((school: any) => {
+          const region = school.cityName || 'Diğer';
+          if (!regionMap.has(region)) {
+            regionMap.set(region, []);
+          }
+          regionMap.get(region)!.push({
+            id: school.id,
+            name: school.name,
+            description: school.description || ''
+          });
+        });
+
+        const regionList = Array.from(regionMap.entries()).map(([name, schools]) => ({
+          name,
+          schools
+        }));
+        setRegions(regionList);
+      } catch (error) {
+        console.error('Dil okulları yüklenemedi:', error);
+        setNotFound(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSchools();
+  }, [country]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+          <p className="text-gray-600 font-bold">Yükleniyor...</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (notFound) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
@@ -157,10 +114,10 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
             ← Dil Okulları
           </Link>
           <div className="inline-block px-5 py-2.5 bg-white/20 backdrop-blur-sm border-4 border-white/30 transform -skew-x-12 mb-6">
-            <span className="transform skew-x-12 text-sm font-black uppercase tracking-wider">{data.flag} {data.name}</span>
+            <span className="transform skew-x-12 text-sm font-black uppercase tracking-wider">{countryFlag} {countryName}</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight drop-shadow-[4px_4px_0_rgba(0,0,0,0.3)]">
-            {data.name.toUpperCase()}'DA
+            {countryName.toUpperCase()}'DA
             <br />
             <span className="relative inline-block">
               <span className="absolute inset-0 bg-white/30 transform -skew-x-12 -z-10"></span>
@@ -168,7 +125,7 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
             </span>
           </h1>
           <p className="text-lg md:text-xl text-purple-100 font-medium max-w-2xl">
-            {data.name}'daki tüm dil okullarımızı bölgelere göre keşfedin.
+            {countryName}'daki tüm dil okullarımızı bölgelere göre keşfedin.
           </p>
         </div>
       </section>
@@ -176,7 +133,7 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
       {/* Regions & Schools */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="space-y-12">
-          {data.regions.map((region, regionIndex) => (
+          {regions.map((region, regionIndex) => (
             <div key={regionIndex} className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10">
               {/* Region Header */}
               <div className="inline-block px-5 py-2.5 bg-purple-600 text-white border-4 border-purple-800 transform -skew-x-12 mb-6">
@@ -190,7 +147,7 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
                 {region.schools.map((school, schoolIndex) => (
                   <Link
                     key={schoolIndex}
-                    href={`/dil-okulu/${country}/${school.slug}`}
+                    href={`/dil-okulu/${country}/${school.id}`}
                     className="group p-6 bg-gray-50 border-4 border-gray-300 hover:border-purple-600 transition-all duration-200 transform hover:-skew-x-1 hover:shadow-lg"
                   >
                     <div className="transform group-hover:skew-x-1">
@@ -219,7 +176,7 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="bg-gradient-to-r from-purple-600 to-violet-600 border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-10 text-center">
           <h2 className="text-3xl md:text-4xl font-black text-white mb-4 uppercase tracking-wider">
-            {data.name}'da Dil Eğitimi Alın
+            {countryName}'da Dil Eğitimi Alın
           </h2>
           <p className="text-xl text-purple-100 mb-8 font-medium">
             Size en uygun okulu seçin ve başvurunuzu yapın

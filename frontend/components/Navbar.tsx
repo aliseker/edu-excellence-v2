@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { slugify } from '@/utils/format';
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -61,38 +63,50 @@ const Navbar = () => {
     ],
   };
 
-  // Dil Okulu nested dropdown verileri
-  const languageSchoolCountries = {
-    ingiltere: [
-      { title: 'EC English - London', href: '/dil-okulu/ingiltere/ec-english-london' },
-      { title: 'Kaplan International - London', href: '/dil-okulu/ingiltere/kaplan-international-london' },
-      { title: 'EC English - Cambridge', href: '/dil-okulu/ingiltere/ec-english-cambridge' },
-      { title: 'EC English - Brighton', href: '/dil-okulu/ingiltere/ec-english-brighton' },
-    ],
-    amerika: [
-      { title: 'LSI Language Studies International - New York', href: '/dil-okulu/amerika/lsi-language-studies-international-new-york' },
-      { title: 'Kaplan International - New York', href: '/dil-okulu/amerika/kaplan-international-new-york' },
-      { title: 'LSI Language Studies International - Boston', href: '/dil-okulu/amerika/lsi-language-studies-international-boston' },
-      { title: 'EC English - Boston', href: '/dil-okulu/amerika/ec-english-boston' },
-      { title: 'Kaplan International - Los Angeles', href: '/dil-okulu/amerika/kaplan-international-los-angeles' },
-      { title: 'EC English - Los Angeles', href: '/dil-okulu/amerika/ec-english-los-angeles' },
-    ],
-    kanada: [
-      { title: 'ILAC - Toronto', href: '/dil-okulu/kanada/ilac-toronto' },
-      { title: 'EC English - Toronto', href: '/dil-okulu/kanada/ec-english-toronto' },
-      { title: 'ILAC - Vancouver', href: '/dil-okulu/kanada/ilac-vancouver' },
-      { title: 'Kaplan International - Vancouver', href: '/dil-okulu/kanada/kaplan-international-vancouver' },
-    ],
-    irlanda: [
-      { title: 'EC English - Dublin', href: '/dil-okulu/irlanda/ec-english-dublin' },
-    ],
-    malta: [
-      { title: 'EC English - Malta', href: '/dil-okulu/malta/ec-english-malta' },
-    ],
-    avustralya: [
-      { title: 'EC English - Sydney', href: '/dil-okulu/avustralya/ec-english-sydney' },
-    ],
-  };
+  const [languageSchoolDropdown, setLanguageSchoolDropdown] = useState<
+    Array<{ title: string; href: string; submenu?: Array<{ title: string; href: string }> }>
+  >([]);
+
+  useEffect(() => {
+    const fetchLanguageSchools = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.languageSchools}`);
+        const data = await res.json();
+        const countryMap = new Map<string, { name: string; slug: string; schools: Array<{ title: string; href: string }> }>();
+
+        data.forEach((school: any) => {
+          const countrySlug = school.countrySlug || slugify(school.countryName || '');
+          if (!countrySlug) {
+            return;
+          }
+          const countryName = school.countryName || countrySlug;
+          const schoolHref = `/dil-okulu/${countrySlug}/${school.id}`;
+
+          if (!countryMap.has(countrySlug)) {
+            countryMap.set(countrySlug, { name: countryName, slug: countrySlug, schools: [] });
+          }
+          countryMap.get(countrySlug)!.schools.push({
+            title: school.name,
+            href: schoolHref
+          });
+        });
+
+        const dropdown = Array.from(countryMap.values())
+          .sort((a, b) => a.name.localeCompare(b.name, 'tr'))
+          .map((country) => ({
+            title: country.name,
+            href: `/dil-okulu/${country.slug}`,
+            submenu: country.schools
+          }));
+
+        setLanguageSchoolDropdown(dropdown);
+      } catch (error) {
+        console.error('Dil okulları menüsü yüklenemedi:', error);
+      }
+    };
+
+    fetchLanguageSchools();
+  }, []);
 
   // Yaz Okulu nested dropdown verileri
   const summerSchoolCountries = {
@@ -186,12 +200,7 @@ const Navbar = () => {
       href: '/dil-okulu',
       dropdown: [
         { title: 'Neden Dil Eğitimi?', href: '/dil-okulu' },
-        { title: 'İngiltere', href: '/dil-okulu/ingiltere', submenu: languageSchoolCountries.ingiltere },
-        { title: 'Amerika', href: '/dil-okulu/amerika', submenu: languageSchoolCountries.amerika },
-        { title: 'Kanada', href: '/dil-okulu/kanada', submenu: languageSchoolCountries.kanada },
-        { title: 'İrlanda', href: '/dil-okulu/irlanda', submenu: languageSchoolCountries.irlanda },
-        { title: 'Malta', href: '/dil-okulu/malta', submenu: languageSchoolCountries.malta },
-        { title: 'Avustralya', href: '/dil-okulu/avustralya', submenu: languageSchoolCountries.avustralya },
+        ...languageSchoolDropdown,
       ]
     },
     { 

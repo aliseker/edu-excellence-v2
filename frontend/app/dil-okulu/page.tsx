@@ -5,16 +5,39 @@ import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { slugify } from '@/utils/format';
 
 export default function DilOkuluPage() {
-  const countries = [
-    { name: 'İngiltere', flag: '🇬🇧', slug: 'ingiltere' },
-    { name: 'Amerika', flag: '🇺🇸', slug: 'amerika' },
-    { name: 'Kanada', flag: '🇨🇦', slug: 'kanada' },
-    { name: 'İrlanda', flag: '🇮🇪', slug: 'irlanda' },
-    { name: 'Malta', flag: '🇲🇹', slug: 'malta' },
-    { name: 'Avustralya', flag: '🇦🇺', slug: 'avustralya' },
-  ];
+  const [countries, setCountries] = useState<Array<{ name: string; flag: string; slug: string }>>([]);
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.languageSchools}`);
+        const data = await res.json();
+        const map = new Map<string, { name: string; flag: string; slug: string }>();
+        data.forEach((school: any) => {
+          const slug = school.countrySlug || slugify(school.countryName || '');
+          if (!slug) {
+            return;
+          }
+          if (!map.has(slug)) {
+            map.set(slug, {
+              name: school.countryName || slug,
+              flag: school.flag || '🌍',
+              slug
+            });
+          }
+        });
+        setCountries(Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name, 'tr')));
+      } catch (error) {
+        console.error('Dil okulu ülkeleri yüklenemedi:', error);
+      }
+    };
+    fetchCountries();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
