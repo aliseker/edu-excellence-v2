@@ -131,6 +131,20 @@ class ApiService {
     return this.request(API_ENDPOINTS.masterProgramById(id));
   }
 
+  // Internship Programs
+  async getInternshipPrograms(filters?: {
+    country?: string;
+    search?: string;
+  }) {
+    return this.request(API_ENDPOINTS.internshipPrograms, {
+      params: filters as Record<string, string>,
+    });
+  }
+
+  async getInternshipProgramById(id: number) {
+    return this.request(API_ENDPOINTS.internshipProgramById(id));
+  }
+
   // Visa Services
   async getVisaServices(filters?: {
     country?: string;

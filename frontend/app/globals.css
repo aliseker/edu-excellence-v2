@@ -29,6 +29,55 @@ html {
   }
 }
 
+@layer components {
+  .admin-panel .bg-white {
+    @apply bg-white/80 backdrop-blur;
+  }
+
+  .admin-panel .border-2 {
+    @apply border;
+  }
+
+  .admin-panel .border-gray-200 {
+    @apply border-slate-200;
+  }
+
+  .admin-panel .rounded-xl {
+    @apply rounded-2xl;
+  }
+
+  .admin-panel .text-gray-900 {
+    @apply text-slate-900;
+  }
+
+  .admin-panel .text-gray-700 {
+    @apply text-slate-700;
+  }
+
+  .admin-panel .text-gray-600 {
+    @apply text-slate-600;
+  }
+
+  .admin-panel input,
+  .admin-panel select,
+  .admin-panel textarea {
+    @apply rounded-xl border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100;
+  }
+
+  .admin-panel button,
+  .admin-panel a {
+    @apply rounded-xl transition;
+  }
+
+  .admin-panel thead {
+    @apply bg-slate-900 text-white;
+  }
+
+  .admin-panel th {
+    @apply font-black tracking-wide;
+  }
+}
+
 /* Custom Animations */
 @keyframes slide-in {
   from {

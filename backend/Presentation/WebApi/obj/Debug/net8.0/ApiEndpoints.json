@@ -164,6 +164,85 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.InternshipProgramsController",
+    "Method": "GetAll",
+    "RelativePath": "api/internship-programs",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.InternshipProgramsController",
+    "Method": "Create",
+    "RelativePath": "api/internship-programs",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "EduExcellenceV2.Application.DTOs.InternshipProgramCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.InternshipProgramsController",
+    "Method": "GetById",
+    "RelativePath": "api/internship-programs/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.InternshipProgramsController",
+    "Method": "Update",
+    "RelativePath": "api/internship-programs/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EduExcellenceV2.Application.DTOs.InternshipProgramCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.InternshipProgramsController",
+    "Method": "Delete",
+    "RelativePath": "api/internship-programs/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.LanguageSchoolsController",
     "Method": "GetAll",
     "RelativePath": "api/language-schools",

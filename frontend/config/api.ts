@@ -30,6 +30,10 @@ export const API_ENDPOINTS = {
   // Master/MBA
   masterPrograms: '/master-programs',
   masterProgramById: (id: number) => `/master-programs/${id}`,
+
+  // Internship Programs
+  internshipPrograms: '/internship-programs',
+  internshipProgramById: (id: number) => `/internship-programs/${id}`,
   
   // Visa
   visaServices: '/visa-services',

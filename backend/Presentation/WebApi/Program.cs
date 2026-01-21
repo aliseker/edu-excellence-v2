@@ -12,6 +12,7 @@ builder.Services.AddScoped<ILanguageSchoolService, LanguageSchoolService>();
 builder.Services.AddScoped<ISummerSchoolService, SummerSchoolService>();
 builder.Services.AddScoped<IUniversityService, UniversityService>();
 builder.Services.AddScoped<IMasterProgramService, MasterProgramService>();
+builder.Services.AddScoped<IInternshipProgramService, InternshipProgramService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<ICountryService, CountryService>();
 builder.Services.AddScoped<ICityService, CityService>();

@@ -1,13 +1,75 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 
 export default function StajPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState<number | ''>('');
+  const [programs, setPrograms] = useState<any[]>([]);
+  const [countries, setCountries] = useState<Array<{ id: number; name?: string; label?: string }>>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const stajlar: any[] = [];
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const [programsRes, countriesRes] = await Promise.all([
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.internshipPrograms}`),
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.locationCountries}`),
+        ]);
+
+        if (!programsRes.ok) {
+          throw new Error('Programlar yüklenemedi.');
+        }
+
+        const programsData = await programsRes.json();
+        const countriesData = await countriesRes.json();
+        setPrograms(programsData);
+        setCountries(countriesData);
+      } catch (err) {
+        console.error('Staj programları yüklenemedi:', err);
+        setError('Programlar yüklenirken bir hata oluştu.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const filteredPrograms = useMemo(() => {
+    return programs.filter((program) => {
+      const matchesCountry = selectedCountry ? program.countryId === selectedCountry : true;
+      const query = searchQuery.trim().toLowerCase();
+      const matchesSearch = query
+        ? (program.generalInfo || '').toLowerCase().includes(query) ||
+          (program.programs || []).some((p: any) => (p.title || '').toLowerCase().includes(query))
+        : true;
+      return matchesCountry && matchesSearch;
+    });
+  }, [programs, searchQuery, selectedCountry]);
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('Bu programı silmek istediğinizden emin misiniz?')) {
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.internshipProgramById(id)}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) {
+        throw new Error('Program silinemedi.');
+      }
+      setPrograms(prev => prev.filter(item => item.id !== id));
+    } catch (err) {
+      console.error('Program silinirken hata oluştu:', err);
+      alert('Program silinirken bir hata oluştu.');
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -40,13 +102,15 @@ export default function StajPage() {
             <label className="block text-sm font-semibold text-gray-700 mb-2">Ülke</label>
             <select
               value={selectedCountry}
-              onChange={(e) => setSelectedCountry(e.target.value)}
+              onChange={(e) => setSelectedCountry(e.target.value ? Number(e.target.value) : '')}
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-teal-600"
             >
               <option value="">Tüm Ülkeler</option>
-              <option value="ingiltere">İngiltere</option>
-              <option value="amerika">Amerika</option>
-              <option value="kanada">Kanada</option>
+              {countries.map((country) => (
+                <option key={country.id} value={country.id}>
+                  {country.name ?? country.label ?? 'Ülke'}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex items-end">
@@ -62,33 +126,43 @@ export default function StajPage() {
           <table className="w-full">
             <thead className="bg-gray-900 text-white">
               <tr>
-                <th className="px-6 py-4 text-left font-black">ID</th>
                 <th className="px-6 py-4 text-left font-black">Program Adı</th>
                 <th className="px-6 py-4 text-left font-black">Ülke</th>
-                <th className="px-6 py-4 text-left font-black">Sektör</th>
+                <th className="px-6 py-4 text-left font-black">Program Sayısı</th>
                 <th className="px-6 py-4 text-left font-black">Durum</th>
                 <th className="px-6 py-4 text-left font-black">İşlemler</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {stajlar.length === 0 ? (
+              {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                    Yükleniyor...
+                  </td>
+                </tr>
+              ) : error ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center text-red-600">
+                    {error}
+                  </td>
+                </tr>
+              ) : filteredPrograms.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
                     <div className="text-4xl mb-4">💼</div>
                     <p className="font-semibold">Henüz staj programı eklenmemiş</p>
                     <p className="text-sm mt-2">İlk staj programını eklemek için "Yeni Staj Programı Ekle" butonuna tıklayın</p>
                   </td>
                 </tr>
               ) : (
-                stajlar.map((staj) => (
+                filteredPrograms.map((staj) => (
                   <tr key={staj.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 font-semibold">{staj.id}</td>
-                    <td className="px-6 py-4 font-semibold">{staj.name}</td>
-                    <td className="px-6 py-4">{staj.country}</td>
-                    <td className="px-6 py-4">{staj.sector}</td>
+                    <td className="px-6 py-4 font-semibold">{staj.programs?.[0]?.title ?? 'Program'}</td>
+                    <td className="px-6 py-4">{staj.countryName ?? '-'}</td>
+                    <td className="px-6 py-4">{staj.programs?.length ?? 0}</td>
                     <td className="px-6 py-4">
-                      <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">
-                        Aktif
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${staj.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-700'}`}>
+                        {staj.status === 'active' ? 'Aktif' : 'Pasif'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
@@ -99,7 +173,11 @@ export default function StajPage() {
                         >
                           Düzenle
                         </Link>
-                        <button className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold">
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(staj.id)}
+                          className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold"
+                        >
                           Sil
                         </button>
                       </div>

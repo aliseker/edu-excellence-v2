@@ -14,6 +14,7 @@ public class EduExcellenceDbContext : DbContext
     public DbSet<SummerSchool> SummerSchools => Set<SummerSchool>();
     public DbSet<University> Universities => Set<University>();
     public DbSet<MasterProgram> MasterPrograms => Set<MasterProgram>();
+    public DbSet<InternshipProgram> InternshipPrograms => Set<InternshipProgram>();
     public DbSet<CountryEntity> Countries => Set<CountryEntity>();
     public DbSet<City> Cities => Set<City>();
 

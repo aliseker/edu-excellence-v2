@@ -114,13 +114,21 @@ const AdminSidebar = () => {
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="p-4 border-b border-gray-800 flex items-center justify-between">
+      <div className="p-4 border-b border-slate-800/70 flex items-center justify-between">
         {!isCollapsed && (
-          <h1 className="text-xl font-black text-white">Admin Panel</h1>
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black">
+              A
+            </div>
+            <div>
+              <h1 className="text-base font-black text-white">Admin Panel</h1>
+              <p className="text-xs text-slate-400 font-semibold">Edu-Excellence</p>
+            </div>
+          </div>
         )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-2 hover:bg-gray-800 rounded transition-colors hidden md:block"
+          className="p-2 hover:bg-slate-800 rounded-lg transition-colors hidden md:block"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isCollapsed ? "M9 5l7 7-7 7" : "M15 19l-7-7 7-7"} />
@@ -128,7 +136,7 @@ const AdminSidebar = () => {
         </button>
         <button
           onClick={() => setIsMobileOpen(false)}
-          className="p-2 hover:bg-gray-800 rounded transition-colors md:hidden"
+          className="p-2 hover:bg-slate-800 rounded-lg transition-colors md:hidden"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -137,20 +145,20 @@ const AdminSidebar = () => {
       </div>
 
         {/* Menu Items */}
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                className={`flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all duration-200 ${
                   isActive
-                    ? 'bg-purple-600 text-white shadow-lg'
-                    : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                    ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/20'
+                    : 'text-slate-300 hover:bg-slate-800/70 hover:text-white'
                 }`}
               >
-                <span className="flex-shrink-0">{item.icon}</span>
+                <span className={`flex-shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`}>{item.icon}</span>
                 {!isCollapsed && <span className="font-semibold">{item.title}</span>}
               </Link>
             );
@@ -158,10 +166,10 @@ const AdminSidebar = () => {
         </nav>
 
         {/* Logout */}
-        <div className="p-4 border-t border-gray-800">
+        <div className="p-4 border-t border-slate-800/70">
           <Link
             href="/admin/login"
-            className="flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200"
+            className="flex items-center space-x-3 px-4 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800/70 hover:text-white transition-all duration-200"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -177,7 +185,7 @@ const AdminSidebar = () => {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsMobileOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-50 bg-gray-900 text-white p-3 rounded-lg shadow-lg"
+        className="md:hidden fixed top-4 left-4 z-50 bg-slate-900/90 text-white p-3 rounded-xl shadow-lg backdrop-blur"
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -185,7 +193,7 @@ const AdminSidebar = () => {
       </button>
 
       {/* Desktop Sidebar */}
-      <aside className={`bg-gray-900 text-white transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'} min-h-screen fixed left-0 top-0 z-40 hidden md:block`}>
+      <aside className={`bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'} min-h-screen fixed left-0 top-0 z-40 hidden md:block`}>
         <SidebarContent />
       </aside>
 
@@ -193,10 +201,10 @@ const AdminSidebar = () => {
       {isMobileOpen && (
         <>
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+            className="fixed inset-0 bg-black/60 z-40 md:hidden"
             onClick={() => setIsMobileOpen(false)}
           />
-          <aside className="bg-gray-900 text-white w-64 min-h-screen fixed left-0 top-0 z-50 md:hidden">
+          <aside className="bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white w-64 min-h-screen fixed left-0 top-0 z-50 md:hidden">
             <SidebarContent />
           </aside>
         </>

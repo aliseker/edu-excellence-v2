@@ -59,10 +59,10 @@ export default function AdminDashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-black text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">Hoş geldiniz, Admin</p>
+          <h1 className="text-3xl font-black text-slate-900">Dashboard</h1>
+          <p className="text-slate-600 mt-1">Hoş geldiniz, Admin</p>
         </div>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-slate-500 bg-white/70 border border-slate-200 px-3 py-1.5 rounded-full shadow-sm">
           {new Date().toLocaleDateString('tr-TR', { 
             weekday: 'long', 
             year: 'numeric', 
@@ -78,14 +78,14 @@ export default function AdminDashboardPage() {
           <Link
             key={index}
             href={stat.href}
-            className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-gray-200 hover:border-purple-600 group"
+            className="bg-white/80 backdrop-blur p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 border border-slate-200 hover:border-indigo-400 group"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-gray-600 mb-1">{stat.title}</p>
-                <p className="text-3xl font-black text-gray-900">{stat.value}</p>
+                <p className="text-sm font-semibold text-slate-600 mb-1">{stat.title}</p>
+                <p className="text-3xl font-black text-slate-900">{stat.value}</p>
               </div>
-              <div className={`${stat.color} w-16 h-16 rounded-lg flex items-center justify-center text-3xl group-hover:scale-110 transition-transform`}>
+              <div className={`${stat.color} w-14 h-14 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-md`}>
                 {stat.icon}
               </div>
             </div>
@@ -94,58 +94,58 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Recent Activities */}
-      <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-gray-200">
-        <h2 className="text-xl font-black text-gray-900 mb-4">Son Aktiviteler</h2>
+      <div className="bg-white/80 backdrop-blur rounded-2xl shadow-lg p-6 border border-slate-200">
+        <h2 className="text-xl font-black text-slate-900 mb-4">Son Aktiviteler</h2>
         <div className="space-y-3">
           {recentActivities.map((activity, index) => (
             <div
               key={index}
-              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              className="flex items-center justify-between p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors"
             >
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
                 <div>
-                  <p className="font-semibold text-gray-900">{activity.type}</p>
-                  <p className="text-sm text-gray-600">{activity.action}</p>
+                  <p className="font-semibold text-slate-900">{activity.type}</p>
+                  <p className="text-sm text-slate-600">{activity.action}</p>
                 </div>
               </div>
-              <span className="text-sm text-gray-500">{activity.time}</span>
+              <span className="text-sm text-slate-500">{activity.time}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-gray-200">
-        <h2 className="text-xl font-black text-gray-900 mb-4">Hızlı İşlemler</h2>
+      <div className="bg-white/80 backdrop-blur rounded-2xl shadow-lg p-6 border border-slate-200">
+        <h2 className="text-xl font-black text-slate-900 mb-4">Hızlı İşlemler</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
             href="/admin/dil-okullari?action=create"
-            className="p-4 bg-purple-50 border-2 border-purple-200 rounded-lg hover:bg-purple-100 transition-colors text-center"
+            className="p-4 bg-purple-50 border border-purple-200 rounded-2xl hover:bg-purple-100 transition-colors text-center shadow-sm"
           >
             <div className="text-2xl mb-2">➕</div>
-            <p className="font-semibold text-gray-900">Yeni Dil Okulu</p>
+            <p className="font-semibold text-slate-900">Yeni Dil Okulu</p>
           </Link>
           <Link
             href="/admin/blog?action=create"
-            className="p-4 bg-green-50 border-2 border-green-200 rounded-lg hover:bg-green-100 transition-colors text-center"
+            className="p-4 bg-green-50 border border-green-200 rounded-2xl hover:bg-green-100 transition-colors text-center shadow-sm"
           >
             <div className="text-2xl mb-2">📝</div>
-            <p className="font-semibold text-gray-900">Yeni Blog Yazısı</p>
+            <p className="font-semibold text-slate-900">Yeni Blog Yazısı</p>
           </Link>
           <Link
             href="/admin/universite?action=create"
-            className="p-4 bg-blue-50 border-2 border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-center"
+            className="p-4 bg-blue-50 border border-blue-200 rounded-2xl hover:bg-blue-100 transition-colors text-center shadow-sm"
           >
             <div className="text-2xl mb-2">🏛️</div>
-            <p className="font-semibold text-gray-900">Yeni Üniversite</p>
+            <p className="font-semibold text-slate-900">Yeni Üniversite</p>
           </Link>
           <Link
             href="/admin/galeri?action=upload"
-            className="p-4 bg-pink-50 border-2 border-pink-200 rounded-lg hover:bg-pink-100 transition-colors text-center"
+            className="p-4 bg-pink-50 border border-pink-200 rounded-2xl hover:bg-pink-100 transition-colors text-center shadow-sm"
           >
             <div className="text-2xl mb-2">🖼️</div>
-            <p className="font-semibold text-gray-900">Galeriye Resim Ekle</p>
+            <p className="font-semibold text-slate-900">Galeriye Resim Ekle</p>
           </Link>
         </div>
       </div>
