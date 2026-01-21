@@ -41,6 +41,9 @@ const Navbar = () => {
   const [masterMbaDropdown, setMasterMbaDropdown] = useState<
     Array<{ title: string; href: string; submenu?: Array<{ title: string; href: string }> }>
   >([]);
+  const [internshipDropdown, setInternshipDropdown] = useState<
+    Array<{ title: string; href: string }>
+  >([]);
 
   useEffect(() => {
     const fetchLanguageSchools = async () => {
@@ -220,6 +223,47 @@ const Navbar = () => {
     fetchMasterPrograms();
   }, []);
 
+  useEffect(() => {
+    const fetchInternshipPrograms = async () => {
+      try {
+        const [programsRes, countriesRes] = await Promise.all([
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.internshipPrograms}`),
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.countries}`)
+        ]);
+        const programs = await programsRes.json();
+        const countries = await countriesRes.json();
+        const countryMap = new Map<string, { name: string; slug: string }>();
+
+        programs.forEach((program: any) => {
+          const country = countries.find((c: any) => c.id === program.countryId);
+          if (!country) {
+            return;
+          }
+          const countrySlug = country.slug || slugify(country.name || '');
+          if (!countrySlug) {
+            return;
+          }
+          if (!countryMap.has(countrySlug)) {
+            countryMap.set(countrySlug, { name: country.name, slug: countrySlug });
+          }
+        });
+
+        const dropdown = Array.from(countryMap.values())
+          .sort((a, b) => a.name.localeCompare(b.name, 'tr'))
+          .map((country) => ({
+            title: country.name,
+            href: `/staj/${country.slug}`
+          }));
+
+        setInternshipDropdown(dropdown);
+      } catch (error) {
+        console.error('Yurtdışı staj menüsü yüklenemedi:', error);
+      }
+    };
+
+    fetchInternshipPrograms();
+  }, []);
+
   // Lise nested dropdown verileri
   const highSchoolCountries = {
     amerika: [
@@ -282,14 +326,8 @@ const Navbar = () => {
       title: 'YURTDIŞI STAJ', 
       href: '/staj',
       dropdown: [
-        { title: 'Amerika', href: '/staj/amerika' },
-        { title: 'Kanada', href: '/staj/kanada' },
-        { title: 'İngiltere', href: '/staj/ingiltere' },
-        { title: 'Almanya', href: '/staj/almanya' },
-        { title: 'Fransa', href: '/staj/fransa' },
-        { title: 'İspanya', href: '/staj/ispanya' },
-        { title: 'İtalya', href: '/staj/italya' },
-        { title: 'Avustralya', href: '/staj/avustralya' },
+        { title: 'Neden Yurtdışında Staj?', href: '/staj' },
+        ...internshipDropdown,
       ]
     },
     { 

@@ -5,18 +5,52 @@ import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { slugify } from '@/utils/format';
 
 export default function StajPage() {
-  const countries = [
-    { name: 'Amerika', flag: '🇺🇸', slug: 'amerika' },
-    { name: 'Kanada', flag: '🇨🇦', slug: 'kanada' },
-    { name: 'İngiltere', flag: '🇬🇧', slug: 'ingiltere' },
-    { name: 'Almanya', flag: '🇩🇪', slug: 'almanya' },
-    { name: 'Fransa', flag: '🇫🇷', slug: 'fransa' },
-    { name: 'İspanya', flag: '🇪🇸', slug: 'ispanya' },
-    { name: 'İtalya', flag: '🇮🇹', slug: 'italya' },
-    { name: 'Avustralya', flag: '🇦🇺', slug: 'avustralya' },
-  ];
+  const [countries, setCountries] = useState<Array<{ id: number; name: string; slug: string; flagEmoji: string }>>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const [programsRes, countriesRes] = await Promise.all([
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.internshipPrograms}`),
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.countries}`)
+        ]);
+        const programs = await programsRes.json();
+        const allCountries = await countriesRes.json();
+
+        const countryIdsWithPrograms = new Set<number>(
+          (programs || []).map((program: any) => program.countryId)
+        );
+
+        const availableCountries = (allCountries || [])
+          .filter((country: any) => countryIdsWithPrograms.has(country.id))
+          .map((country: any) => ({
+            id: country.id,
+            name: country.name,
+            slug: country.slug || slugify(country.name || ''),
+            flagEmoji: country.flagEmoji || '🌍',
+          }))
+          .filter((country: any) => country.slug);
+
+        setCountries(availableCountries);
+      } catch (fetchError) {
+        console.error('Staj ülkeleri yüklenemedi:', fetchError);
+        setError('Ülkeler yüklenirken bir hata oluştu.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCountries();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -252,20 +286,30 @@ export default function StajPage() {
             <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🌍 Staj Programları Sunan Ülkeler</h2>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {countries.map((country) => (
+          {isLoading ? (
+            <div className="text-center py-8">Yükleniyor...</div>
+          ) : error ? (
+            <div className="text-center py-8 text-red-600">{error}</div>
+          ) : countries.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              Henüz staj programı eklenmemiş.
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {countries.map((country) => (
               <Link
-                key={country.slug}
+                key={country.id}
                 href={`/staj/${country.slug}`}
                 className="group p-6 bg-gradient-to-br from-violet-50 to-purple-50 border-4 border-violet-300 hover:border-violet-600 transition-all duration-200 transform hover:-translate-y-2 hover:shadow-[8px_8px_0_0_rgba(139,92,246,0.3)]"
               >
-                <div className="text-5xl mb-4 text-center">{country.flag}</div>
+                <div className="text-5xl mb-4 text-center">{country.flagEmoji}</div>
                 <h3 className="text-xl font-black text-gray-900 text-center uppercase tracking-wider group-hover:text-violet-600 transition-colors">
                   {country.name}
                 </h3>
               </Link>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* CTA */}
