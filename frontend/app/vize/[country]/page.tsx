@@ -1,250 +1,90 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
 import { use } from 'react';
+import { apiService } from '@/services/api';
 
-// Mock data - Later this will come from API
-const countryData: Record<string, {
+type VisaType = {
   name: string;
+  description: string;
+  processingTime: string;
+  requirements: string[];
+};
+
+type CountryData = {
+  id: number;
+  countryName: string;
+  countrySlug: string;
   flag: string;
-  visaTypes: Array<{
-    name: string;
-    description: string;
-    processingTime: string;
-    requirements: string[];
-  }>;
   generalInfo: string;
+  status: string;
+  visaTypes: VisaType[];
   process: string[];
-  importantNotes: string[];
   documents: string[];
-}> = {
-  amerika: {
-    name: 'Amerika',
-    flag: '🇺🇸',
-    generalInfo: 'Amerika Birleşik Devletleri vizesi, başvuru süreci ve değerlendirme kriterleri açısından birçok ülkeden farklı bir yapıya sahiptir. ABD vize sistemi, başvuru sahibinin seyahat amacını, finansal durumunu ve özellikle seyahat sonrası ülkesine geri dönme niyetini detaylı şekilde değerlendiren, mülakat odaklı bir sistemle çalışır.',
-    visaTypes: [
-      {
-        name: 'F-1 Öğrenci Vizesi',
-        description: 'Amerika\'da lisans, yüksek lisans veya dil eğitimi almak isteyen öğrenciler için',
-        processingTime: '2-4 hafta',
-        requirements: [
-          'SEVIS I-20 belgesi',
-          'Yeterli İngilizce seviyesi',
-          'Finansal destek kanıtı',
-          'DS-160 formu',
-          'Konsolosluk mülakatı',
-        ],
-      },
-      {
-        name: 'B-1/B-2 Turist Vizesi',
-        description: 'Turizm, iş görüşmeleri veya kısa süreli ziyaretler için',
-        processingTime: '2-4 hafta',
-        requirements: [
-          'DS-160 formu',
-          'Pasaport (en az 6 ay geçerli)',
-          'Finansal destek kanıtı',
-          'Türkiye\'ye dönüş niyeti kanıtı',
-          'Konsolosluk mülakatı',
-        ],
-      },
-      {
-        name: 'J-1 Değişim Programı Vizesi',
-        description: 'Değişim programları, staj ve çalışma programları için',
-        processingTime: '3-5 hafta',
-        requirements: [
-          'DS-2019 belgesi',
-          'Program sponsor onayı',
-          'Finansal destek kanıtı',
-          'DS-160 formu',
-        ],
-      },
-    ],
-    process: [
-      'DS-160 online vize başvuru formunun doldurulması',
-      'Vize başvuru ücretinin ödenmesi',
-      'Konsolosluk randevusunun alınması',
-      'Gerekli belgelerin hazırlanması',
-      'Konsolosluk mülakatına katılım',
-      'Vize sonucunun değerlendirilmesi',
-    ],
-    importantNotes: [
-      'Amerika vizesi mülakat esaslı değerlendirilir',
-      'DS-160 formunun doğru ve eksiksiz doldurulması çok önemlidir',
-      'Finansal belgelerin tutarlı ve güncel olması gerekir',
-      'Konsolosluk mülakatında verilen cevaplar başvuru belgeleriyle uyumlu olmalıdır',
-      'Vize, ülkeye giriş garantisi değildir; giriş noktasında kontrol yapılır',
-    ],
-    documents: [
-      'Pasaport (en az 6 ay geçerli)',
-      'DS-160 onay sayfası',
-      'Vize başvuru ücreti makbuzu',
-      '2 adet biyometrik fotoğraf',
-      'Finansal belgeler (banka hesap dökümü, gelir belgesi)',
-      'Seyahat amacını gösteren belgeler',
-      'Türkiye\'ye dönüş niyetini gösteren belgeler (iş belgesi, okul belgesi vb.)',
-    ],
-  },
-  ingiltere: {
-    name: 'İngiltere',
-    flag: '🇬🇧',
-    generalInfo: 'İngiltere vize sistemi, öğrenci vizesi, turist vizesi ve çalışma vizesi gibi farklı kategoriler sunar. Başvurular genellikle online yapılır ve belge teslimi gerekir.',
-    visaTypes: [
-      {
-        name: 'Student Visa (Tier 4)',
-        description: 'İngiltere\'de eğitim almak isteyen öğrenciler için',
-        processingTime: '3-6 hafta',
-        requirements: [
-          'CAS (Confirmation of Acceptance for Studies) belgesi',
-          'Yeterli İngilizce seviyesi (IELTS vb.)',
-          'Finansal destek kanıtı',
-          'Tuberküloz testi (bazı ülkeler için)',
-        ],
-      },
-      {
-        name: 'Visitor Visa',
-        description: 'Turizm ve kısa süreli ziyaretler için',
-        processingTime: '3-4 hafta',
-        requirements: [
-          'Online başvuru formu',
-          'Finansal destek kanıtı',
-          'Konaklama rezervasyonu',
-          'Dönüş uçak bileti',
-        ],
-      },
-    ],
-    process: [
-      'Online vize başvuru formunun doldurulması',
-      'Vize ücretinin ödenmesi',
-      'Biyometrik verilerin alınması (parmak izi, fotoğraf)',
-      'Belgelerin VFS Global\'e teslimi',
-      'Başvurunun değerlendirilmesi',
-      'Pasaportun iade edilmesi',
-    ],
-    importantNotes: [
-      'İngiltere vize başvuruları online yapılır',
-      'Biyometrik veriler alınır',
-      'Finansal belgelerin güncel olması gerekir',
-      'Tuberküloz testi bazı ülkeler için zorunludur',
-    ],
-    documents: [
-      'Pasaport',
-      'Online başvuru formu',
-      'Vize ücreti makbuzu',
-      'Fotoğraf',
-      'Finansal belgeler',
-      'Konaklama belgeleri',
-      'Seyahat belgeleri',
-    ],
-  },
-  kanada: {
-    name: 'Kanada',
-    flag: '🇨🇦',
-    generalInfo: 'Kanada vize sistemi, eğitim ve çalışma için Study Permit ve Work Permit sunar. Turist vizesi için Visitor Visa gereklidir.',
-    visaTypes: [
-      {
-        name: 'Study Permit',
-        description: 'Kanada\'da eğitim almak isteyen öğrenciler için',
-        processingTime: '4-8 hafta',
-        requirements: [
-          'Kabul mektubu (Letter of Acceptance)',
-          'Finansal destek kanıtı',
-          'İngilizce/Fransızca yeterlilik',
-          'Sağlık sigortası',
-        ],
-      },
-      {
-        name: 'Visitor Visa',
-        description: 'Turizm ve kısa süreli ziyaretler için',
-        processingTime: '2-4 hafta',
-        requirements: [
-          'Online başvuru',
-          'Finansal belgeler',
-          'Seyahat planı',
-          'Dönüş niyeti kanıtı',
-        ],
-      },
-    ],
-    process: [
-      'Online başvuru (IRCC portal)',
-      'Gerekli belgelerin yüklenmesi',
-      'Biyometrik verilerin alınması',
-      'Başvurunun değerlendirilmesi',
-      'Pasaportun iade edilmesi',
-    ],
-    importantNotes: [
-      'Kanada vize başvuruları online yapılır',
-      'Biyometrik veriler gerekir',
-      'Elektronik Seyahat İzni (eTA) gerekebilir',
-      'Finansal belgeler çok önemlidir',
-    ],
-    documents: [
-      'Pasaport',
-      'Online başvuru formu',
-      'Fotoğraf',
-      'Finansal belgeler',
-      'Kabul mektubu (öğrenci vizesi için)',
-      'Seyahat belgeleri',
-    ],
-  },
-  avustralya: {
-    name: 'Avustralya',
-    flag: '🇦🇺',
-    generalInfo: 'Avustralya vize sistemi, eğitim, turizm ve çalışma için farklı vize türleri sunar. Online başvuru yapılır.',
-    visaTypes: [
-      {
-        name: 'Student Visa',
-        description: 'Avustralya\'da eğitim almak isteyen öğrenciler için',
-        processingTime: '2-4 hafta',
-        requirements: [
-          'CoE (Confirmation of Enrolment)',
-          'OSHC (Overseas Student Health Cover)',
-          'Finansal destek kanıtı',
-          'İngilizce yeterlilik',
-        ],
-      },
-      {
-        name: 'Visitor Visa',
-        description: 'Turizm için',
-        processingTime: '1-4 hafta',
-        requirements: [
-          'Online başvuru',
-          'Finansal belgeler',
-          'Seyahat planı',
-        ],
-      },
-    ],
-    process: [
-      'Online başvuru (ImmiAccount)',
-      'Belgelerin yüklenmesi',
-      'Biyometrik verilerin alınması',
-      'Başvurunun değerlendirilmesi',
-      'Vize sonucu',
-    ],
-    importantNotes: [
-      'Avustralya vize başvuruları online yapılır',
-      'OSHC zorunludur',
-      'Biyometrik veriler gerekir',
-    ],
-    documents: [
-      'Pasaport',
-      'Online başvuru',
-      'Fotoğraf',
-      'Finansal belgeler',
-      'CoE (öğrenci vizesi için)',
-    ],
-  },
+  importantNotes: string[];
+};
+
+const getCountryEmoji = (countryCode: string): string => {
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map(char => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
 };
 
 export default function CountryVizePage({ params }: { params: Promise<{ country: string }> }) {
   const { country } = use(params);
-  const countryKey = country.toLowerCase();
-  const data = countryData[countryKey];
+  const [data, setData] = useState<CountryData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
-  if (!data) {
+  useEffect(() => {
+    loadCountryData();
+  }, [country]);
+
+  const loadCountryData = async () => {
+    try {
+      setIsLoading(true);
+      const allCountries = await apiService.getVisaServices();
+      const countryData = (allCountries as CountryData[]).find(
+        (c) => c.countrySlug.toLowerCase() === country.toLowerCase()
+      );
+      
+      if (countryData) {
+        setData(countryData);
+        setNotFound(false);
+      } else {
+        setNotFound(true);
+      }
+    } catch (error) {
+      console.error('Vize verisi yüklenirken hata oluştu:', error);
+      setNotFound(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center">
+            <div className="text-6xl mb-4">⏳</div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Yükleniyor...</h1>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (notFound || !data) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
@@ -277,10 +117,10 @@ export default function CountryVizePage({ params }: { params: Promise<{ country:
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
           <div className="inline-block px-5 py-2.5 bg-white/20 backdrop-blur-sm border-4 border-white/30 transform -skew-x-12 mb-6">
-            <span className="transform skew-x-12 text-sm font-black uppercase tracking-wider">{data.flag} {data.name} Vizesi</span>
+            <span className="transform skew-x-12 text-sm font-black uppercase tracking-wider">{getCountryEmoji(data.flag)} {data.countryName} Vizesi</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight drop-shadow-[4px_4px_0_rgba(0,0,0,0.3)]">
-            {data.name.toUpperCase()}
+            {data.countryName.toUpperCase()}
             <br />
             <span className="relative inline-block">
               <span className="absolute inset-0 bg-white/30 transform -skew-x-12 -z-10"></span>
@@ -392,7 +232,7 @@ export default function CountryVizePage({ params }: { params: Promise<{ country:
             <h2 className="transform skew-x-12 text-2xl font-black uppercase tracking-wider">🚀 Vize Başvurunuzu Yapın</h2>
           </div>
           <p className="text-xl font-medium mb-8 max-w-2xl mx-auto">
-            {data.name} vizesi hakkında detaylı bilgi almak ve başvuru sürecinizi başlatmak için bizimle iletişime geçin!
+            {data.countryName} vizesi hakkında detaylı bilgi almak ve başvuru sürecinizi başlatmak için bizimle iletişime geçin!
           </p>
           <Link
             href="/iletisim"
@@ -409,8 +249,3 @@ export default function CountryVizePage({ params }: { params: Promise<{ country:
     </div>
   );
 }
-
-
-
-
-

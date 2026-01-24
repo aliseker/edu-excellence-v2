@@ -47,6 +47,11 @@ class ApiService {
         }
       }
 
+      // Handle No Content (204) responses
+      if (response.status === 204 || response.headers.get('content-length') === '0') {
+        return {} as T;
+      }
+
       return response.json();
     } catch (error) {
       // Log error for debugging but don't expose details to user
@@ -152,6 +157,26 @@ class ApiService {
   }) {
     return this.request(API_ENDPOINTS.visaServices, {
       params: filters as Record<string, string>,
+    });
+  }
+
+  async createVisaService(data: any) {
+    return this.request(API_ENDPOINTS.visaServices, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateVisaService(id: number, data: any) {
+    return this.request(API_ENDPOINTS.visaServiceById(id), {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteVisaService(id: number) {
+    return this.request(API_ENDPOINTS.visaServiceById(id), {
+      method: 'DELETE',
     });
   }
 

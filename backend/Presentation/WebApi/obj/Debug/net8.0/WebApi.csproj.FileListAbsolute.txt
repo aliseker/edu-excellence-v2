@@ -134,11 +134,6 @@ C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\bin\De
 C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\bin\Debug\net8.0\Domain.pdb
 C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\staticwebassets.development.json
-C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\staticwebassets\msbuild.WebApi.Microsoft.AspNetCore.StaticWebAssets.props
-C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\staticwebassets\msbuild.build.WebApi.props
-C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.WebApi.props
-C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.WebApi.props
-C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\staticwebassets.pack.json
 C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\scopedcss\bundle\WebApi.styles.css
 C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\WebApi.csproj.Up2Date
 C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\WebApi.dll
@@ -146,3 +141,9 @@ C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\De
 C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\WebApi.pdb
 C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\WebApi.genruntimeconfig.cache
 C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\ref\WebApi.dll
+C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\WebApi.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\staticwebassets\msbuild.WebApi.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\staticwebassets\msbuild.build.WebApi.props
+C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.WebApi.props
+C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.WebApi.props
+C:\Users\baris\source\repos\edu-excellence-v2\backend\Presentation\WebApi\obj\Debug\net8.0\staticwebassets.pack.json

@@ -1,12 +1,73 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { apiService } from '@/services/api';
+
+type VisaCountry = {
+  id: number;
+  countrySlug: string;
+  countryName: string;
+  flag: string;
+  generalInfo: string;
+  status: string;
+  visaTypes: Array<{
+    name: string;
+    description: string;
+    processingTime: string;
+    requirements: string[];
+  }>;
+  process: string[];
+  documents: string[];
+  importantNotes: string[];
+};
+
+const getCountryEmoji = (countryCode: string): string => {
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map(char => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+};
 
 export default function VizePage() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [vizeUlkeler, setVizeUlkeler] = useState<VisaCountry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const vizeUlkeler: any[] = [];
+  useEffect(() => {
+    loadVisaCountries();
+  }, []);
+
+  const loadVisaCountries = async () => {
+    try {
+      setIsLoading(true);
+      const data = await apiService.getVisaServices();
+      setVizeUlkeler(data as VisaCountry[]);
+    } catch (error) {
+      console.error('Vize ülkeleri yüklenirken hata oluştu:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: number, countryName: string) => {
+    if (!confirm(`${countryName} ülkesini silmek istediğinize emin misiniz?`)) {
+      return;
+    }
+
+    try {
+      await apiService.deleteVisaService(id);
+      await loadVisaCountries();
+    } catch (error) {
+      console.error('Vize ülkesi silinirken hata oluştu:', error);
+      alert('Silme işlemi sırasında bir hata oluştu.');
+    }
+  };
+
+  const filteredCountries = vizeUlkeler.filter(ulke =>
+    ulke.countryName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
@@ -35,11 +96,6 @@ export default function VizePage() {
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-emerald-600"
             />
           </div>
-          <div className="flex items-end">
-            <button className="w-full bg-gray-900 text-white px-4 py-2 rounded-lg font-bold hover:bg-gray-800 transition-colors">
-              Filtrele
-            </button>
-          </div>
         </div>
       </div>
 
@@ -48,33 +104,55 @@ export default function VizePage() {
           <table className="w-full">
             <thead className="bg-gray-900 text-white">
               <tr>
-                <th className="px-6 py-4 text-left font-black">ID</th>
                 <th className="px-6 py-4 text-left font-black">Ülke Adı</th>
                 <th className="px-6 py-4 text-left font-black">Bayrak</th>
-                <th className="px-6 py-4 text-left font-black">Vize Tipi</th>
+                <th className="px-6 py-4 text-left font-black">Vize Türleri</th>
                 <th className="px-6 py-4 text-left font-black">Durum</th>
                 <th className="px-6 py-4 text-left font-black">İşlemler</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {vizeUlkeler.length === 0 ? (
+              {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                    <div className="text-4xl mb-4">⏳</div>
+                    <p className="font-semibold">Yükleniyor...</p>
+                  </td>
+                </tr>
+              ) : filteredCountries.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
                     <div className="text-4xl mb-4">🛂</div>
                     <p className="font-semibold">Henüz ülke eklenmemiş</p>
                     <p className="text-sm mt-2">İlk ülkeyi eklemek için "Yeni Ülke Ekle" butonuna tıklayın</p>
                   </td>
                 </tr>
               ) : (
-                vizeUlkeler.map((ulke) => (
+                filteredCountries.map((ulke) => (
                   <tr key={ulke.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 font-semibold">{ulke.id}</td>
-                    <td className="px-6 py-4 font-semibold">{ulke.name}</td>
-                    <td className="px-6 py-4">{ulke.flag}</td>
-                    <td className="px-6 py-4">{ulke.visaType}</td>
+                    <td className="px-6 py-4 font-semibold">{ulke.countryName}</td>
+                    <td className="px-6 py-4 text-2xl">{getCountryEmoji(ulke.flag)}</td>
                     <td className="px-6 py-4">
-                      <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">
-                        Aktif
+                      <div className="flex flex-wrap gap-1">
+                        {ulke.visaTypes.slice(0, 2).map((type, idx) => (
+                          <span key={idx} className="px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-semibold">
+                            {type.name}
+                          </span>
+                        ))}
+                        {ulke.visaTypes.length > 2 && (
+                          <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs font-semibold">
+                            +{ulke.visaTypes.length - 2} daha
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                        ulke.status === 'active'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {ulke.status === 'active' ? 'Aktif' : 'Pasif'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
@@ -85,7 +163,10 @@ export default function VizePage() {
                         >
                           Düzenle
                         </Link>
-                        <button className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold">
+                        <button
+                          onClick={() => handleDelete(ulke.id, ulke.countryName)}
+                          className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold"
+                        >
                           Sil
                         </button>
                       </div>

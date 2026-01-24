@@ -1,30 +1,50 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
+import { apiService } from '@/services/api';
+
+type VisaCountry = {
+  id: number;
+  countrySlug: string;
+  countryName: string;
+  flag: string;
+  status: string;
+};
+
+const getCountryEmoji = (countryCode: string): string => {
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map(char => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+};
 
 export default function VizePage() {
-  const countries = [
-    { name: 'Amerika', flag: '🇺🇸', slug: 'amerika' },
-    { name: 'İngiltere', flag: '🇬🇧', slug: 'ingiltere' },
-    { name: 'Kanada', flag: '🇨🇦', slug: 'kanada' },
-    { name: 'Avustralya', flag: '🇦🇺', slug: 'avustralya' },
-    { name: 'İrlanda', flag: '🇮🇪', slug: 'irlanda' },
-    { name: 'Malta', flag: '🇲🇹', slug: 'malta' },
-    { name: 'İtalya', flag: '🇮🇹', slug: 'italya' },
-    { name: 'İspanya', flag: '🇪🇸', slug: 'ispanya' },
-    { name: 'Fransa', flag: '🇫🇷', slug: 'fransa' },
-    { name: 'Almanya', flag: '🇩🇪', slug: 'almanya' },
-    { name: 'Polonya', flag: '🇵🇱', slug: 'polonya' },
-    { name: 'Macaristan', flag: '🇭🇺', slug: 'macaristan' },
-    { name: 'Çek Cumhuriyeti', flag: '🇨🇿', slug: 'cek-cumhuriyeti' },
-    { name: 'Yunanistan', flag: '🇬🇷', slug: 'yunanistan' },
-    { name: 'İsviçre', flag: '🇨🇭', slug: 'isvicre' },
-    { name: 'İsveç', flag: '🇸🇪', slug: 'isvec' },
-  ];
+  const [countries, setCountries] = useState<VisaCountry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadCountries();
+  }, []);
+
+  const loadCountries = async () => {
+    try {
+      setIsLoading(true);
+      const data = await apiService.getVisaServices();
+      // Sadece aktif ülkeleri göster
+      const activeCountries = (data as VisaCountry[]).filter(c => c.status === 'active');
+      setCountries(activeCountries);
+    } catch (error) {
+      console.error('Vize ülkeleri yüklenirken hata oluştu:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -203,20 +223,32 @@ export default function VizePage() {
             <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🌍 Vize Danışmanlığı Sunan Ülkeler</h2>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6">
-            {countries.map((country) => (
-              <Link
-                key={country.slug}
-                href={`/vize/${country.slug}`}
-                className="group p-6 bg-gradient-to-br from-red-50 to-pink-50 border-4 border-red-300 hover:border-red-600 transition-all duration-200 transform hover:-translate-y-2 hover:shadow-[8px_8px_0_0_rgba(220,38,38,0.3)]"
-              >
-                <div className="text-5xl mb-4 text-center">{country.flag}</div>
-                <h3 className="text-xl font-black text-gray-900 text-center uppercase tracking-wider group-hover:text-red-600 transition-colors">
-                  {country.name}
-                </h3>
-              </Link>
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">⏳</div>
+              <p className="text-xl font-semibold text-gray-700">Ülkeler yükleniyor...</p>
+            </div>
+          ) : countries.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">🌍</div>
+              <p className="text-xl font-semibold text-gray-700">Henüz ülke eklenmemiş</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6">
+              {countries.map((country) => (
+                <Link
+                  key={country.countrySlug}
+                  href={`/vize/${country.countrySlug}`}
+                  className="group p-6 bg-gradient-to-br from-red-50 to-pink-50 border-4 border-red-300 hover:border-red-600 transition-all duration-200 transform hover:-translate-y-2 hover:shadow-[8px_8px_0_0_rgba(220,38,38,0.3)]"
+                >
+                  <div className="text-5xl mb-4 text-center">{getCountryEmoji(country.flag)}</div>
+                  <h3 className="text-xl font-black text-gray-900 text-center uppercase tracking-wider group-hover:text-red-600 transition-colors">
+                    {country.countryName}
+                  </h3>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* CTA */}

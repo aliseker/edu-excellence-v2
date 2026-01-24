@@ -583,5 +583,84 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.VisaServicesController",
+    "Method": "GetAll",
+    "RelativePath": "api/visa-services",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.VisaServicesController",
+    "Method": "Create",
+    "RelativePath": "api/visa-services",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "EduExcellenceV2.Application.DTOs.VisaServiceCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.VisaServicesController",
+    "Method": "GetById",
+    "RelativePath": "api/visa-services/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.VisaServicesController",
+    "Method": "Update",
+    "RelativePath": "api/visa-services/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EduExcellenceV2.Application.DTOs.VisaServiceCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.VisaServicesController",
+    "Method": "Delete",
+    "RelativePath": "api/visa-services/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   }
 ]
