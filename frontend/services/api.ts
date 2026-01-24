@@ -180,6 +180,39 @@ class ApiService {
     });
   }
 
+  // Blog Posts
+  async getBlogPosts() {
+    return this.request(API_ENDPOINTS.blogPosts);
+  }
+
+  async getBlogPostById(id: number) {
+    return this.request(API_ENDPOINTS.blogPostById(id));
+  }
+
+  async getBlogPostBySlug(slug: string) {
+    return this.request(API_ENDPOINTS.blogPostBySlug(slug));
+  }
+
+  async createBlogPost(data: any) {
+    return this.request(API_ENDPOINTS.blogPosts, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateBlogPost(id: number, data: any) {
+    return this.request(API_ENDPOINTS.blogPostById(id), {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteBlogPost(id: number) {
+    return this.request(API_ENDPOINTS.blogPostById(id), {
+      method: 'DELETE',
+    });
+  }
+
   // Contact
   async submitContactForm(data: {
     name: string;

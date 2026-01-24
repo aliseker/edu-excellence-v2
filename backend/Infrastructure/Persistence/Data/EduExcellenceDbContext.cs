@@ -18,6 +18,7 @@ public class EduExcellenceDbContext : DbContext
     public DbSet<CountryEntity> Countries => Set<CountryEntity>();
     public DbSet<City> Cities => Set<City>();
     public DbSet<VisaCountry> VisaCountries => Set<VisaCountry>();
+    public DbSet<BlogPost> BlogPosts => Set<BlogPost>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

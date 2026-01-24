@@ -1,65 +1,66 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
+import { apiService } from '@/services/api';
+import BlogPlaceholderIcon from '@/components/BlogPlaceholderIcon';
 
-const blogPosts = [
-  {
-    id: 1,
-    title: 'Kanada\'da Üniversite Eğitimi: Başvuru Rehberi',
-    excerpt: 'Kanada\'daki üniversitelere başvuru yapmak için bilmeniz gereken her şey...',
-    image: '🇨🇦',
-    date: '15 Ocak 2025',
-    category: 'Üniversite',
-    readTime: '5 dk'
-  },
-  {
-    id: 2,
-    title: 'İngiltere\'de Öğrenci Vizesi Nasıl Alınır?',
-    excerpt: 'İngiltere öğrenci vizesi başvuru süreci, gerekli belgeler ve ipuçları...',
-    image: '🇬🇧',
-    date: '12 Ocak 2025',
-    category: 'Vize',
-    readTime: '7 dk'
-  },
-  {
-    id: 3,
-    title: 'Yurtdışında Dil Okulu Seçerken Dikkat Edilmesi Gerekenler',
-    excerpt: 'En uygun dil okulunu seçmek için rehberiniz...',
-    image: '📚',
-    date: '10 Ocak 2025',
-    category: 'Dil Okulu',
-    readTime: '4 dk'
-  },
-  {
-    id: 4,
-    title: 'MBA Programları: Hangi Ülke, Hangi Üniversite?',
-    excerpt: 'Dünyanın en iyi MBA programlarını keşfedin...',
-    image: '🎓',
-    date: '8 Ocak 2025',
-    category: 'Master/MBA',
-    readTime: '6 dk'
-  },
-  {
-    id: 5,
-    title: 'Amerika\'da Lise Eğitimi: Fırsatlar ve Zorluklar',
-    excerpt: 'Amerika\'da lise eğitimi hakkında bilmeniz gerekenler...',
-    image: '🇺🇸',
-    date: '5 Ocak 2025',
-    category: 'Lise',
-    readTime: '5 dk'
-  },
-  {
-    id: 6,
-    title: 'Yaz Okulu Programları: Çocuğunuz İçin En İyi Seçim',
-    excerpt: 'Yaz okulu programları hakkında detaylı bilgi...',
-    image: '☀️',
-    date: '3 Ocak 2025',
-    category: 'Yaz Okulu',
-    readTime: '4 dk'
-  }
+type BlogPost = {
+  id: number;
+  title: string;
+  slug: string;
+  category: string;
+  summary: string;
+  coverImageBase64: string;
+  status: string;
+  viewCount: number;
+  createdAt: string;
+};
+
+const categories = [
+  { value: 'dil-okullari', label: 'Dil Okulları' },
+  { value: 'yaz-okulu', label: 'Yaz Okulu' },
+  { value: 'universite', label: 'Üniversite' },
+  { value: 'master-mba', label: 'Master/MBA' },
+  { value: 'yurtdisi-staj', label: 'Yurtdışı Staj' },
+  { value: 'lise', label: 'Lise' },
+  { value: 'vize-danismanligi', label: 'Vize Danışmanlığı' },
 ];
 
+const getCategoryLabel = (value: string) => {
+  return categories.find(c => c.value === value)?.label || value;
+};
+
+const calculateReadTime = (content: string): string => {
+  const wordsPerMinute = 200;
+  const words = content.split(/\s+/).length;
+  const minutes = Math.ceil(words / wordsPerMinute);
+  return `${minutes} dk`;
+};
+
 export default function BlogPage() {
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadBlogPosts();
+  }, []);
+
+  const loadBlogPosts = async () => {
+    try {
+      setIsLoading(true);
+      const data = await apiService.getBlogPosts();
+      // Sadece yayınlanmış blog yazılarını göster
+      const publishedPosts = (data as BlogPost[]).filter(post => post.status === 'published');
+      setBlogPosts(publishedPosts);
+    } catch (error) {
+      console.error('Blog yazıları yüklenirken hata oluştu:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -78,39 +79,65 @@ export default function BlogPage() {
 
       {/* Blog Posts */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogPosts.map((post) => (
-            <Link
-              key={post.id}
-              href={`/blog/${post.id}`}
-              className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 overflow-hidden group border border-gray-100 hover:border-indigo-300"
-            >
-              <div className="h-48 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-6xl">
-                {post.image}
-              </div>
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-semibold rounded-full">
-                    {post.category}
-                  </span>
-                  <span className="text-xs text-gray-500">{post.readTime}</span>
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">⏳</div>
+            <p className="text-xl font-semibold text-gray-700">Yükleniyor...</p>
+          </div>
+        ) : blogPosts.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="mb-4 flex justify-center text-gray-400">
+              <BlogPlaceholderIcon size={72} />
+            </div>
+            <p className="text-xl font-semibold text-gray-700">Henüz blog yazısı yok</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {blogPosts.map((post) => {
+              // Slug yoksa veya boşsa ID kullan (fallback)
+              const blogUrl = post.slug && post.slug.trim() ? `/blog/${post.slug}` : `/blog/${post.id}`;
+              return (
+              <Link
+                key={post.id}
+                href={blogUrl}
+                className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 overflow-hidden group border border-gray-100 hover:border-indigo-300"
+              >
+                <div className="h-48 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center overflow-hidden text-white">
+                  {post.coverImageBase64 ? (
+                    <img
+                      src={post.coverImageBase64}
+                      alt={post.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <BlogPlaceholderIcon size={72} />
+                  )}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">
-                  {post.title}
-                </h3>
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                  {post.excerpt}
-                </p>
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <span>{post.date}</span>
-                  <span className="text-indigo-600 font-semibold group-hover:text-indigo-700">
-                    Devamını Oku →
-                  </span>
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-semibold rounded-full">
+                      {getCategoryLabel(post.category)}
+                    </span>
+                    <span className="text-xs text-gray-500">{calculateReadTime(post.summary)}</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">
+                    {post.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                    {post.summary}
+                  </p>
+                  <div className="flex items-center justify-between text-xs text-gray-500">
+                    <span>{new Date(post.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                    <span className="text-indigo-600 font-semibold group-hover:text-indigo-700">
+                      Devamını Oku →
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+              </Link>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       <Footer />

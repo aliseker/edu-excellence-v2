@@ -17,6 +17,7 @@ builder.Services.AddScoped<IVisaService, VisaService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<ICountryService, CountryService>();
 builder.Services.AddScoped<ICityService, CityService>();
+builder.Services.AddScoped<IBlogPostService, BlogPostService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

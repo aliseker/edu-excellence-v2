@@ -3,41 +3,58 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
+import { apiService } from '@/services/api';
+
+const categories = [
+  { value: 'dil-okullari', label: 'Dil Okulları' },
+  { value: 'yaz-okulu', label: 'Yaz Okulu' },
+  { value: 'universite', label: 'Üniversite' },
+  { value: 'master-mba', label: 'Master/MBA' },
+  { value: 'yurtdisi-staj', label: 'Yurtdışı Staj' },
+  { value: 'lise', label: 'Lise' },
+  { value: 'vize-danismanligi', label: 'Vize Danışmanlığı' },
+];
 
 export default function YeniBlogPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
-    category: '',
-    author: '',
+    category: categories[0].value,
+    coverImageBase64: '',
+    summary: '',
     content: '',
-    image: '',
-    excerpt: '',
     status: 'draft',
   });
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    // Dosya boyutu kontrolü (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Dosya boyutu 5MB\'dan küçük olmalıdır!');
+      return;
     }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      setFormData({ ...formData, coverImageBase64: base64String });
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await apiService.createBlogPost(formData);
       router.push('/admin/blog');
     } catch (error) {
-      console.error('Hata:', error);
+      console.error('Blog eklenirken hata oluştu:', error);
+      alert('Blog eklenirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);
     }
@@ -47,60 +64,146 @@ export default function YeniBlogPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-black text-gray-900">Yeni Blog Yazısı Ekle</h1>
-          <p className="text-gray-600 mt-1">Yeni bir blog yazısı oluşturun</p>
+          <h1 className="text-3xl font-black text-gray-900">Yeni Blog Yazısı</h1>
+          <p className="text-gray-600 mt-1">Blog içeriğini bu alandan yönetin.</p>
         </div>
-        <Link href="/admin/blog" className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-bold hover:bg-gray-300 transition-colors">← Geri Dön</Link>
+        <Link
+          href="/admin/blog"
+          className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-bold hover:bg-gray-300 transition-colors"
+        >
+          ← Geri Dön
+        </Link>
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg border-2 border-gray-200 p-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">Başlık <span className="text-red-500">*</span></label>
-            <input type="text" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600" required />
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">Kategori <span className="text-red-500">*</span></label>
-            <select value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600" required>
-              <option value="">Seçiniz</option>
-              <option value="dil-egitimi">Dil Eğitimi</option>
-              <option value="yurtdisi-egitim">Yurtdışı Eğitim</option>
-              <option value="vize">Vize</option>
-              <option value="genel">Genel</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">Yazar <span className="text-red-500">*</span></label>
-            <input type="text" value={formData.author} onChange={(e) => setFormData({ ...formData, author: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600" required />
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">Durum</label>
-            <select value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600">
-              <option value="draft">Taslak</option>
-              <option value="published">Yayında</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">Kapak Resmi</label>
-            <input type="file" accept="image/*" onChange={handleImageChange} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600" />
-            {imagePreview && (
-              <div className="mt-3">
-                <Image src={imagePreview} alt="Preview" width={300} height={180} className="rounded-lg border-2 border-gray-300" />
+        {/* Başlık */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Başlık <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            placeholder="Blog başlığını girin"
+            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-emerald-600"
+            required
+          />
+        </div>
+
+        {/* Kategori */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Kategori <span className="text-red-500">*</span>
+          </label>
+          <select
+            value={formData.category}
+            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-emerald-600 bg-white"
+            required
+          >
+            {categories.map((cat) => (
+              <option key={cat.value} value={cat.value}>
+                {cat.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Kapak Resmi */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Kapak Resmi <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-emerald-600"
+            required={!formData.coverImageBase64}
+          />
+          <p className="text-xs text-gray-500 mt-1">Maksimum 5MB, JPG, PNG veya WebP formatında</p>
+          
+          {formData.coverImageBase64 && (
+            <div className="mt-4">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm font-semibold text-gray-700">Önizleme:</p>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, coverImageBase64: '' })}
+                  className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold"
+                >
+                  ✕ Kaldır
+                </button>
               </div>
-            )}
-          </div>
+              <img
+                src={formData.coverImageBase64}
+                alt="Preview"
+                className="w-full max-w-md h-48 object-cover rounded-lg border-2 border-gray-300"
+              />
+            </div>
+          )}
         </div>
+
+        {/* Özet */}
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">Özet</label>
-          <textarea value={formData.excerpt} onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })} rows={3} placeholder="Kısa özet..." className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600" />
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Özet <span className="text-red-500">*</span>
+          </label>
+          <textarea
+            value={formData.summary}
+            onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
+            rows={3}
+            placeholder="Blog yazısının kısa özetini girin (2-3 cümle)"
+            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-emerald-600"
+            required
+          />
         </div>
+
+        {/* İçerik */}
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">İçerik <span className="text-red-500">*</span></label>
-          <textarea value={formData.content} onChange={(e) => setFormData({ ...formData, content: e.target.value })} rows={12} placeholder="Blog yazısı içeriği (HTML desteklenir)" className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600 font-mono text-sm" required />
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            İçerik <span className="text-red-500">*</span>
+          </label>
+          <textarea
+            value={formData.content}
+            onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+            rows={15}
+            placeholder="Blog yazısının tam içeriğini girin"
+            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-emerald-600 font-mono text-sm"
+            required
+          />
+          <p className="text-xs text-gray-500 mt-1">Markdown formatını destekler</p>
         </div>
+
+        {/* Durum */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Durum</label>
+          <select
+            value={formData.status}
+            onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-emerald-600 bg-white"
+          >
+            <option value="draft">Taslak</option>
+            <option value="published">Yayınlandı</option>
+          </select>
+        </div>
+
+        {/* Buttons */}
         <div className="flex items-center justify-end space-x-4 pt-4 border-t border-gray-200">
-          <Link href="/admin/blog" className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-bold hover:bg-gray-300 transition-colors">İptal</Link>
-          <button type="submit" disabled={isLoading} className="px-6 py-3 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">{isLoading ? 'Kaydediliyor...' : 'Kaydet'}</button>
+          <Link
+            href="/admin/blog"
+            className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-bold hover:bg-gray-300 transition-colors"
+          >
+            İptal
+          </Link>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="px-6 py-3 bg-emerald-600 text-white rounded-lg font-bold hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? 'Kaydediliyor...' : 'Kaydet'}
+          </button>
         </div>
       </form>
     </div>

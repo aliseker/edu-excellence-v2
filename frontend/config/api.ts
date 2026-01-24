@@ -39,6 +39,11 @@ export const API_ENDPOINTS = {
   visaServices: '/visa-services',
   visaServiceById: (id: number) => `/visa-services/${id}`,
   
+  // Blog
+  blogPosts: '/blog-posts',
+  blogPostById: (id: number) => `/blog-posts/${id}`,
+  blogPostBySlug: (slug: string) => `/blog-posts/slug/${encodeURIComponent(slug)}`,
+  
   // Contact
   contact: '/contact',
   
