@@ -213,6 +213,39 @@ class ApiService {
     });
   }
 
+  // Gallery
+  async getGalleryItems() {
+    return this.request(API_ENDPOINTS.galleryItems);
+  }
+
+  async getGalleryItemById(id: number) {
+    return this.request(API_ENDPOINTS.galleryItemById(id));
+  }
+
+  async getGalleryItemsByCategory(category: string) {
+    return this.request(API_ENDPOINTS.galleryItemsByCategory(category));
+  }
+
+  async createGalleryItem(data: { category: string; imageBase64: string }) {
+    return this.request(API_ENDPOINTS.galleryItems, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateGalleryItem(id: number, data: { category: string; imageBase64: string }) {
+    return this.request(API_ENDPOINTS.galleryItemById(id), {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteGalleryItem(id: number) {
+    return this.request(API_ENDPOINTS.galleryItemById(id), {
+      method: 'DELETE',
+    });
+  }
+
   // Contact
   async submitContactForm(data: {
     name: string;

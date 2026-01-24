@@ -1,33 +1,58 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import ImageGallery from '@/components/ImageGallery';
+import { apiService } from '@/services/api';
 
-// Mock images - Backend'den gelecek
-const galleryImages = [
-  '/images/gallery-1.jpg',
-  '/images/gallery-2.jpg',
-  '/images/gallery-3.jpg',
-  '/images/gallery-4.jpg',
-  '/images/gallery-5.jpg',
-  '/images/gallery-6.jpg',
-];
+type GalleryItem = {
+  id: number;
+  category: string;
+  imageBase64: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
-const categories = [
-  {
-    name: 'Üniversite Kampüsleri',
-    images: galleryImages.slice(0, 3),
-  },
-  {
-    name: 'Dil Okulları',
-    images: galleryImages.slice(3, 6),
-  },
-  {
-    name: 'Öğrenci Etkinlikleri',
-    images: galleryImages,
-  },
-];
+const categoryLabels: Record<string, string> = {
+  'universite-kampusleri': 'Üniversite Kampüsleri',
+  'dil-okullari': 'Dil Okulları',
+  'ogrenci-etkinlikleri': 'Öğrenci Etkinlikleri',
+};
 
 export default function GaleriPage() {
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadGalleryItems();
+  }, []);
+
+  const loadGalleryItems = async () => {
+    try {
+      setIsLoading(true);
+      const data = await apiService.getGalleryItems();
+      setGalleryItems(data as GalleryItem[]);
+    } catch (error) {
+      console.error('Galeri resimleri yüklenirken hata oluştu:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Kategorilere göre grupla
+  const groupedByCategory = galleryItems.reduce((acc, item) => {
+    const categoryName = categoryLabels[item.category] || item.category;
+    if (!acc[categoryName]) {
+      acc[categoryName] = [];
+    }
+    acc[categoryName].push(item);
+    return acc;
+  }, {} as Record<string, GalleryItem[]>);
+
+  const categories = Object.keys(categoryLabels).map(key => ({
+    key,
+    name: categoryLabels[key],
+  }));
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -46,26 +71,48 @@ export default function GaleriPage() {
 
       {/* Gallery */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="space-y-16">
-          {categories.map((category, index) => (
-            <div key={index}>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">{category.name}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {category.images.map((image, imgIndex) => (
-                  <div
-                    key={imgIndex}
-                    className="relative h-64 rounded-xl overflow-hidden bg-gray-200 group cursor-pointer"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity z-10"></div>
-                    <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                      <p className="font-semibold">Görsel {imgIndex + 1}</p>
-                    </div>
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">⏳</div>
+            <p className="text-xl font-semibold text-gray-700">Yükleniyor...</p>
+          </div>
+        ) : Object.keys(groupedByCategory).length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">🖼️</div>
+            <p className="text-xl font-semibold text-gray-700">Henüz galeri resmi eklenmemiş</p>
+          </div>
+        ) : (
+          <div className="space-y-16">
+            {categories.map((category) => {
+              const items = groupedByCategory[category.name] || [];
+              if (items.length === 0) return null;
+              
+              return (
+                <div key={category.key}>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">{category.name}</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {items.map((item) => (
+                      <div
+                        key={item.id}
+                        className="relative h-64 rounded-xl overflow-hidden bg-gray-200 group cursor-pointer"
+                      >
+                        <img
+                          src={item.imageBase64}
+                          alt={`${category.name} - Görsel ${item.id}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity z-10"></div>
+                        <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                          <p className="font-semibold">{category.name}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       <Footer />

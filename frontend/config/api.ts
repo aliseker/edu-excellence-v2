@@ -44,6 +44,11 @@ export const API_ENDPOINTS = {
   blogPostById: (id: number) => `/blog-posts/${id}`,
   blogPostBySlug: (slug: string) => `/blog-posts/slug/${encodeURIComponent(slug)}`,
   
+  // Gallery
+  galleryItems: '/gallery',
+  galleryItemById: (id: number) => `/gallery/${id}`,
+  galleryItemsByCategory: (category: string) => `/gallery/category/${encodeURIComponent(category)}`,
+  
   // Contact
   contact: '/contact',
   
