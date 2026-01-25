@@ -61,10 +61,7 @@ export default function DilOkuluPage() {
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight drop-shadow-[4px_4px_0_rgba(0,0,0,0.3)]">
             NEDEN DİL
             <br />
-            <span className="relative inline-block">
-              <span className="absolute inset-0 bg-white/30 transform -skew-x-12 -z-10"></span>
-              <span className="relative">EĞİTİMİ?</span>
-            </span>
+            <span>EĞİTİMİ?</span>
           </h1>
           <p className="text-lg md:text-xl text-purple-100 font-medium max-w-2xl">
             Yurtdışında dil öğrenerek kariyerinize yön verin. Profesyonel danışmanlık hizmetimizle yanınızdayız.
