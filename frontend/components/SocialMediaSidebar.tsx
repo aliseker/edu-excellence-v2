@@ -1,6 +1,15 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
+
 const SocialMediaSidebar = () => {
+  const pathname = usePathname();
+  
+  // Admin ve login sayfalarında gösterme
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   // Sosyal medya linkleri - gerçek linklerle değiştirilecek
   const socialLinks = {
     facebook: 'https://www.facebook.com/eduexcellence',

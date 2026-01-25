@@ -21,6 +21,7 @@ public class EduExcellenceDbContext : DbContext
     public DbSet<BlogPost> BlogPosts => Set<BlogPost>();
     public DbSet<GalleryItem> GalleryItems => Set<GalleryItem>();
     public DbSet<Testimonial> Testimonials => Set<Testimonial>();
+    public DbSet<User> Users => Set<User>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

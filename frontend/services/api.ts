@@ -24,13 +24,23 @@ class ApiService {
       url += `?${searchParams.toString()}`;
     }
 
+    // Token'ı localStorage'dan al
+    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+
     try {
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+        ...fetchOptions.headers,
+      };
+
+      // Token varsa Authorization header'ına ekle
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await fetch(url, {
         ...fetchOptions,
-        headers: {
-          'Content-Type': 'application/json',
-          ...fetchOptions.headers,
-        },
+        headers,
       });
 
       if (!response.ok) {
@@ -41,7 +51,11 @@ class ApiService {
         } else if (status === 404) {
           throw new Error('İstenen kaynak bulunamadı.');
         } else if (status === 401 || status === 403) {
-          throw new Error('Yetkiniz bulunmamaktadır.');
+          // Login endpoint'i için 401 normal bir durum olabilir (yanlış şifre)
+          // Bu durumda özel bir hata tipi fırlat
+          const error = new Error('Yetkiniz bulunmamaktadır.');
+          (error as any).isAuthError = true;
+          throw error;
         } else {
           throw new Error('Bir hata oluştu. Lütfen tekrar deneyin.');
         }
@@ -55,8 +69,12 @@ class ApiService {
       return response.json();
     } catch (error) {
       // Log error for debugging but don't expose details to user
+      // Auth hatalarını (401/403) login için loglama
       if (error instanceof Error) {
-        console.error('API request failed:', error.message);
+        const isAuthError = (error as any).isAuthError;
+        if (!isAuthError) {
+          console.error('API request failed:', error.message);
+        }
         throw error;
       }
       throw new Error('Bağlantı hatası oluştu. Lütfen internet bağlantınızı kontrol edin.');
@@ -326,6 +344,30 @@ class ApiService {
   async deleteTestimonial(id: number) {
     return this.request(API_ENDPOINTS.testimonialById(id), {
       method: 'DELETE',
+    });
+  }
+
+  // Auth
+  async login(username: string, password: string) {
+    try {
+      return await this.request(API_ENDPOINTS.authLogin, {
+        method: 'POST',
+        body: JSON.stringify({ username, password }),
+      });
+    } catch (error) {
+      // 401 hatası login için normal bir durum (yanlış şifre)
+      // Bu hatayı tekrar fırlatma, sadece null döndür
+      if (error instanceof Error && (error as any).isAuthError) {
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  async validateToken(token: string) {
+    return this.request(API_ENDPOINTS.authValidate, {
+      method: 'POST',
+      body: JSON.stringify({ token }),
     });
   }
 }

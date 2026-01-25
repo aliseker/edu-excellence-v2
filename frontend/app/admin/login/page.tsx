@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const { login, isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -13,18 +15,26 @@ export default function AdminLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    // Eğer zaten giriş yapılmışsa dashboard'a yönlendir
+    if (isAuthenticated) {
+      router.push('/admin/dashboard');
+    }
+  }, [isAuthenticated, router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
 
     try {
-      // TODO: Backend API entegrasyonu eklenecek
-      // Şimdilik mock login
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const success = await login(formData.email, formData.password);
       
-      // Başarılı login sonrası dashboard'a yönlendir
-      router.push('/admin/dashboard');
+      if (success) {
+        router.push('/admin/dashboard');
+      } else {
+        setError('E-posta veya şifre hatalı.');
+      }
     } catch (err) {
       setError('Giriş başarısız. Lütfen bilgilerinizi kontrol edin.');
     } finally {
@@ -69,7 +79,7 @@ export default function AdminLoginPage() {
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-600 transition-colors"
-              placeholder="admin@eduexcellence.com.tr"
+              placeholder="E-posta adresinizi girin"
               required
             />
           </div>

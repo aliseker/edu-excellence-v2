@@ -1,5 +1,6 @@
 using EduExcellenceV2.Application.DTOs;
 using EduExcellenceV2.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduExcellenceV2.Presentation.WebApi.Controllers;
@@ -16,6 +17,7 @@ public class GalleryController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetAll()
     {
         var items = await _service.GetAllAsync();
@@ -23,6 +25,7 @@ public class GalleryController : ControllerBase
     }
 
     [HttpGet("category/{category}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetByCategory(string category)
     {
         var items = await _service.GetByCategoryAsync(category);
@@ -30,6 +33,7 @@ public class GalleryController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetById(int id)
     {
         var item = await _service.GetByIdAsync(id);
@@ -42,6 +46,7 @@ public class GalleryController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create([FromBody] GalleryItemCreateUpdateDto dto)
     {
         var created = await _service.CreateAsync(dto);
@@ -49,6 +54,7 @@ public class GalleryController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Update(int id, [FromBody] GalleryItemCreateUpdateDto dto)
     {
         var updated = await _service.UpdateAsync(id, dto);
@@ -56,6 +62,7 @@ public class GalleryController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
         var deleted = await _service.DeleteAsync(id);

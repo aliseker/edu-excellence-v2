@@ -3,9 +3,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const AdminSidebar = () => {
   const pathname = usePathname();
+  const { logout } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
@@ -176,15 +178,15 @@ const AdminSidebar = () => {
 
         {/* Logout */}
         <div className="p-4 border-t border-slate-800/70">
-          <Link
-            href="/admin/login"
-            className="flex items-center space-x-3 px-4 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800/70 hover:text-white transition-all duration-200"
+          <button
+            onClick={logout}
+            className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800/70 hover:text-white transition-all duration-200"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
             {!isCollapsed && <span className="font-semibold">Çıkış Yap</span>}
-          </Link>
+          </button>
         </div>
       </div>
   );
