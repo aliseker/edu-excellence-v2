@@ -712,6 +712,95 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.TestimonialsController",
+    "Method": "GetAll",
+    "RelativePath": "api/testimonials",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.TestimonialsController",
+    "Method": "Create",
+    "RelativePath": "api/testimonials",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "EduExcellenceV2.Application.DTOs.TestimonialCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.TestimonialsController",
+    "Method": "GetById",
+    "RelativePath": "api/testimonials/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.TestimonialsController",
+    "Method": "Update",
+    "RelativePath": "api/testimonials/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EduExcellenceV2.Application.DTOs.TestimonialCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.TestimonialsController",
+    "Method": "Delete",
+    "RelativePath": "api/testimonials/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.TestimonialsController",
+    "Method": "GetActive",
+    "RelativePath": "api/testimonials/active",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.UniversitiesController",
     "Method": "GetAll",
     "RelativePath": "api/universities",

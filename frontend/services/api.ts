@@ -272,6 +272,62 @@ class ApiService {
     }
     return [];
   }
+
+  // Locations
+  async getLocationCountries() {
+    return this.request(API_ENDPOINTS.locationCountries);
+  }
+
+  async getLocationCities(countryId: number) {
+    return this.request(API_ENDPOINTS.locationCities(countryId));
+  }
+
+  // Testimonials
+  async getTestimonials() {
+    return this.request(API_ENDPOINTS.testimonials);
+  }
+
+  async getActiveTestimonials() {
+    return this.request(API_ENDPOINTS.testimonialsActive);
+  }
+
+  async getTestimonialById(id: number) {
+    return this.request(API_ENDPOINTS.testimonialById(id));
+  }
+
+  async createTestimonial(data: {
+    name: string;
+    title: string;
+    description: string;
+    universityName: string;
+    displayOrder?: number;
+    isActive?: boolean;
+  }) {
+    return this.request(API_ENDPOINTS.testimonials, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateTestimonial(id: number, data: {
+    name: string;
+    title: string;
+    description: string;
+    universityName: string;
+    displayOrder?: number;
+    isActive?: boolean;
+  }) {
+    return this.request(API_ENDPOINTS.testimonialById(id), {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteTestimonial(id: number) {
+    return this.request(API_ENDPOINTS.testimonialById(id), {
+      method: 'DELETE',
+    });
+  }
 }
 
 export const apiService = new ApiService();

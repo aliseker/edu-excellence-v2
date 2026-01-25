@@ -12,7 +12,6 @@ const Navbar = () => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,13 +20,6 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/arama?q=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
 
   const [languageSchoolDropdown, setLanguageSchoolDropdown] = useState<
     Array<{ title: string; href: string; submenu?: Array<{ title: string; href: string }> }>
@@ -442,7 +434,7 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* Right Section - Diğer Hizmetlerimiz + Search */}
+          {/* Right Section - Diğer Hizmetlerimiz */}
           <div className="hidden lg:flex items-center space-x-2 flex-shrink-0">
             {/* Diğer Hizmetlerimiz */}
             <div className="relative group">
@@ -456,14 +448,14 @@ const Navbar = () => {
               {/* Dropdown Menu */}
               <div className="absolute top-full right-0 mt-1 w-56 bg-white border-4 border-gray-900 shadow-[6px_6px_0_0_rgba(0,0,0,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <div className="py-2">
-                  <div className="submenu-parent relative">
+                  <div className="submenu-parent relative group/lise">
                     <Link href="/lise" className="block px-4 py-2.5 text-sm text-gray-900 font-bold hover:bg-purple-600 hover:text-white transition-colors border-l-4 border-transparent hover:border-purple-800">
-                      Lise
-                      <svg className="inline-block w-3 h-3 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      <svg className="inline-block w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                       </svg>
+                      Lise
                     </Link>
-                    <div className="submenu-child absolute left-full top-0 ml-1 w-56 bg-white border-4 border-gray-900 shadow-[6px_6px_0_0_rgba(0,0,0,0.1)] opacity-0 invisible">
+                    <div className="submenu-child absolute right-full top-0 mr-1 w-56 bg-white border-4 border-gray-900 shadow-[6px_6px_0_0_rgba(0,0,0,0.1)] opacity-0 invisible group-hover/lise:opacity-100 group-hover/lise:visible transition-all duration-200 z-50">
                       <div className="py-2">
                         <Link href="/lise" className="block px-4 py-2 text-xs text-gray-600 font-semibold mb-2 uppercase tracking-wider border-b-2 border-gray-200 pb-2">
                           Neden Yurtdışında Lise?
@@ -510,36 +502,6 @@ const Navbar = () => {
                 </div>
               </div>
             </div>
-
-            {/* Search Section */}
-            <div className="flex items-center space-x-1">
-            <form onSubmit={handleSearch} className="flex items-center space-x-1">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Ara..."
-                  className="w-32 px-2 py-1.5 pl-6 border-4 border-gray-900 focus:outline-none focus:border-purple-600 text-[9px] font-bold"
-                />
-                <svg
-                  className="absolute left-1 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  strokeWidth={3}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-              <button
-                type="submit"
-                className="px-3 py-1.5 bg-purple-600 text-white font-black uppercase tracking-tight hover:bg-purple-700 transition-all duration-200 shadow-[4px_4px_0_0_rgba(0,0,0,0.2)] hover:shadow-[2px_2px_0_0_rgba(0,0,0,0.2)] hover:translate-x-1 hover:translate-y-1 text-[9px]"
-              >
-                Ara
-              </button>
-            </form>
-            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -563,35 +525,6 @@ const Navbar = () => {
         {/* Mobile Menu */}
         {isOpen && (
           <div className="lg:hidden pb-4 border-t-4 border-gray-900 mt-2 pt-4">
-            {/* Mobile Search */}
-            <form onSubmit={handleSearch} className="mb-4">
-              <div className="flex items-center space-x-2">
-                <div className="relative flex-1">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Ara..."
-                    className="w-full px-4 py-2 pl-10 border-4 border-gray-900 focus:outline-none focus:border-purple-600 text-sm font-bold"
-                  />
-                  <svg
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-purple-600 text-white font-black uppercase tracking-wider border-4 border-purple-800 hover:bg-purple-700 hover:border-purple-900 shadow-[4px_4px_0_0_rgba(0,0,0,0.2)]"
-                >
-                  Ara
-                </button>
-              </div>
-            </form>
-
             {/* Mobile Menu Items */}
             <div className="flex flex-col space-y-2">
               {menuItems.map((item) => {

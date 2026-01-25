@@ -20,6 +20,7 @@ public class EduExcellenceDbContext : DbContext
     public DbSet<VisaCountry> VisaCountries => Set<VisaCountry>();
     public DbSet<BlogPost> BlogPosts => Set<BlogPost>();
     public DbSet<GalleryItem> GalleryItems => Set<GalleryItem>();
+    public DbSet<Testimonial> Testimonials => Set<Testimonial>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

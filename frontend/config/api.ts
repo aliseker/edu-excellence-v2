@@ -63,6 +63,11 @@ export const API_ENDPOINTS = {
   // Cities
   cities: '/cities',
   cityById: (id: number) => `/cities/${id}`,
+
+  // Testimonials
+  testimonials: '/testimonials',
+  testimonialsActive: '/testimonials/active',
+  testimonialById: (id: number) => `/testimonials/${id}`,
 };
 
 

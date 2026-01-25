@@ -4,9 +4,8 @@ import UniversityFilter from './UniversityFilter';
 
 const FilterSection = () => {
   const handleFilterChange = (filters: any) => {
-    console.log('Filters:', filters);
-    // Burada filtreleme mantığı eklenecek
-    // Backend API çağrısı yapılacak
+    // Filtreler UniversityFilter içinde işleniyor
+    // Bu callback şu an için kullanılmıyor ama gelecekte ek özellikler için tutuluyor
   };
 
   return (

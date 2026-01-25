@@ -1,13 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { slugify } from '@/utils/format';
 
 export default function SearchPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
+  const country = searchParams.get('country') || '';
+  const city = searchParams.get('city') || '';
+  const programType = searchParams.get('programType') || '';
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,12 +20,89 @@ export default function SearchPage() {
     }
   };
 
-  // Örnek arama sonuçları - gerçek API entegrasyonu yapılacak
-  const searchResults = searchQuery ? [
-    { type: 'program', title: 'Kanada Üniversite Programları', description: 'Kanada\'da lisans ve yüksek lisans programları', href: '/universite?country=kanada' },
-    { type: 'program', title: 'İngiltere Dil Okulu', description: 'İngiltere\'de İngilizce dil eğitimi programları', href: '/dil-okulu?country=ingiltere' },
-    { type: 'page', title: 'Hakkımızda', description: 'Edu-Excellence hakkında bilgiler', href: '/hakkimizda' },
-  ] : [];
+  // Program tipi etiketleri
+  const programTypeLabels: Record<string, string> = {
+    'universite': 'Üniversite',
+    'dil-okulu': 'Dil Okulu',
+    'master-mba': 'Master/MBA',
+    'yaz-okulu': 'Yaz Okulu',
+    'lise': 'Lise',
+    'staj': 'Staj'
+  };
+
+  // Program tipi route'ları
+  const programTypeRoutes: Record<string, string> = {
+    'universite': '/universite',
+    'dil-okulu': '/dil-okulu',
+    'master-mba': '/master-mba',
+    'yaz-okulu': '/yaz-okulu',
+    'lise': '/lise',
+    'staj': '/staj'
+  };
+
+  // Filtrelere göre sonuçları oluştur
+  const hasFilters = country || city || programType || searchQuery;
+  
+  const searchResults: Array<{
+    type: string;
+    title: string;
+    description: string;
+    href: string;
+  }> = [];
+
+  // Program tipi seçildiyse direkt o sayfaya yönlendir
+  if (programType && programTypeRoutes[programType]) {
+    const baseRoute = programTypeRoutes[programType];
+    const countryPath = country ? `/${slugify(country)}` : '';
+    const cityQuery = city ? `?city=${slugify(city)}` : '';
+    
+    searchResults.push({
+      type: 'program',
+      title: `${programTypeLabels[programType]} Programları${country ? ` - ${country}` : ''}`,
+      description: `${country || 'Seçilen ülkede'} ${programTypeLabels[programType].toLowerCase()} programları`,
+      href: `${baseRoute}${countryPath}${cityQuery}`
+    });
+  } else if (country || city) {
+    // Program tipi seçilmediyse tüm program tiplerini göster
+    if (!programType) {
+      searchResults.push({
+        type: 'program',
+        title: `${country || 'Seçilen'} Üniversite Programları`,
+        description: `${country || 'Seçilen ülkede'} lisans ve yüksek lisans programları`,
+        href: `/universite${country ? `/${slugify(country)}` : ''}${city ? `?city=${slugify(city)}` : ''}`
+      });
+
+      searchResults.push({
+        type: 'program',
+        title: `${country || 'Seçilen'} Dil Okulu Programları`,
+        description: `${country || 'Seçilen ülkede'} dil eğitimi programları`,
+        href: `/dil-okulu${country ? `/${slugify(country)}` : ''}${city ? `?city=${slugify(city)}` : ''}`
+      });
+
+      searchResults.push({
+        type: 'program',
+        title: `${country || 'Seçilen'} Master/MBA Programları`,
+        description: `${country || 'Seçilen ülkede'} master ve MBA programları`,
+        href: `/master-mba${country ? `/${slugify(country)}` : ''}${city ? `?city=${slugify(city)}` : ''}`
+      });
+
+      searchResults.push({
+        type: 'program',
+        title: `${country || 'Seçilen'} Yaz Okulu Programları`,
+        description: `${country || 'Seçilen ülkede'} yaz okulu programları`,
+        href: `/yaz-okulu${country ? `/${slugify(country)}` : ''}${city ? `?city=${slugify(city)}` : ''}`
+      });
+    }
+  }
+
+  // Metin araması için örnek sonuçlar
+  if (searchQuery && !country && !city && !language) {
+    searchResults.push(
+      { type: 'program', title: 'Kanada Üniversite Programları', description: 'Kanada\'da lisans ve yüksek lisans programları', href: '/universite/kanada' },
+      { type: 'program', title: 'İngiltere Dil Okulu', description: 'İngiltere\'de İngilizce dil eğitimi programları', href: '/dil-okulu/ingiltere' },
+      { type: 'page', title: 'Hakkımızda', description: 'Edu-Excellence hakkında bilgiler', href: '/hakkimizda' }
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-pink-50/30">
@@ -46,10 +127,39 @@ export default function SearchPage() {
           </div>
         </form>
 
-        {searchQuery && (
+        {/* Aktif Filtreler */}
+        {hasFilters && (
+          <div className="mb-6 p-4 bg-white rounded-xl shadow-md">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Aktif Filtreler:</h3>
+            <div className="flex flex-wrap gap-2">
+              {country && (
+                <span className="bg-violet-100 text-violet-800 px-3 py-1 rounded-full text-sm font-medium">
+                  Ülke: {country}
+                </span>
+              )}
+              {city && (
+                <span className="bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-sm font-medium">
+                  Şehir: {city}
+                </span>
+              )}
+              {programType && (
+                <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+                  Program: {programTypeLabels[programType] || programType}
+                </span>
+              )}
+              {searchQuery && (
+                <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                  Arama: {searchQuery}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
+        {hasFilters && (
           <div>
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              "{searchQuery}" için sonuçlar
+              {searchQuery ? `"${searchQuery}" için sonuçlar` : 'Filtrelere göre programlar'}
             </h2>
             {searchResults.length > 0 ? (
               <div className="space-y-4">
@@ -76,6 +186,12 @@ export default function SearchPage() {
                 <p className="text-gray-600 text-lg">Sonuç bulunamadı.</p>
               </div>
             )}
+          </div>
+        )}
+
+        {!hasFilters && (
+          <div className="text-center py-12">
+            <p className="text-gray-600 text-lg mb-4">Arama yapmak için yukarıdaki formu kullanın veya anasayfadaki hızlı arama bölümünden filtreleri seçin.</p>
           </div>
         )}
       </div>

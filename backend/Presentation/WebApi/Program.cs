@@ -19,6 +19,7 @@ builder.Services.AddScoped<ICountryService, CountryService>();
 builder.Services.AddScoped<ICityService, CityService>();
 builder.Services.AddScoped<IBlogPostService, BlogPostService>();
 builder.Services.AddScoped<IGalleryService, GalleryService>();
+builder.Services.AddScoped<ITestimonialService, TestimonialService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
