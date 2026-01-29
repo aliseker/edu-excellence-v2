@@ -6,11 +6,11 @@ import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { API_BASE_URL, API_ENDPOINTS, BACKEND_BASE_URL } from '@/config/api';
 import { slugify } from '@/utils/format';
 
 export default function StajPage() {
-  const [countries, setCountries] = useState<Array<{ id: number; name: string; slug: string; flagEmoji: string }>>([]);
+  const [countries, setCountries] = useState<Array<{ id: number; name: string; slug: string; flagEmoji?: string; flagImageUrl?: string | null }>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,6 +37,7 @@ export default function StajPage() {
             name: country.name,
             slug: country.slug || slugify(country.name || ''),
             flagEmoji: country.flagEmoji || '🌍',
+            flagImageUrl: country.flagImageUrl ?? null,
           }))
           .filter((country: any) => country.slug);
 
@@ -299,7 +300,17 @@ export default function StajPage() {
                 href={`/staj/${country.slug}`}
                 className="group p-6 bg-gradient-to-br from-violet-50 to-purple-50 border-4 border-violet-300 hover:border-violet-600 transition-all duration-200 transform hover:-translate-y-2 hover:shadow-[8px_8px_0_0_rgba(139,92,246,0.3)]"
               >
-                <div className="text-5xl mb-4 text-center">{country.flagEmoji}</div>
+                <div className="flex justify-center mb-4 min-h-[3rem] items-center">
+                  {country.flagImageUrl ? (
+                    <img
+                      src={`${BACKEND_BASE_URL}${country.flagImageUrl}`}
+                      alt={country.name}
+                      className="h-12 w-auto object-contain"
+                    />
+                  ) : (
+                    <span className="text-5xl">{country.flagEmoji || '🌍'}</span>
+                  )}
+                </div>
                 <h3 className="text-xl font-black text-gray-900 text-center uppercase tracking-wider group-hover:text-violet-600 transition-colors">
                   {country.name}
                 </h3>

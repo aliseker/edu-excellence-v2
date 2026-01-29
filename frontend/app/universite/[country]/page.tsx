@@ -7,13 +7,14 @@ import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
 import { use, useEffect, useState } from 'react';
 import { apiService } from '@/services/api';
-import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { API_BASE_URL, API_ENDPOINTS, BACKEND_BASE_URL } from '@/config/api';
 
 interface Country {
   id: number;
   name: string;
   slug: string;
-  flagEmoji: string;
+  flagEmoji?: string;
+  flagImageUrl?: string | null;
 }
 
 interface City {
@@ -121,8 +122,15 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
           <Link href="/universite" className="inline-block mb-4 text-blue-100 hover:text-white font-bold transition-colors">
             ← Üniversiteler
           </Link>
-          <div className="inline-block px-5 py-2.5 bg-white/20 backdrop-blur-sm border-4 border-white/30 transform -skew-x-12 mb-6">
-            <span className="transform skew-x-12 text-sm font-black uppercase tracking-wider">{country.flagEmoji || '🌍'} {country.name}</span>
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/20 backdrop-blur-sm border-4 border-white/30 transform -skew-x-12 mb-6">
+            <span className="transform skew-x-12 flex items-center gap-2 text-sm font-black uppercase tracking-wider">
+              {country.flagImageUrl ? (
+                <img src={`${BACKEND_BASE_URL}${country.flagImageUrl}`} alt={country.name} className="h-6 w-auto object-contain" />
+              ) : (
+                <span>{country.flagEmoji || '🌍'}</span>
+              )}
+              {country.name}
+            </span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight drop-shadow-[4px_4px_0_rgba(0,0,0,0.3)]">
             {country.name.toUpperCase()}'DA

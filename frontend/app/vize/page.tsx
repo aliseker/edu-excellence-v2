@@ -7,6 +7,7 @@ import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
 import { apiService } from '@/services/api';
+import { API_BASE_URL, API_ENDPOINTS, BACKEND_BASE_URL } from '@/config/api';
 
 type VisaCountry = {
   id: number;
@@ -15,6 +16,8 @@ type VisaCountry = {
   flag: string;
   status: string;
 };
+
+type CountryWithFlag = VisaCountry & { flagImageUrl?: string | null };
 
 const getCountryEmoji = (countryCode: string): string => {
   const codePoints = countryCode
@@ -25,7 +28,7 @@ const getCountryEmoji = (countryCode: string): string => {
 };
 
 export default function VizePage() {
-  const [countries, setCountries] = useState<VisaCountry[]>([]);
+  const [countries, setCountries] = useState<CountryWithFlag[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -35,10 +38,19 @@ export default function VizePage() {
   const loadCountries = async () => {
     try {
       setIsLoading(true);
-      const data = await apiService.getVisaServices();
-      // Sadece aktif ülkeleri göster
-      const activeCountries = (data as VisaCountry[]).filter(c => c.status === 'active');
-      setCountries(activeCountries);
+      const [visaData, countriesRes] = await Promise.all([
+        apiService.getVisaServices(),
+        fetch(`${API_BASE_URL}${API_ENDPOINTS.countries}`),
+      ]);
+      const visaCountries = (visaData as VisaCountry[]).filter(c => c.status === 'active');
+      const countriesList: Array<{ slug: string; flagImageUrl?: string | null }> = await countriesRes.json();
+      const slugToFlag = new Map(countriesList.map(c => [c.slug, c.flagImageUrl ?? null]));
+
+      const withFlags: CountryWithFlag[] = visaCountries.map(v => ({
+        ...v,
+        flagImageUrl: slugToFlag.get(v.countrySlug.toLowerCase()) ?? slugToFlag.get(v.countrySlug) ?? null,
+      }));
+      setCountries(withFlags);
     } catch (error) {
       console.error('Vize ülkeleri yüklenirken hata oluştu:', error);
     } finally {
@@ -238,7 +250,17 @@ export default function VizePage() {
                   href={`/vize/${country.countrySlug}`}
                   className="group p-6 bg-gradient-to-br from-red-50 to-pink-50 border-4 border-red-300 hover:border-red-600 transition-all duration-200 transform hover:-translate-y-2 hover:shadow-[8px_8px_0_0_rgba(220,38,38,0.3)]"
                 >
-                  <div className="text-5xl mb-4 text-center">{getCountryEmoji(country.flag)}</div>
+                  <div className="flex justify-center mb-4 min-h-[3rem] items-center">
+                    {country.flagImageUrl ? (
+                      <img
+                        src={`${BACKEND_BASE_URL}${country.flagImageUrl}`}
+                        alt={country.countryName}
+                        className="h-12 w-auto object-contain"
+                      />
+                    ) : (
+                      <span className="text-5xl">{getCountryEmoji(country.flag)}</span>
+                    )}
+                  </div>
                   <h3 className="text-xl font-black text-gray-900 text-center uppercase tracking-wider group-hover:text-red-600 transition-colors">
                     {country.countryName}
                   </h3>
