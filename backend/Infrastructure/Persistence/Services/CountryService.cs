@@ -72,6 +72,20 @@ public class CountryService : ICountryService
         return true;
     }
 
+    public async Task<bool> SetFlagImageUrlAsync(int id, string relativePath)
+    {
+        var entity = await _dbContext.Countries.FirstOrDefaultAsync(x => x.Id == id);
+        if (entity == null)
+        {
+            return false;
+        }
+
+        entity.FlagImageUrl = relativePath;
+        entity.UpdatedAt = DateTime.UtcNow;
+        await _dbContext.SaveChangesAsync();
+        return true;
+    }
+
     private static CountryDto ToDto(CountryEntity entity)
     {
         return new CountryDto
@@ -79,6 +93,7 @@ public class CountryService : ICountryService
             Id = entity.Id,
             Name = entity.Name,
             Slug = entity.Slug,
+            FlagImageUrl = entity.FlagImageUrl,
             IsActive = entity.IsActive
         };
     }

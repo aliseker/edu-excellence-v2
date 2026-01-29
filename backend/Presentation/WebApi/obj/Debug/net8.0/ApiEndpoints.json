@@ -323,6 +323,27 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.CountriesController",
+    "Method": "UploadFlag",
+    "RelativePath": "api/countries/{id}/flag",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "flag",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "EduExcellenceV2.Presentation.WebApi.Controllers.GalleryController",
     "Method": "GetAll",
     "RelativePath": "api/gallery",

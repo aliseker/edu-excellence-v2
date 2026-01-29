@@ -55,6 +55,7 @@ export const API_ENDPOINTS = {
   // Countries
   countries: '/countries',
   countryById: (id: number) => `/countries/${id}`,
+  countryFlagUpload: (id: number) => `/countries/${id}/flag`,
 
   // Locations
   locationCountries: '/locations/countries',

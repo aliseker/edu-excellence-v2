@@ -6,28 +6,35 @@ import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { API_BASE_URL, API_ENDPOINTS, BACKEND_BASE_URL } from '@/config/api';
 import { slugify } from '@/utils/format';
 
+type CountryItem = { name: string; slug: string; flagImageUrl?: string | null };
+
 export default function DilOkuluPage() {
-  const [countries, setCountries] = useState<Array<{ name: string; flag: string; slug: string }>>([]);
+  const [countries, setCountries] = useState<CountryItem[]>([]);
 
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.languageSchools}`);
-        const data = await res.json();
-        const map = new Map<string, { name: string; flag: string; slug: string }>();
-        data.forEach((school: any) => {
+        const [schoolsRes, countriesRes] = await Promise.all([
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.languageSchools}`),
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.countries}`),
+        ]);
+        const schools = await schoolsRes.json();
+        const countriesList: Array<{ id: number; name: string; slug: string; flagImageUrl?: string | null }> = await countriesRes.json();
+        const slugToCountry = new Map(countriesList.map((c) => [c.slug, c]));
+
+        const map = new Map<string, CountryItem>();
+        schools.forEach((school: any) => {
           const slug = school.countrySlug || slugify(school.countryName || '');
-          if (!slug) {
-            return;
-          }
+          if (!slug) return;
           if (!map.has(slug)) {
+            const country = slugToCountry.get(slug);
             map.set(slug, {
-              name: school.countryName || slug,
-              flag: school.flag || '🌍',
-              slug
+              name: school.countryName || country?.name || slug,
+              slug,
+              flagImageUrl: country?.flagImageUrl ?? null,
             });
           }
         });
@@ -320,7 +327,17 @@ export default function DilOkuluPage() {
               className="group p-6 bg-white border-4 border-gray-900 hover:border-purple-600 transition-all duration-200 transform hover:-skew-x-2 hover:shadow-[8px_8px_0_0_rgba(0,0,0,0.1)]"
             >
               <div className="transform group-hover:skew-x-2 text-center">
-                <div className="text-5xl mb-3">{country.flag}</div>
+                <div className="flex justify-center mb-3 min-h-[3rem] items-center">
+                  {country.flagImageUrl ? (
+                    <img
+                      src={`${BACKEND_BASE_URL}${country.flagImageUrl}`}
+                      alt={country.name}
+                      className="h-12 w-auto object-contain"
+                    />
+                  ) : (
+                    <span className="text-5xl">🌍</span>
+                  )}
+                </div>
                 <div className="text-lg font-black text-gray-900 uppercase tracking-wider group-hover:text-purple-600 transition-colors">
                   {country.name}
                 </div>

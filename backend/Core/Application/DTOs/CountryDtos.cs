@@ -10,4 +10,5 @@ public class CountryCreateUpdateDto
 public class CountryDto : CountryCreateUpdateDto
 {
     public int Id { get; set; }
+    public string? FlagImageUrl { get; set; }
 }

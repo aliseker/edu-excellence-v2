@@ -9,4 +9,5 @@ public interface ICountryService
     Task<CountryDto> CreateAsync(CountryCreateUpdateDto dto);
     Task<bool> UpdateAsync(int id, CountryCreateUpdateDto dto);
     Task<bool> DeleteAsync(int id);
+    Task<bool> SetFlagImageUrlAsync(int id, string relativePath);
 }

@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { API_BASE_URL, API_ENDPOINTS, BACKEND_BASE_URL } from '@/config/api';
 
 export default function UlkeDuzenlePage() {
   const router = useRouter();
@@ -14,7 +14,9 @@ export default function UlkeDuzenlePage() {
     name: '',
     slug: '',
     isActive: true,
+    flagImageUrl: null as string | null,
   });
+  const flagFileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchCountry = async () => {
@@ -25,6 +27,7 @@ export default function UlkeDuzenlePage() {
           name: data.name ?? '',
           slug: data.slug ?? '',
           isActive: Boolean(data.isActive),
+          flagImageUrl: data.flagImageUrl ?? null,
         });
       } catch (error) {
         console.error('Ülke yüklenemedi:', error);
@@ -39,11 +42,27 @@ export default function UlkeDuzenlePage() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await fetch(`${API_BASE_URL}${API_ENDPOINTS.countryById(Number(id))}`, {
+      const putRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.countryById(Number(id))}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ name: formData.name, slug: formData.slug, isActive: formData.isActive }),
       });
+      if (!putRes.ok) throw new Error('Güncellenemedi.');
+
+      const file = flagFileRef.current?.files?.[0];
+      if (file) {
+        const formDataFlag = new FormData();
+        formDataFlag.append('flag', file);
+        const flagRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.countryFlagUpload(Number(id))}`, {
+          method: 'POST',
+          body: formDataFlag,
+        });
+        if (!flagRes.ok) {
+          const err = await flagRes.json().catch(() => ({}));
+          console.warn('Bayrak yüklenemedi:', err);
+        }
+      }
+
       router.push('/admin/ulkeler');
     } catch (error) {
       console.error('Hata:', error);
@@ -84,6 +103,26 @@ export default function UlkeDuzenlePage() {
             className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-600"
             required
           />
+        </div>
+        <div>
+          <label className="block text-sm font-bold text-gray-700 mb-2">Bayrak resmi</label>
+          {formData.flagImageUrl && (
+            <div className="mb-2 flex items-center gap-3">
+              <img
+                src={`${BACKEND_BASE_URL}${formData.flagImageUrl}`}
+                alt="Mevcut bayrak"
+                className="h-10 w-auto object-contain border border-gray-200 rounded"
+              />
+              <span className="text-sm text-gray-500">Mevcut bayrak</span>
+            </div>
+          )}
+          <input
+            ref={flagFileRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:font-bold file:bg-purple-100 file:text-purple-700"
+          />
+          <p className="text-xs text-gray-500 mt-1">Yeni dosya seçersen mevcut bayrak güncellenir. JPEG, PNG, WebP veya GIF, en fazla 2 MB</p>
         </div>
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-2">Durum</label>

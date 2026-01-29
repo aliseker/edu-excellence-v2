@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
@@ -13,16 +13,38 @@ export default function YeniUlkePage() {
     slug: '',
     isActive: true,
   });
+  const flagFileRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await fetch(`${API_BASE_URL}${API_ENDPOINTS.countries}`, {
+      const createRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.countries}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
+      if (!createRes.ok) {
+        const err = await createRes.json().catch(() => ({}));
+        throw new Error(err.message || 'Ülke eklenemedi.');
+      }
+      const created = await createRes.json();
+      const countryId = created.id;
+
+      const file = flagFileRef.current?.files?.[0];
+      if (file) {
+        const formDataFlag = new FormData();
+        formDataFlag.append('flag', file);
+        const flagRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.countryFlagUpload(countryId)}`, {
+          method: 'POST',
+          body: formDataFlag,
+        });
+        if (!flagRes.ok) {
+          const err = await flagRes.json().catch(() => ({}));
+          console.warn('Bayrak yüklenemedi:', err);
+        }
+      }
+
       router.push('/admin/ulkeler');
     } catch (error) {
       console.error('Hata:', error);
@@ -64,6 +86,16 @@ export default function YeniUlkePage() {
             className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-600"
             required
           />
+        </div>
+        <div>
+          <label className="block text-sm font-bold text-gray-700 mb-2">Bayrak resmi</label>
+          <input
+            ref={flagFileRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:font-bold file:bg-purple-100 file:text-purple-700"
+          />
+          <p className="text-xs text-gray-500 mt-1">JPEG, PNG, WebP veya GIF, en fazla 2 MB</p>
         </div>
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-2">Durum</label>
