@@ -12,6 +12,8 @@ const Navbar = () => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [openMobileSections, setOpenMobileSections] = useState<Record<string, boolean>>({});
+  const [openMobileSubsections, setOpenMobileSubsections] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const handleScroll = () => {
@@ -256,21 +258,40 @@ const Navbar = () => {
     fetchInternshipPrograms();
   }, []);
 
-  // Lise nested dropdown verileri
-  const highSchoolCountries = {
-    amerika: [
-      { title: 'Beverly High School', href: '/lise/amerika/beverly-high-school' },
-      { title: 'Harvard-Westlake School', href: '/lise/amerika/harvard-westlake-school' },
-      { title: 'Stuyvesant High School', href: '/lise/amerika/stuyvesant-high-school' },
-    ],
-    kanada: [
-      { title: 'Upper Canada College', href: '/lise/kanada/upper-canada-college' },
-      { title: 'St. George\'s School', href: '/lise/kanada/st-georges-school-vancouver' },
-    ],
-    ingiltere: [
-      { title: 'Eton College', href: '/lise/ingiltere/eton-college' },
-      { title: 'Westminster School', href: '/lise/ingiltere/westminster-school' },
-    ],
+  const otherServicesItems = [
+    {
+      title: 'Lise',
+      href: '/lise',
+      submenu: [
+        { title: 'Neden Yurtdışında Lise?', href: '/lise' },
+        { title: 'Amerika', href: '/lise/amerika' },
+        { title: 'Kanada', href: '/lise/kanada' },
+        { title: 'İngiltere', href: '/lise/ingiltere' },
+        { title: 'İrlanda', href: '/lise/irlanda' },
+        { title: 'Almanya', href: '/lise/almanya' },
+        { title: 'İtalya', href: '/lise/italya' },
+        { title: 'Fransa', href: '/lise/fransa' },
+        { title: 'İspanya', href: '/lise/ispanya' }
+      ]
+    },
+    { title: 'Vize Danışmanlığı', href: '/vize' },
+    { title: 'Blog', href: '/blog' },
+    { title: 'Sıkça Sorulan Sorular', href: '/sss' },
+    { title: 'Galeri', href: '/galeri' }
+  ];
+
+  const toggleMobileSection = (key: string) => {
+    setOpenMobileSections((prev) => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  const toggleMobileSubsection = (key: string) => {
+    setOpenMobileSubsections((prev) => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
   };
 
   const menuItems = [
@@ -529,36 +550,192 @@ const Navbar = () => {
             <div className="flex flex-col space-y-2">
               {menuItems.map((item) => {
                 const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+                const hasDropdown = item.dropdown && item.dropdown.length > 0;
+                const sectionKey = `section-${item.href}`;
+
                 return (
-                  <div key={item.href}>
-                    <Link
-                      href={item.href}
-                      onClick={() => setIsOpen(false)}
-                      className={`block px-4 py-3 text-base font-black uppercase tracking-wide transition-all duration-200 border-4 ${
-                        isActive
-                          ? 'bg-purple-600 text-white border-purple-800'
-                          : 'text-gray-900 border-gray-900 hover:bg-purple-600 hover:text-white hover:border-purple-800'
-                      }`}
-                    >
-                      {item.title}
-                    </Link>
-                    {item.dropdown && (
-                      <div className="pl-4 mt-1 space-y-1">
-                        {item.dropdown.map((dropdownItem) => (
-                          <Link
-                            key={dropdownItem.href}
-                            href={dropdownItem.href}
-                            onClick={() => setIsOpen(false)}
-                            className="block px-4 py-2.5 text-sm text-gray-900 font-bold hover:bg-purple-600 hover:text-white border-l-4 border-transparent hover:border-purple-800"
-                          >
-                            {dropdownItem.title}
-                          </Link>
-                        ))}
+                  <div key={item.href} className="border-4 border-gray-900">
+                    {hasDropdown ? (
+                      <button
+                        type="button"
+                        onClick={() => toggleMobileSection(sectionKey)}
+                        aria-expanded={openMobileSections[sectionKey] ? 'true' : 'false'}
+                        className={`w-full px-4 py-3 text-base font-black uppercase tracking-wide transition-all duration-200 flex items-center justify-between ${
+                          isActive
+                            ? 'bg-purple-600 text-white'
+                            : 'text-gray-900 hover:bg-purple-600 hover:text-white'
+                        }`}
+                      >
+                        <span>{item.title}</span>
+                        <svg
+                          className={`w-4 h-4 transition-transform duration-200 ${
+                            openMobileSections[sectionKey] ? 'rotate-180' : ''
+                          }`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          strokeWidth={3}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        onClick={() => setIsOpen(false)}
+                        className={`block px-4 py-3 text-base font-black uppercase tracking-wide transition-all duration-200 ${
+                          isActive
+                            ? 'bg-purple-600 text-white'
+                            : 'text-gray-900 hover:bg-purple-600 hover:text-white'
+                        }`}
+                      >
+                        {item.title}
+                      </Link>
+                    )}
+
+                    {hasDropdown && openMobileSections[sectionKey] && (
+                      <div className="border-t-4 border-gray-900 bg-gray-50">
+                        {item.dropdown?.map((dropdownItem) => {
+                          const hasSubmenu = dropdownItem.submenu && dropdownItem.submenu.length > 0;
+                          const subsectionKey = `sub-${item.href}-${dropdownItem.href}`;
+
+                          if (!hasSubmenu) {
+                            return (
+                              <Link
+                                key={dropdownItem.href}
+                                href={dropdownItem.href}
+                                onClick={() => setIsOpen(false)}
+                                className="block px-4 py-2.5 text-sm text-gray-900 font-bold hover:bg-purple-600 hover:text-white border-b-2 border-gray-200 last:border-b-0"
+                              >
+                                {dropdownItem.title}
+                              </Link>
+                            );
+                          }
+
+                          return (
+                            <div key={dropdownItem.href} className="border-b-2 border-gray-200">
+                              <button
+                                type="button"
+                                onClick={() => toggleMobileSubsection(subsectionKey)}
+                                aria-expanded={openMobileSubsections[subsectionKey] ? 'true' : 'false'}
+                                className="w-full px-4 py-2.5 text-sm text-gray-900 font-bold flex items-center justify-between hover:bg-purple-600 hover:text-white transition-colors"
+                              >
+                                <span>{dropdownItem.title}</span>
+                                <svg
+                                  className={`w-3 h-3 transition-transform duration-200 ${
+                                    openMobileSubsections[subsectionKey] ? 'rotate-180' : ''
+                                  }`}
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={3}
+                                >
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </button>
+                              {openMobileSubsections[subsectionKey] && (
+                                <div className="pb-2">
+                                  {dropdownItem.submenu?.map((submenuItem) => (
+                                    <Link
+                                      key={submenuItem.href}
+                                      href={submenuItem.href}
+                                      onClick={() => setIsOpen(false)}
+                                      className="block px-8 py-2 text-xs text-gray-900 font-semibold hover:bg-purple-600 hover:text-white"
+                                    >
+                                      {submenuItem.title}
+                                    </Link>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
                 );
               })}
+
+              <div className="border-4 border-gray-900">
+                <button
+                  type="button"
+                  onClick={() => toggleMobileSection('section-other-services')}
+                  aria-expanded={openMobileSections['section-other-services'] ? 'true' : 'false'}
+                  className="w-full px-4 py-3 text-base font-black uppercase tracking-wide transition-all duration-200 flex items-center justify-between text-gray-900 hover:bg-purple-600 hover:text-white"
+                >
+                  <span>DİĞER HİZMETLERİMİZ</span>
+                  <svg
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      openMobileSections['section-other-services'] ? 'rotate-180' : ''
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth={3}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {openMobileSections['section-other-services'] && (
+                  <div className="border-t-4 border-gray-900 bg-gray-50">
+                    {otherServicesItems.map((serviceItem) => {
+                      const hasSubmenu = serviceItem.submenu && serviceItem.submenu.length > 0;
+                      const subsectionKey = `sub-other-${serviceItem.href}`;
+
+                      if (!hasSubmenu) {
+                        return (
+                          <Link
+                            key={serviceItem.href}
+                            href={serviceItem.href}
+                            onClick={() => setIsOpen(false)}
+                            className="block px-4 py-2.5 text-sm text-gray-900 font-bold hover:bg-purple-600 hover:text-white border-b-2 border-gray-200 last:border-b-0"
+                          >
+                            {serviceItem.title}
+                          </Link>
+                        );
+                      }
+
+                      return (
+                        <div key={serviceItem.href} className="border-b-2 border-gray-200">
+                          <button
+                            type="button"
+                            onClick={() => toggleMobileSubsection(subsectionKey)}
+                            aria-expanded={openMobileSubsections[subsectionKey] ? 'true' : 'false'}
+                            className="w-full px-4 py-2.5 text-sm text-gray-900 font-bold flex items-center justify-between hover:bg-purple-600 hover:text-white transition-colors"
+                          >
+                            <span>{serviceItem.title}</span>
+                            <svg
+                              className={`w-3 h-3 transition-transform duration-200 ${
+                                openMobileSubsections[subsectionKey] ? 'rotate-180' : ''
+                              }`}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              strokeWidth={3}
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                          {openMobileSubsections[subsectionKey] && (
+                            <div className="pb-2">
+                              {serviceItem.submenu?.map((submenuItem) => (
+                                <Link
+                                  key={submenuItem.href}
+                                  href={submenuItem.href}
+                                  onClick={() => setIsOpen(false)}
+                                  className="block px-8 py-2 text-xs text-gray-900 font-semibold hover:bg-purple-600 hover:text-white"
+                                >
+                                  {submenuItem.title}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
