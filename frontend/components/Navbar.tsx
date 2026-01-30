@@ -394,7 +394,7 @@ const Navbar = () => {
                 <div key={item.href} className="relative group">
                   <Link
                     href={item.href}
-                    className={`px-1 py-1.5 text-[9px] font-black uppercase tracking-tight transition-all duration-200 flex items-center gap-0.5 whitespace-nowrap border-2 ${
+                    className={`px-1 py-1.5 text-[10px] font-black uppercase tracking-tight transition-all duration-200 flex items-center gap-0.5 whitespace-nowrap border-2 ${
                       isActive
                         ? 'text-purple-600 border-purple-600 bg-purple-50'
                         : 'text-gray-900 border-transparent hover:text-purple-600 hover:border-purple-600 hover:bg-purple-50'
@@ -459,7 +459,7 @@ const Navbar = () => {
           <div className="hidden lg:flex items-center space-x-2 flex-shrink-0">
             {/* Diğer Hizmetlerimiz */}
             <div className="relative group">
-              <button className="px-1.5 py-1.5 text-[9px] font-black uppercase tracking-tight transition-all duration-200 flex items-center gap-0.5 whitespace-nowrap border-2 text-gray-900 border-transparent hover:text-purple-600 hover:border-purple-600 hover:bg-purple-50">
+              <button className="px-1.5 py-1.5 text-[10px] font-black uppercase tracking-tight transition-all duration-200 flex items-center gap-0.5 whitespace-nowrap border-2 text-gray-900 border-transparent hover:text-purple-600 hover:border-purple-600 hover:bg-purple-50">
                 DİĞER HİZMETLERİMİZ
                 <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />

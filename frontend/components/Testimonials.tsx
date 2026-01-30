@@ -20,9 +20,15 @@ const gradients = [
   'from-orange-500 to-red-600'
 ];
 
-const getRandomEmoji = () => {
-  const emojis = ['👩', '👨', '👧', '👦', '🧑', '👱'];
-  return emojis[Math.floor(Math.random() * emojis.length)];
+const getInitials = (name: string) => {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) {
+    return 'EE';
+  }
+  if (parts.length === 1) {
+    return parts[0].slice(0, 2).toUpperCase();
+  }
+  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 };
 
 const Testimonials = () => {
@@ -100,15 +106,15 @@ const Testimonials = () => {
                 {currentTestimonials.map((testimonial, index) => {
                   const globalIndex = startIndex + index;
                   const gradient = gradients[globalIndex % gradients.length];
-                  const emoji = getRandomEmoji();
+                  const initials = getInitials(testimonial.name);
                   return (
                     <div
                       key={testimonial.id}
                       className="bg-white p-5 sm:p-6 lg:p-8 border-2 sm:border-4 border-gray-900 hover:border-purple-600 transition-all duration-200 shadow-[4px_4px_0_0_rgba(0,0,0,0.1)] sm:shadow-[6px_6px_0_0_rgba(0,0,0,0.1)] hover:shadow-[6px_6px_0_0_rgba(147,51,234,0.2)] sm:hover:shadow-[10px_10px_0_0_rgba(147,51,234,0.2)] hover:-translate-x-1 hover:-translate-y-1"
                     >
                       <div className="flex items-center mb-4 sm:mb-5 lg:mb-6">
-                        <div className={`w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gradient-to-br ${gradient} flex items-center justify-center text-2xl sm:text-3xl mr-3 sm:mr-4 border-2 sm:border-4 border-gray-900`}>
-                          {emoji}
+                        <div className={`w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gradient-to-br ${gradient} flex items-center justify-center text-sm sm:text-base lg:text-lg font-black text-white mr-3 sm:mr-4 border-2 sm:border-4 border-gray-900`}>
+                          {initials}
                         </div>
                         <div>
                           <h4 className="font-black text-gray-900 text-base sm:text-lg uppercase tracking-tight">{testimonial.name}</h4>
