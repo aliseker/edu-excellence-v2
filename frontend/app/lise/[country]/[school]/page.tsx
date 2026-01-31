@@ -5,8 +5,9 @@ import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
-import { use } from 'react';
+import { use, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 
 // Mock data - Later this will come from API
 const schoolData: Record<string, Record<string, {
@@ -210,7 +211,98 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
   const { country, school } = use(params);
   const countryKey = country.toLowerCase();
   const schoolKey = school.toLowerCase();
-  const data = schoolData[countryKey]?.[schoolKey];
+  const flagEmojiBySlug: Record<string, string> = useMemo(() => ({
+    amerika: '🇺🇸',
+    kanada: '🇨🇦',
+    ingiltere: '🇬🇧',
+    irlanda: '🇮🇪',
+    almanya: '🇩🇪',
+    italya: '🇮🇹',
+    fransa: '🇫🇷',
+    ispanya: '🇪🇸',
+  }), []);
+
+  const [apiData, setApiData] = useState<{
+    name: string;
+    country: string;
+    city: string;
+    flag: string;
+    type: string;
+    description: string;
+    intro?: string;
+    image?: string;
+    features: string[];
+    programs: Array<{ name: string; description: string }>;
+    accommodation: Array<{ type: string; description: string }>;
+    facilities: string[];
+    location: string;
+    established?: string;
+    students?: string;
+    accreditation?: string[];
+    requirements?: string[];
+  } | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchById = async () => {
+      const numericId = Number(schoolKey);
+      if (!Number.isFinite(numericId) || numericId <= 0) {
+        setApiData(null);
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.highSchoolById(numericId)}`);
+        if (!res.ok) {
+          setApiData(null);
+          return;
+        }
+
+        const hs = await res.json();
+        const slug = String(hs.countrySlug ?? '').toLowerCase();
+        if (slug && slug !== countryKey) {
+          setApiData(null);
+          return;
+        }
+
+        setApiData({
+          name: String(hs.name ?? ''),
+          country: String(hs.countryName ?? countryKey),
+          city: String(hs.cityName ?? ''),
+          flag: flagEmojiBySlug[countryKey] ?? '🌍',
+          type: 'Devlet',
+          description: String(hs.description ?? ''),
+          intro: String(hs.whySchool ?? ''),
+          image: undefined,
+          features: Array.isArray(hs.features) ? hs.features : [],
+          programs: (Array.isArray(hs.programOptions) ? hs.programOptions : []).map((p: any) => ({
+            name: String(p.title ?? ''),
+            description: String(p.description ?? ''),
+          })),
+          accommodation: (Array.isArray(hs.accommodationOptions) ? hs.accommodationOptions : []).map((a: any) => ({
+            type: String(a.title ?? ''),
+            description: String(a.description ?? ''),
+          })),
+          facilities: Array.isArray(hs.facilities) ? hs.facilities : [],
+          location: String(hs.location ?? ''),
+          established: hs.established ? String(hs.established) : undefined,
+          students: hs.students ? String(hs.students) : undefined,
+          accreditation: Array.isArray(hs.accreditation) ? hs.accreditation : undefined,
+          requirements: Array.isArray(hs.requirements) ? hs.requirements : undefined,
+        });
+      } catch (e) {
+        console.error('Lise detayı yüklenemedi:', e);
+        setApiData(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchById();
+  }, [countryKey, flagEmojiBySlug, schoolKey]);
+
+  const data = apiData;
 
   if (!data) {
     return (
@@ -218,7 +310,9 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Okul Bulunamadı</h1>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              {isLoading ? 'Yükleniyor...' : 'Okul Bulunamadı'}
+            </h1>
             <Link href={`/lise/${countryKey}`} className="text-green-600 hover:text-green-800 font-semibold">
               Ülke sayfasına dön
             </Link>

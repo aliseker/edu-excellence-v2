@@ -5,255 +5,110 @@ import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
-import { use } from 'react';
-
-// Mock data - Later this will come from API
-const countryData: Record<string, { 
-  name: string; 
-  flag: string; 
-  cities: Array<{ 
-    name: string; 
-    schools: Array<{ 
-      name: string; 
-      slug: string; 
-      type: string;
-      description: string; 
-    }> 
-  }> 
-}> = {
-  amerika: {
-    name: 'Amerika',
-    flag: '🇺🇸',
-    cities: [
-      {
-        name: 'Los Angeles',
-        schools: [
-          { 
-            name: 'Beverly High School', 
-            slug: 'beverly-high-school', 
-            type: 'Devlet',
-            description: 'Los Angeles\'ın prestijli Beverly Hills bölgesinde bulunan, akademik başarılarıyla tanınan devlet lisesi.'
-          },
-          { 
-            name: 'Harvard-Westlake School', 
-            slug: 'harvard-westlake-school', 
-            type: 'Özel',
-            description: 'Üst düzey akademik programlar ve üniversite hazırlık odaklı eğitim sunan özel lise.'
-          },
-        ]
-      },
-      {
-        name: 'New York',
-        schools: [
-          { 
-            name: 'Stuyvesant High School', 
-            slug: 'stuyvesant-high-school', 
-            type: 'Devlet',
-            description: 'New York\'un en prestijli devlet liselerinden biri, bilim ve teknoloji alanında uzmanlaşmış.'
-          },
-          { 
-            name: 'Trinity School', 
-            slug: 'trinity-school', 
-            type: 'Özel',
-            description: 'New York\'un köklü özel liselerinden biri, üniversiteye hazırlık konusunda mükemmel bir geçmişe sahip.'
-          },
-        ]
-      },
-      {
-        name: 'Boston',
-        schools: [
-          { 
-            name: 'Phillips Academy Andover', 
-            slug: 'phillips-academy-andover', 
-            type: 'Özel',
-            description: 'Amerika\'nın en prestijli yatılı özel liselerinden biri, üniversite hazırlık konusunda lider.'
-          },
-          { 
-            name: 'Boston Latin School', 
-            slug: 'boston-latin-school', 
-            type: 'Devlet',
-            description: 'Amerika\'nın en eski devlet lisesi, klasik eğitim ve akademik mükemmellik geleneği.'
-          },
-        ]
-      },
-    ]
-  },
-  kanada: {
-    name: 'Kanada',
-    flag: '🇨🇦',
-    cities: [
-      {
-        name: 'Toronto',
-        schools: [
-          { 
-            name: 'Upper Canada College', 
-            slug: 'upper-canada-college', 
-            type: 'Özel',
-            description: 'Kanada\'nın önde gelen özel erkek liselerinden biri, IB programı sunuyor.'
-          },
-          { 
-            name: 'Bayview Glen School', 
-            slug: 'bayview-glen-school', 
-            type: 'Özel',
-            description: 'Karma eğitim veren özel lise, üniversite hazırlık programları ile tanınır.'
-          },
-        ]
-      },
-      {
-        name: 'Vancouver',
-        schools: [
-          { 
-            name: 'St. George\'s School', 
-            slug: 'st-georges-school-vancouver', 
-            type: 'Özel',
-            description: 'Vancouver\'ın prestijli özel liselerinden biri, mükemmel akademik ve spor programları.'
-          },
-          { 
-            name: 'Little Flower Academy', 
-            slug: 'little-flower-academy', 
-            type: 'Özel',
-            description: 'Kız liseleri arasında öne çıkan, akademik başarılarıyla tanınan okul.'
-          },
-        ]
-      },
-    ]
-  },
-  ingiltere: {
-    name: 'İngiltere',
-    flag: '🇬🇧',
-    cities: [
-      {
-        name: 'Londra',
-        schools: [
-          { 
-            name: 'Eton College', 
-            slug: 'eton-college', 
-            type: 'Özel',
-            description: 'İngiltere\'nin en prestijli özel erkek liselerinden biri, köklü bir eğitim geleneği.'
-          },
-          { 
-            name: 'Westminster School', 
-            slug: 'westminster-school', 
-            type: 'Özel',
-            description: 'Londra\'nın merkezinde, akademik mükemmellik ve üniversite hazırlık konusunda lider.'
-          },
-        ]
-      },
-      {
-        name: 'Oxford',
-        schools: [
-          { 
-            name: 'Magdalen College School', 
-            slug: 'magdalen-college-school', 
-            type: 'Özel',
-            description: 'Oxford\'un tarihi atmosferinde, klasik eğitim ve modern yaklaşımları birleştiren okul.'
-          },
-        ]
-      },
-      {
-        name: 'Cambridge',
-        schools: [
-          { 
-            name: 'The Perse School', 
-            slug: 'the-perse-school', 
-            type: 'Özel',
-            description: 'Cambridge\'in köklü okullarından biri, akademik başarılarıyla tanınır.'
-          },
-        ]
-      },
-    ]
-  },
-  irlanda: {
-    name: 'İrlanda',
-    flag: '🇮🇪',
-    cities: [
-      {
-        name: 'Dublin',
-        schools: [
-          { 
-            name: 'Belvedere College', 
-            slug: 'belvedere-college', 
-            type: 'Özel',
-            description: 'Dublin\'in köklü özel liselerinden biri, akademik başarılarıyla tanınır.'
-          },
-        ]
-      },
-    ]
-  },
-  almanya: {
-    name: 'Almanya',
-    flag: '🇩🇪',
-    cities: [
-      {
-        name: 'Berlin',
-        schools: [
-          { 
-            name: 'Gymnasium Steglitz', 
-            slug: 'gymnasium-steglitz', 
-            type: 'Devlet',
-            description: 'Berlin\'in önde gelen devlet liselerinden biri, Abitur programı sunuyor.'
-          },
-        ]
-      },
-    ]
-  },
-  italya: {
-    name: 'İtalya',
-    flag: '🇮🇹',
-    cities: [
-      {
-        name: 'Roma',
-        schools: [
-          { 
-            name: 'Liceo Classico', 
-            slug: 'liceo-classico-roma', 
-            type: 'Devlet',
-            description: 'Roma\'nın klasik eğitim veren devlet liselerinden biri.'
-          },
-        ]
-      },
-    ]
-  },
-  fransa: {
-    name: 'Fransa',
-    flag: '🇫🇷',
-    cities: [
-      {
-        name: 'Paris',
-        schools: [
-          { 
-            name: 'Lycée Louis-le-Grand', 
-            slug: 'lycee-louis-le-grand', 
-            type: 'Devlet',
-            description: 'Paris\'in en prestijli devlet liselerinden biri, üniversite hazırlık konusunda lider.'
-          },
-        ]
-      },
-    ]
-  },
-  ispanya: {
-    name: 'İspanya',
-    flag: '🇪🇸',
-    cities: [
-      {
-        name: 'Madrid',
-        schools: [
-          { 
-            name: 'Colegio San Patricio', 
-            slug: 'colegio-san-patricio', 
-            type: 'Özel',
-            description: 'Madrid\'in önde gelen özel liselerinden biri, IB programı sunuyor.'
-          },
-        ]
-      },
-    ]
-  },
-};
+import { use, useEffect, useMemo, useState } from 'react';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 
 export default function CountryPage({ params }: { params: Promise<{ country: string }> }) {
   const { country } = use(params);
   const countryKey = country.toLowerCase();
-  const data = countryData[countryKey];
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+
+  const [apiData, setApiData] = useState<{
+    name: string;
+    flag: string;
+    cities: Array<{
+      name: string;
+      schools: Array<{
+        name: string;
+        slug: string;
+        type: string;
+        description: string;
+      }>;
+    }>;
+  } | null>(null);
+
+  const flagEmojiBySlug: Record<string, string> = useMemo(() => ({
+    amerika: '🇺🇸',
+    kanada: '🇨🇦',
+    ingiltere: '🇬🇧',
+    irlanda: '🇮🇪',
+    almanya: '🇩🇪',
+    italya: '🇮🇹',
+    fransa: '🇫🇷',
+    ispanya: '🇪🇸',
+  }), []);
+
+  useEffect(() => {
+    const fetchCountryHighSchools = async () => {
+      setIsLoading(true);
+      setApiError(null);
+      try {
+        // 1) Resolve countryId by slug from locations/countries
+        const countriesRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.locationCountries}`);
+        if (!countriesRes.ok) {
+          throw new Error('Ülkeler yüklenemedi.');
+        }
+        const countries = await countriesRes.json();
+        const match = (Array.isArray(countries) ? countries : []).find((c: any) =>
+          String(c.value ?? '').toLowerCase() === countryKey
+        );
+
+        if (!match) {
+          setApiData(null);
+          return;
+        }
+
+        // 2) Fetch high schools by countryId
+        const schoolsRes = await fetch(
+          `${API_BASE_URL}${API_ENDPOINTS.highSchools}?countryId=${Number(match.id)}&status=active`
+        );
+        if (!schoolsRes.ok) {
+          throw new Error('Liseler yüklenemedi.');
+        }
+        const schools = await schoolsRes.json();
+
+        const cityMap = new Map<string, Array<{ name: string; slug: string; type: string; description: string }>>();
+        (Array.isArray(schools) ? schools : []).forEach((s: any) => {
+          const cityName = String(s.cityName ?? '').trim() || 'Diğer';
+          const list = cityMap.get(cityName) ?? [];
+          list.push({
+            name: String(s.name ?? ''),
+            // Detail route will accept numeric id too
+            slug: String(s.id),
+            // Backend currently doesn't store type; keep existing UI badge with a safe default
+            type: 'Devlet',
+            description: String(s.description ?? ''),
+          });
+          cityMap.set(cityName, list);
+        });
+
+        const cities = Array.from(cityMap.entries())
+          .sort((a, b) => a[0].localeCompare(b[0], 'tr'))
+          .map(([name, schools]) => ({
+            name,
+            schools: schools.filter(x => x.name.trim() !== ''),
+          }))
+          .filter(c => c.schools.length > 0);
+
+        setApiData({
+          name: String(match.label ?? match.name ?? match.value ?? ''),
+          flag: flagEmojiBySlug[countryKey] ?? '🌍',
+          cities,
+        });
+      } catch (error) {
+        console.error('Lise ülke sayfası yüklenemedi:', error);
+        setApiError('Lise verileri yüklenirken bir hata oluştu.');
+        setApiData(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCountryHighSchools();
+  }, [countryKey, flagEmojiBySlug]);
+
+  const data = apiData;
 
   if (!data) {
     return (
@@ -265,6 +120,12 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
             <Link href="/lise" className="text-purple-600 hover:text-purple-800 font-semibold">
               Lise sayfasına dön
             </Link>
+            {isLoading && (
+              <p className="mt-4 text-gray-600 font-medium">Yükleniyor...</p>
+            )}
+            {apiError && (
+              <p className="mt-2 text-red-600 font-semibold">{apiError}</p>
+            )}
           </div>
         </div>
         <Footer />
@@ -303,6 +164,16 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
 
       {/* Schools by City */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        {isLoading && (
+          <div className="text-center text-gray-600 font-semibold">
+            Yükleniyor...
+          </div>
+        )}
+        {apiError && (
+          <div className="text-center text-red-600 font-semibold">
+            {apiError}
+          </div>
+        )}
         {data.cities.map((city, cityIndex) => (
           <div key={city.name} className={cityIndex > 0 ? 'mt-16' : ''}>
             <div className="mb-8">

@@ -15,6 +15,7 @@ public class EduExcellenceDbContext : DbContext
     public DbSet<University> Universities => Set<University>();
     public DbSet<MasterProgram> MasterPrograms => Set<MasterProgram>();
     public DbSet<InternshipProgram> InternshipPrograms => Set<InternshipProgram>();
+    public DbSet<HighSchool> HighSchools => Set<HighSchool>();
     public DbSet<CountryEntity> Countries => Set<CountryEntity>();
     public DbSet<City> Cities => Set<City>();
     public DbSet<VisaCountry> VisaCountries => Set<VisaCountry>();

@@ -26,6 +26,7 @@ export const API_ENDPOINTS = {
   // High Schools
   highSchools: '/high-schools',
   highSchoolById: (id: number) => `/high-schools/${id}`,
+  highSchoolCountries: '/high-schools/countries',
   
   // Master/MBA
   masterPrograms: '/master-programs',

@@ -15,6 +15,23 @@ const Navbar = () => {
   const [openMobileSections, setOpenMobileSections] = useState<Record<string, boolean>>({});
   const [openMobileSubsections, setOpenMobileSubsections] = useState<Record<string, boolean>>({});
 
+  const fallbackHighSchoolCountries: Array<{ title: string; href: string; slug: string }> = [
+    { title: 'Amerika', href: '/lise/amerika', slug: 'amerika' },
+    { title: 'Kanada', href: '/lise/kanada', slug: 'kanada' },
+    { title: 'İngiltere', href: '/lise/ingiltere', slug: 'ingiltere' },
+    { title: 'İrlanda', href: '/lise/irlanda', slug: 'irlanda' },
+    { title: 'Almanya', href: '/lise/almanya', slug: 'almanya' },
+    { title: 'İtalya', href: '/lise/italya', slug: 'italya' },
+    { title: 'Fransa', href: '/lise/fransa', slug: 'fransa' },
+    { title: 'İspanya', href: '/lise/ispanya', slug: 'ispanya' },
+  ];
+
+  const preferredHighSchoolCountryOrder = fallbackHighSchoolCountries.map((x) => x.slug);
+
+  const [highSchoolCountries, setHighSchoolCountries] = useState<Array<{ title: string; href: string; slug: string }>>(
+    fallbackHighSchoolCountries
+  );
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -38,6 +55,53 @@ const Navbar = () => {
   const [internshipDropdown, setInternshipDropdown] = useState<
     Array<{ title: string; href: string }>
   >([]);
+
+  useEffect(() => {
+    const fetchHighSchoolCountries = async () => {
+      try {
+        // Only show countries that actually have a HighSchool record
+        const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.highSchools}?status=active`);
+        if (!res.ok) {
+          console.warn('Lise ülkeleri yüklenemedi:', res.status, res.statusText);
+          setHighSchoolCountries(fallbackHighSchoolCountries);
+          return;
+        }
+
+        const data = await res.json();
+
+        const countryMap = new Map<string, { title: string; slug: string }>();
+
+        (Array.isArray(data) ? data : []).forEach((school: any) => {
+          const slug = String(school.countrySlug || slugify(school.countryName || '') || '').toLowerCase();
+          if (!slug) return;
+
+          const title = String(school.countryName || slug);
+          if (!countryMap.has(slug)) {
+            countryMap.set(slug, { slug, title });
+          }
+        });
+
+        const mapped = Array.from(countryMap.values()).map((c) => ({ ...c, href: `/lise/${c.slug}` }));
+
+        const sorted = mapped.sort((a, b) => {
+          const ia = preferredHighSchoolCountryOrder.indexOf(a.slug);
+          const ib = preferredHighSchoolCountryOrder.indexOf(b.slug);
+          const ra = ia === -1 ? Number.MAX_SAFE_INTEGER : ia;
+          const rb = ib === -1 ? Number.MAX_SAFE_INTEGER : ib;
+          if (ra !== rb) return ra - rb;
+          return a.title.localeCompare(b.title, 'tr');
+        });
+
+        setHighSchoolCountries(sorted.length ? sorted : fallbackHighSchoolCountries);
+      } catch (error) {
+        console.error('Lise ülkeleri menüsü yüklenemedi:', error);
+        setHighSchoolCountries(fallbackHighSchoolCountries);
+      }
+    };
+
+    fetchHighSchoolCountries();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const fetchLanguageSchools = async () => {
@@ -264,14 +328,7 @@ const Navbar = () => {
       href: '/lise',
       submenu: [
         { title: 'Neden Yurtdışında Lise?', href: '/lise' },
-        { title: 'Amerika', href: '/lise/amerika' },
-        { title: 'Kanada', href: '/lise/kanada' },
-        { title: 'İngiltere', href: '/lise/ingiltere' },
-        { title: 'İrlanda', href: '/lise/irlanda' },
-        { title: 'Almanya', href: '/lise/almanya' },
-        { title: 'İtalya', href: '/lise/italya' },
-        { title: 'Fransa', href: '/lise/fransa' },
-        { title: 'İspanya', href: '/lise/ispanya' }
+        ...highSchoolCountries.map((c) => ({ title: c.title, href: c.href })),
       ]
     },
     { title: 'Vize Danışmanlığı', href: '/vize' },
@@ -481,30 +538,15 @@ const Navbar = () => {
                         <Link href="/lise" className="block px-4 py-2 text-xs text-gray-600 font-semibold mb-2 uppercase tracking-wider border-b-2 border-gray-200 pb-2">
                           Neden Yurtdışında Lise?
                         </Link>
-                        <Link href="/lise/amerika" className="block px-4 py-2.5 text-sm text-gray-900 font-bold hover:bg-purple-600 hover:text-white transition-colors border-l-4 border-transparent hover:border-purple-800">
-                          Amerika
-                        </Link>
-                        <Link href="/lise/kanada" className="block px-4 py-2.5 text-sm text-gray-900 font-bold hover:bg-purple-600 hover:text-white transition-colors border-l-4 border-transparent hover:border-purple-800">
-                          Kanada
-                        </Link>
-                        <Link href="/lise/ingiltere" className="block px-4 py-2.5 text-sm text-gray-900 font-bold hover:bg-purple-600 hover:text-white transition-colors border-l-4 border-transparent hover:border-purple-800">
-                          İngiltere
-                        </Link>
-                        <Link href="/lise/irlanda" className="block px-4 py-2.5 text-sm text-gray-900 font-bold hover:bg-purple-600 hover:text-white transition-colors border-l-4 border-transparent hover:border-purple-800">
-                          İrlanda
-                        </Link>
-                        <Link href="/lise/almanya" className="block px-4 py-2.5 text-sm text-gray-900 font-bold hover:bg-purple-600 hover:text-white transition-colors border-l-4 border-transparent hover:border-purple-800">
-                          Almanya
-                        </Link>
-                        <Link href="/lise/italya" className="block px-4 py-2.5 text-sm text-gray-900 font-bold hover:bg-purple-600 hover:text-white transition-colors border-l-4 border-transparent hover:border-purple-800">
-                          İtalya
-                        </Link>
-                        <Link href="/lise/fransa" className="block px-4 py-2.5 text-sm text-gray-900 font-bold hover:bg-purple-600 hover:text-white transition-colors border-l-4 border-transparent hover:border-purple-800">
-                          Fransa
-                        </Link>
-                        <Link href="/lise/ispanya" className="block px-4 py-2.5 text-sm text-gray-900 font-bold hover:bg-purple-600 hover:text-white transition-colors border-l-4 border-transparent hover:border-purple-800">
-                          İspanya
-                        </Link>
+                        {highSchoolCountries.map((country) => (
+                          <Link
+                            key={country.slug}
+                            href={country.href}
+                            className="block px-4 py-2.5 text-sm text-gray-900 font-bold hover:bg-purple-600 hover:text-white transition-colors border-l-4 border-transparent hover:border-purple-800"
+                          >
+                            {country.title}
+                          </Link>
+                        ))}
                       </div>
                     </div>
                   </div>
