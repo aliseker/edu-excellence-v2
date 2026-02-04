@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { API_BASE_URL, API_ENDPOINTS, getAuthHeaders } from '@/config/api';
 
 interface UniversityRow {
   id: number;
@@ -74,6 +74,7 @@ export default function UniversitePage() {
     try {
       const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.universityById(id)}`, {
         method: 'DELETE',
+        headers: getAuthHeaders(false),
       });
       if (!res.ok) {
         throw new Error('Silme başarısız.');

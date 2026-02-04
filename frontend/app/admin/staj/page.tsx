@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { API_BASE_URL, API_ENDPOINTS, getAuthHeaders } from '@/config/api';
 
 export default function StajPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -60,6 +60,7 @@ export default function StajPage() {
     try {
       const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.internshipProgramById(id)}`, {
         method: 'DELETE',
+        headers: getAuthHeaders(false),
       });
       if (!res.ok) {
         throw new Error('Program silinemedi.');

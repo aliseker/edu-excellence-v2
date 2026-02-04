@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { API_BASE_URL, API_ENDPOINTS, getAuthHeaders } from '@/config/api';
 
 interface Course {
   name: string;
@@ -199,7 +199,7 @@ export default function DilOkuluDuzenlePage() {
       };
       const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.languageSchoolById(Number(id))}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(submitData),
       });
       if (!response.ok) {

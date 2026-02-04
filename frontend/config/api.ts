@@ -76,6 +76,17 @@ export const API_ENDPOINTS = {
   authValidate: '/auth/validate',
 };
 
+/** Admin API istekleri için: Bearer token ekler. json: true ise Content-Type: application/json eklenir (FormData için false kullan). */
+export function getAuthHeaders(json = true): HeadersInit {
+  const headers: Record<string, string> = {};
+  if (json) headers['Content-Type'] = 'application/json';
+  if (typeof window !== 'undefined') {
+    const t = localStorage.getItem('auth_token');
+    if (t) headers['Authorization'] = `Bearer ${t}`;
+  }
+  return headers;
+}
+
 
 
 

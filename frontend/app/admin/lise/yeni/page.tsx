@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { API_BASE_URL, API_ENDPOINTS, getAuthHeaders } from '@/config/api';
 
 interface CountryOption {
   id: number;
@@ -134,7 +134,7 @@ export default function YeniLisePage() {
 
       const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.highSchools}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(submitData),
       });
 

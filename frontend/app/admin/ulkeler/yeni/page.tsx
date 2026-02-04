@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { API_BASE_URL, API_ENDPOINTS, getAuthHeaders } from '@/config/api';
 
 export default function YeniUlkePage() {
   const router = useRouter();
@@ -21,7 +21,7 @@ export default function YeniUlkePage() {
     try {
       const createRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.countries}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(formData),
       });
       if (!createRes.ok) {
@@ -37,6 +37,7 @@ export default function YeniUlkePage() {
         formDataFlag.append('flag', file);
         const flagRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.countryFlagUpload(countryId)}`, {
           method: 'POST',
+          headers: getAuthHeaders(false),
           body: formDataFlag,
         });
         if (!flagRes.ok) {

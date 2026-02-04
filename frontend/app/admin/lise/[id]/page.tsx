@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { API_BASE_URL, API_ENDPOINTS, getAuthHeaders } from '@/config/api';
 
 interface CountryOption {
   id: number;
@@ -204,7 +204,7 @@ export default function LiseDuzenlePage() {
 
       const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.highSchoolById(Number(id))}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(submitData),
       });
 

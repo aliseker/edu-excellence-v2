@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 import { apiService } from '@/services/api';
 
 type VisaTypeForm = {
@@ -73,7 +74,7 @@ export default function VizeDuzenlePage() {
   const loadVisaData = async () => {
     try {
       setIsLoadingData(true);
-      const response = await fetch(`https://localhost:7166/api/visa-services/${id}`);
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.visaServiceById(Number(id))}`);
       if (!response.ok) throw new Error('Veri yüklenemedi');
       
       const data = await response.json();

@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { API_BASE_URL, API_ENDPOINTS, BACKEND_BASE_URL } from '@/config/api';
+import { API_BASE_URL, API_ENDPOINTS, BACKEND_BASE_URL, getAuthHeaders } from '@/config/api';
 
 export default function UlkeDuzenlePage() {
   const router = useRouter();
@@ -44,7 +44,7 @@ export default function UlkeDuzenlePage() {
     try {
       const putRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.countryById(Number(id))}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ name: formData.name, slug: formData.slug, isActive: formData.isActive }),
       });
       if (!putRes.ok) throw new Error('Güncellenemedi.');
@@ -55,6 +55,7 @@ export default function UlkeDuzenlePage() {
         formDataFlag.append('flag', file);
         const flagRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.countryFlagUpload(Number(id))}`, {
           method: 'POST',
+          headers: getAuthHeaders(false),
           body: formDataFlag,
         });
         if (!flagRes.ok) {

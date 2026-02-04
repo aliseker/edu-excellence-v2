@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { API_BASE_URL, API_ENDPOINTS, getAuthHeaders } from '@/config/api';
 
 interface City {
   id: number;
@@ -61,7 +61,7 @@ export default function SehirlerPage() {
     try {
       await fetch(`${API_BASE_URL}${API_ENDPOINTS.cities}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ name: newCity.trim(), countryId }),
       });
       setNewCity('');
@@ -91,7 +91,7 @@ export default function SehirlerPage() {
     try {
       await fetch(`${API_BASE_URL}${API_ENDPOINTS.cityById(editingCityId)}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ name: editingCityName.trim(), countryId }),
       });
       cancelEdit();
@@ -108,7 +108,7 @@ export default function SehirlerPage() {
       return;
     }
     try {
-      await fetch(`${API_BASE_URL}/cities/${id}`, { method: 'DELETE' });
+      await fetch(`${API_BASE_URL}/cities/${id}`, { method: 'DELETE', headers: getAuthHeaders(false) });
       setCities(prev => prev.filter(c => c.id !== id));
     } catch (error) {
       console.error('Şehir silinemedi:', error);

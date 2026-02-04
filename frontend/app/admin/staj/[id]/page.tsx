@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { API_BASE_URL, API_ENDPOINTS, getAuthHeaders } from '@/config/api';
 
 export default function StajDuzenlePage() {
   const router = useRouter();
@@ -141,9 +141,7 @@ export default function StajDuzenlePage() {
 
       const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.internshipProgramById(id)}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(submitData),
       });
       if (!res.ok) {

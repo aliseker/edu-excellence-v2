@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { API_BASE_URL, API_ENDPOINTS, getAuthHeaders } from '@/config/api';
 
 interface Country {
   id: number;
@@ -37,7 +37,7 @@ export default function UlkelerPage() {
       return;
     }
     try {
-      await fetch(`${API_BASE_URL}${API_ENDPOINTS.countryById(id)}`, { method: 'DELETE' });
+      await fetch(`${API_BASE_URL}${API_ENDPOINTS.countryById(id)}`, { method: 'DELETE', headers: getAuthHeaders(false) });
       setCountries(prev => prev.filter(c => c.id !== id));
     } catch (error) {
       console.error('Silme hatası:', error);

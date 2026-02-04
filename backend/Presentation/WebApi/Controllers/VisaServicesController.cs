@@ -1,5 +1,6 @@
 using EduExcellenceV2.Application.DTOs;
 using EduExcellenceV2.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduExcellenceV2.Presentation.WebApi.Controllers;
@@ -35,6 +36,7 @@ public class VisaServicesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create([FromBody] VisaServiceCreateUpdateDto dto)
     {
         var created = await _service.CreateAsync(dto);
@@ -42,6 +44,7 @@ public class VisaServicesController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Update(int id, [FromBody] VisaServiceCreateUpdateDto dto)
     {
         var updated = await _service.UpdateAsync(id, dto);
@@ -49,6 +52,7 @@ public class VisaServicesController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
         var deleted = await _service.DeleteAsync(id);
