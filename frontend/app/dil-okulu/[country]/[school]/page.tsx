@@ -157,8 +157,8 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
         </div>
       </section>
 
-      {/* Quick Info */}
-      {data.established && (
+      {/* Quick Info - sadece en az bir veri varsa göster */}
+      {(data.established || data.students || (data.courses?.length ?? 0) > 0 || (data.accommodation?.length ?? 0) > 0) && (
         <section className="bg-white border-b-4 border-gray-900 py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -174,113 +174,128 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
                   <div className="text-sm font-bold text-gray-600 uppercase tracking-wider">Öğrenci Kapasitesi</div>
                 </div>
               )}
-              <div className="text-center">
-                <div className="text-3xl font-black text-pink-600 mb-2">{data.courses.length}</div>
-                <div className="text-sm font-bold text-gray-600 uppercase tracking-wider">Kurs Programı</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-black text-blue-600 mb-2">{data.accommodation.length}</div>
-                <div className="text-sm font-bold text-gray-600 uppercase tracking-wider">Konaklama Tipi</div>
-              </div>
+              {(data.courses?.length ?? 0) > 0 && (
+                <div className="text-center">
+                  <div className="text-3xl font-black text-pink-600 mb-2">{data.courses.length}</div>
+                  <div className="text-sm font-bold text-gray-600 uppercase tracking-wider">Kurs Programı</div>
+                </div>
+              )}
+              {(data.accommodation?.length ?? 0) > 0 && (
+                <div className="text-center">
+                  <div className="text-3xl font-black text-blue-600 mb-2">{data.accommodation.length}</div>
+                  <div className="text-sm font-bold text-gray-600 uppercase tracking-wider">Konaklama Tipi</div>
+                </div>
+              )}
             </div>
           </div>
         </section>
       )}
 
-      {/* Features */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
-          <div className="inline-block px-5 py-2.5 bg-purple-600 text-white border-4 border-purple-800 transform -skew-x-12 mb-6">
-            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">✨ Okul Özellikleri</h2>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {data.features.map((feature, index) => (
-              <div key={index} className="p-3 bg-purple-50 border-4 border-purple-200 transform hover:-skew-x-1 transition-all duration-200">
-                <div className="transform skew-x-1">
-                  <div className="flex items-start">
-                    <span className="text-purple-600 mr-3 font-black text-xl">✓</span>
-                    <span className="font-bold text-gray-900">{feature}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Courses */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
-          <div className="inline-block px-5 py-2.5 bg-violet-600 text-white border-4 border-violet-800 transform -skew-x-12 mb-6">
-            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📚 Kurs Programları</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {data.courses.map((course, index) => (
-              <div key={index} className="p-5 bg-gray-50 border-4 border-gray-300 transform hover:-skew-x-1 transition-all duration-200">
-                <div className="transform skew-x-1">
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">{course.name}</h3>
-                    <span className="px-3 py-1 bg-violet-600 text-white text-xs font-black uppercase">{course.hours}</span>
-                  </div>
-                  <p className="text-gray-700 font-medium leading-relaxed">{course.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Accommodation */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
-          <div className="inline-block px-5 py-2.5 bg-pink-600 text-white border-4 border-pink-800 transform -skew-x-12 mb-6">
-            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🏠 Konaklama Seçenekleri</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {data.accommodation.map((acc, index) => (
-              <div key={index} className="p-5 bg-gray-50 border-4 border-gray-300 transform hover:-skew-x-1 transition-all duration-200">
-                <div className="transform skew-x-1">
-                  <h3 className="text-xl font-black text-gray-900 mb-3 uppercase tracking-tight">{acc.type}</h3>
-                  <p className="text-gray-700 font-medium leading-relaxed">{acc.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Facilities & Location */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Facilities */}
-          <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10">
-            <div className="inline-block px-5 py-2.5 bg-blue-600 text-white border-4 border-blue-800 transform -skew-x-12 mb-6">
-              <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🏢 Tesisler</h2>
+      {/* Features - sadece admin özellik eklediyse göster */}
+      {(data.features?.length ?? 0) > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
+            <div className="inline-block px-5 py-2.5 bg-purple-600 text-white border-4 border-purple-800 transform -skew-x-12 mb-6">
+              <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">✨ Okul Özellikleri</h2>
             </div>
             
-            <div className="grid grid-cols-2 gap-3">
-              {data.facilities.map((facility, index) => (
-                <div key={index} className="p-4 bg-blue-50 border-2 border-blue-200">
-                  <div className="flex items-center">
-                    <span className="text-blue-600 mr-2 font-black">•</span>
-                    <span className="font-bold text-gray-900">{facility}</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {data.features.map((feature, index) => (
+                <div key={index} className="p-3 bg-purple-50 border-4 border-purple-200 transform hover:-skew-x-1 transition-all duration-200">
+                  <div className="transform skew-x-1">
+                    <div className="flex items-start">
+                      <span className="text-purple-600 mr-3 font-black text-xl">✓</span>
+                      <span className="font-bold text-gray-900">{feature}</span>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
+        </section>
+      )}
+
+      {/* Courses - sadece kurs programı eklenmişse göster */}
+      {(data.courses?.length ?? 0) > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
+            <div className="inline-block px-5 py-2.5 bg-violet-600 text-white border-4 border-violet-800 transform -skew-x-12 mb-6">
+              <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📚 Kurs Programları</h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {data.courses.map((course, index) => (
+                <div key={index} className="p-5 bg-gray-50 border-4 border-gray-300 transform hover:-skew-x-1 transition-all duration-200">
+                  <div className="transform skew-x-1">
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">{course.name}</h3>
+                      <span className="px-3 py-1 bg-violet-600 text-white text-xs font-black uppercase">{course.hours}</span>
+                    </div>
+                    <p className="text-gray-700 font-medium leading-relaxed">{course.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Accommodation - sadece konaklama seçeneği eklenmişse göster */}
+      {(data.accommodation?.length ?? 0) > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
+            <div className="inline-block px-5 py-2.5 bg-pink-600 text-white border-4 border-pink-800 transform -skew-x-12 mb-6">
+              <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🏠 Konaklama Seçenekleri</h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {data.accommodation.map((acc, index) => (
+                <div key={index} className="p-5 bg-gray-50 border-4 border-gray-300 transform hover:-skew-x-1 transition-all duration-200">
+                  <div className="transform skew-x-1">
+                    <h3 className="text-xl font-black text-gray-900 mb-3 uppercase tracking-tight">{acc.type}</h3>
+                    <p className="text-gray-700 font-medium leading-relaxed">{acc.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Facilities & Location - sadece veri varsa göster */}
+      {((data.facilities?.length ?? 0) > 0 || (data.location?.trim() ?? '') !== '' || (data.accreditation?.length ?? 0) > 0) && (
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Facilities - sadece tesis eklenmişse */}
+          {(data.facilities?.length ?? 0) > 0 && (
+            <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10">
+              <div className="inline-block px-5 py-2.5 bg-blue-600 text-white border-4 border-blue-800 transform -skew-x-12 mb-6">
+                <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🏢 Tesisler</h2>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
+                {data.facilities.map((facility, index) => (
+                  <div key={index} className="p-4 bg-blue-50 border-2 border-blue-200">
+                    <div className="flex items-center">
+                      <span className="text-blue-600 mr-2 font-black">•</span>
+                      <span className="font-bold text-gray-900">{facility}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Location & Accreditation */}
           <div className="space-y-8">
+            {(data.location?.trim() ?? '') !== '' && (
             <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10">
               <div className="inline-block px-5 py-2.5 bg-green-600 text-white border-4 border-green-800 transform -skew-x-12 mb-6">
                 <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📍 Lokasyon</h2>
               </div>
               <p className="text-gray-700 font-bold text-lg leading-relaxed">{data.location}</p>
             </div>
+            )}
 
             {data.accreditation && data.accreditation.length > 0 && (
               <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10">
@@ -299,6 +314,7 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
           </div>
         </div>
       </section>
+      )}
 
       {/* CTA */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
