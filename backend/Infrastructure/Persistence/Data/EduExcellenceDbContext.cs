@@ -25,11 +25,13 @@ public class EduExcellenceDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<SiteSettings> SiteSettings => Set<SiteSettings>();
     public DbSet<Faq> Faqs => Set<Faq>();
+    public DbSet<ErasmusPage> ErasmusPages => Set<ErasmusPage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<CountryEntity>().HasData(LocationSeed.Countries());
         modelBuilder.Entity<City>().HasData(LocationSeed.Cities());
+        modelBuilder.Entity<ErasmusPage>().HasIndex(x => x.Slug).IsUnique();
 
         base.OnModelCreating(modelBuilder);
     }

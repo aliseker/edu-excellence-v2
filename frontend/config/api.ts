@@ -83,6 +83,12 @@ export const API_ENDPOINTS = {
   // Site settings (sosyal medya, WhatsApp)
   siteSettings: '/site-settings',
   siteSettingsById: (id: number) => `/site-settings/${id}`,
+
+  // Erasmus sayfaları (içerik yönetimi)
+  erasmusPages: '/erasmus-pages',
+  erasmusPageById: (id: number) => `/erasmus-pages/${id}`,
+  erasmusPageBySlug: (slug: string) => `/erasmus-pages/slug/${encodeURIComponent(slug)}`,
+  erasmusPageUploadPdf: '/erasmus-pages/upload-pdf',
 };
 
 /** Admin API istekleri için: Bearer token ekler. json: true ise Content-Type: application/json eklenir (FormData için false kullan). */

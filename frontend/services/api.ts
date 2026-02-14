@@ -72,12 +72,12 @@ class ApiService {
     const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
 
     try {
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json',
-        ...fetchOptions.headers,
+      const headers: Record<string, string> = {
+        ...(fetchOptions.headers as Record<string, string>),
       };
-
-      // Token varsa Authorization header'ına ekle
+      if (!(fetchOptions.body instanceof FormData)) {
+        headers['Content-Type'] = 'application/json';
+      }
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
       }
@@ -88,8 +88,15 @@ class ApiService {
       });
 
       if (!response.ok) {
-        // Don't expose detailed error information to prevent information leakage
+        // 4xx için sunucudan gelen mesajı kullan (409 çakışma, 400 validasyon vb.)
         const status = response.status;
+        let bodyMessage: string | null = null;
+        try {
+          const body = await response.json();
+          if (body && typeof body.message === 'string') bodyMessage = body.message;
+        } catch {
+          /* ignore */
+        }
         if (status >= 500) {
           throw new Error('Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.');
         } else if (status === 404) {
@@ -99,13 +106,13 @@ class ApiService {
           (rateLimitError as any).isRateLimitError = true;
           throw rateLimitError;
         } else if (status === 401 || status === 403) {
-          // Login endpoint'i için 401 normal bir durum olabilir (yanlış şifre)
-          // Bu durumda özel bir hata tipi fırlat
           const error = new Error('Yetkiniz bulunmamaktadır.');
           (error as any).isAuthError = true;
           throw error;
+        } else if (status === 409 || status === 400) {
+          throw new Error(bodyMessage || 'İşlem kabul edilmedi. Lütfen tekrar deneyin.');
         } else {
-          throw new Error('Bir hata oluştu. Lütfen tekrar deneyin.');
+          throw new Error(bodyMessage || 'Bir hata oluştu. Lütfen tekrar deneyin.');
         }
       }
 
@@ -474,6 +481,55 @@ class ApiService {
       body: JSON.stringify(data),
     });
     return normalizeSiteSettings(raw);
+  }
+
+  // Erasmus sayfaları
+  async getErasmusPages() {
+    return this.request<Array<{ id: number; slug: string; title: string; htmlContent: string; imagesJson: string; pdfPath: string | null; createdAt: string; updatedAt: string | null }>>(API_ENDPOINTS.erasmusPages);
+  }
+
+  async getErasmusPageBySlug(slug: string) {
+    return this.request<{ id: number; slug: string; title: string; htmlContent: string; imagesJson: string; pdfPath: string | null }>(API_ENDPOINTS.erasmusPageBySlug(slug));
+  }
+
+  async getErasmusPageById(id: number) {
+    return this.request<{ id: number; slug: string; title: string; htmlContent: string; imagesJson: string; pdfPath: string | null }>(API_ENDPOINTS.erasmusPageById(id));
+  }
+
+  async createErasmusPage(data: { slug: string; title: string; htmlContent: string; imagesJson?: string; pdfPath?: string | null }) {
+    return this.request<{ id: number; slug: string; title: string; htmlContent: string; imagesJson: string; pdfPath: string | null }>(API_ENDPOINTS.erasmusPages, {
+      method: 'POST',
+      body: JSON.stringify({ ...data, imagesJson: data.imagesJson ?? '[]' }),
+    });
+  }
+
+  async updateErasmusPage(id: number, data: { slug: string; title: string; htmlContent: string; imagesJson?: string; pdfPath?: string | null }) {
+    return this.request(API_ENDPOINTS.erasmusPageById(id), {
+      method: 'PUT',
+      body: JSON.stringify({ ...data, imagesJson: data.imagesJson ?? '[]' }),
+    });
+  }
+
+  async deleteErasmusPage(id: number) {
+    return this.request(API_ENDPOINTS.erasmusPageById(id), {
+      method: 'DELETE',
+    });
+  }
+
+  async uploadErasmusPdf(file: File, suggestedName?: string): Promise<{ path: string }> {
+    const form = new FormData();
+    form.append('file', file);
+    if (suggestedName) form.append('suggestedName', suggestedName);
+    const url = `${this.baseUrl}${API_ENDPOINTS.erasmusPageUploadPdf}${suggestedName ? `?suggestedName=${encodeURIComponent(suggestedName)}` : ''}`;
+    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+    const headers: HeadersInit = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const res = await fetch(url, { method: 'POST', body: form, headers });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err?.message || 'PDF yüklenirken hata oluştu.');
+    }
+    return res.json();
   }
 }
 

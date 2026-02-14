@@ -404,8 +404,32 @@ const Navbar = () => {
       title: 'ERASMUS+', 
       href: '/erasmus',
       dropdown: [
-        { title: 'KA1 - Eğitimler', href: '/erasmus/egitimler' },
-        { title: 'KA2 - Projeler', href: '/erasmus/projeler' },
+        {
+          title: 'Hizmetlerimiz',
+          href: '/erasmus/hizmetler/proje-yazma-egitimleri',
+          submenu: [
+            { title: 'Proje Yazma Eğitimleri', href: '/erasmus/hizmetler/proje-yazma-egitimleri' },
+            { title: 'DANIŞMANLIK HİZMETLERİ', href: '/erasmus/hizmetler/danismanlik-hizmetleri' },
+            { title: 'Yurtdışı Staj ve İşbaşı Gözlem', href: '/erasmus/hizmetler/yurtdisi-staj-isbasi-gozlem' },
+          ]
+        },
+        {
+          title: 'Projelerimiz',
+          href: '/erasmus/projeler/ka1',
+          submenu: [
+            { title: 'Ka1 Projeleri', href: '/erasmus/projeler/ka1' },
+            { title: 'Ka2 Projeleri', href: '/erasmus/projeler/ka2' },
+            { title: 'Diğer', href: '/erasmus/projeler/diger' },
+          ]
+        },
+        {
+          title: 'Faydalı linkler',
+          href: '/erasmus/linkler/programme-rehberi',
+          submenu: [
+            { title: 'Programme Rehberi', href: '/erasmus/linkler/programme-rehberi' },
+            { title: 'Başvuru Sonuçları', href: '/erasmus/linkler/basvuru-sonuclari' },
+          ]
+        },
       ]
     },
     { 
