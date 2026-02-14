@@ -1,41 +1,7 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Accordion from '@/components/Accordion';
-
-const faqs = [
-  {
-    title: 'Yurtdışı eğitim başvurusu ne kadar sürer?',
-    content: 'Başvuru süreci ülkeye ve programa göre değişiklik göstermektedir. Genellikle 2-6 hafta arasında sürmektedir. Vize işlemleri dahil toplam süre 2-3 ay olabilmektedir.'
-  },
-  {
-    title: 'Hangi ülkelerde hizmet veriyorsunuz?',
-    content: '30+ ülkede hizmet vermekteyiz. Başlıca ülkeler: Kanada, İngiltere, Amerika, Almanya, İtalya, Fransa, Avustralya, İrlanda, İspanya, Hollanda ve daha fazlası.'
-  },
-  {
-    title: 'Vize başvurusu için ne gerekiyor?',
-    content: 'Vize başvurusu için genellikle şu belgeler gereklidir: Pasaport, kabul mektubu, finansal belgeler, sağlık sigortası, dil yeterlilik belgesi. Ülkeye göre ek belgeler gerekebilir.'
-  },
-  {
-    title: 'Dil okulu programları ne kadar sürer?',
-    content: 'Dil okulu programları genellikle 2 haftadan başlayıp 1 yıla kadar sürebilir. Program süresi öğrencinin hedefine ve bütçesine göre belirlenir.'
-  },
-  {
-    title: 'Burs imkanları var mı?',
-    content: 'Evet, birçok üniversite ve program için burs imkanları mevcuttur. Akademik başarı, dil yeterliliği ve diğer kriterlere göre burs başvurusu yapılabilir.'
-  },
-  {
-    title: 'Danışmanlık hizmeti ücretli mi?',
-    content: 'Hayır, temsilcisi olduğumuz tüm okul ve üniversiteler için danışmanlık hizmetimiz tamamen ücretsizdir. Sadece okul kayıt ücretleri ve vize ücretleri ödenmektedir.'
-  },
-  {
-    title: 'Online danışmanlık alabilir miyim?',
-    content: 'Evet, online danışmanlık hizmeti de sunmaktayız. Video görüşme veya telefon ile danışmanlık alabilirsiniz.'
-  },
-  {
-    title: 'Başvuru reddedilirse ne olur?',
-    content: 'Başvuru reddedilirse, red nedenini analiz edip alternatif seçenekler sunuyoruz. İtiraz süreci veya yeni başvuru için destek sağlıyoruz.'
-  }
-];
+import SSSContent from './SSSContent';
 
 export default function SSSPage() {
   return (
@@ -54,9 +20,9 @@ export default function SSSPage() {
         </div>
       </section>
 
-      {/* FAQ Content */}
+      {/* FAQ Content - dinamik API'den */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <Accordion items={faqs} defaultOpen={0} />
+        <SSSContent />
       </section>
 
       {/* Contact CTA */}

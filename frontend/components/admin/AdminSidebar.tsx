@@ -129,12 +129,21 @@ const AdminSidebar = () => {
         </svg>
       ),
     },
+    {
+      title: 'Sık Sorulan Sorular',
+      href: '/admin/sss',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+    },
   ];
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full min-h-0">
       {/* Logo */}
-      <div className="p-4 border-b border-slate-800/70 flex items-center justify-between">
+      <div className="flex-shrink-0 p-4 border-b border-slate-800/70 flex items-center justify-between">
         {!isCollapsed && (
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black">
@@ -164,8 +173,8 @@ const AdminSidebar = () => {
         </button>
       </div>
 
-        {/* Menu Items */}
-        <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
+        {/* Menu Items - kaydırılabilir alan */}
+        <nav className="flex-1 min-h-0 p-4 space-y-1.5 overflow-y-auto overflow-x-hidden">
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -186,7 +195,7 @@ const AdminSidebar = () => {
         </nav>
 
         {/* Logout */}
-        <div className="p-4 border-t border-slate-800/70">
+        <div className="flex-shrink-0 p-4 border-t border-slate-800/70">
           <button
             onClick={logout}
             className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800/70 hover:text-white transition-all duration-200"
@@ -213,7 +222,7 @@ const AdminSidebar = () => {
       </button>
 
       {/* Desktop Sidebar */}
-      <aside className={`bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'} min-h-screen fixed left-0 top-0 z-40 hidden md:block`}>
+      <aside className={`bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'} h-screen overflow-hidden fixed left-0 top-0 z-40 hidden md:block flex flex-col`}>
         <SidebarContent />
       </aside>
 
@@ -224,7 +233,7 @@ const AdminSidebar = () => {
             className="fixed inset-0 bg-black/60 z-40 md:hidden"
             onClick={() => setIsMobileOpen(false)}
           />
-          <aside className="bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white w-64 min-h-screen fixed left-0 top-0 z-50 md:hidden">
+          <aside className="bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white w-64 h-screen overflow-hidden fixed left-0 top-0 z-50 md:hidden flex flex-col">
             <SidebarContent />
           </aside>
         </>

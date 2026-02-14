@@ -71,6 +71,11 @@ export const API_ENDPOINTS = {
   testimonialsActive: '/testimonials/active',
   testimonialById: (id: number) => `/testimonials/${id}`,
 
+  // FAQs (Sık Sorulan Sorular)
+  faqs: '/faqs',
+  faqsActive: '/faqs/active',
+  faqById: (id: number) => `/faqs/${id}`,
+
   // Auth
   authLogin: '/auth/login',
   authValidate: '/auth/validate',

@@ -24,6 +24,7 @@ public class EduExcellenceDbContext : DbContext
     public DbSet<Testimonial> Testimonials => Set<Testimonial>();
     public DbSet<User> Users => Set<User>();
     public DbSet<SiteSettings> SiteSettings => Set<SiteSettings>();
+    public DbSet<Faq> Faqs => Set<Faq>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

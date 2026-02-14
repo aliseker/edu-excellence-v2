@@ -403,6 +403,39 @@ class ApiService {
     });
   }
 
+  // FAQs (Sık Sorulan Sorular)
+  async getFaqs() {
+    return this.request(API_ENDPOINTS.faqs);
+  }
+
+  async getActiveFaqs() {
+    return this.request(API_ENDPOINTS.faqsActive);
+  }
+
+  async getFaqById(id: number) {
+    return this.request(API_ENDPOINTS.faqById(id));
+  }
+
+  async createFaq(data: { question: string; answer: string; displayOrder?: number; isActive?: boolean }) {
+    return this.request(API_ENDPOINTS.faqs, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateFaq(id: number, data: { question: string; answer: string; displayOrder?: number; isActive?: boolean }) {
+    return this.request(API_ENDPOINTS.faqById(id), {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteFaq(id: number) {
+    return this.request(API_ENDPOINTS.faqById(id), {
+      method: 'DELETE',
+    });
+  }
+
   // Auth
   async login(username: string, password: string) {
     try {
