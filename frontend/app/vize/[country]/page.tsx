@@ -130,18 +130,21 @@ export default function CountryVizePage({ params }: { params: Promise<{ country:
         </div>
       </section>
 
-      {/* General Info */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
-          <div className="inline-block px-5 py-2.5 bg-red-600 text-white border-4 border-red-800 transform -skew-x-12 mb-6">
-            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">ℹ️ Genel Bilgiler</h2>
+        {/* General Info - sadece doluysa göster */}
+        {data.generalInfo?.trim() && (
+          <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
+            <div className="inline-block px-5 py-2.5 bg-red-600 text-white border-4 border-red-800 transform -skew-x-12 mb-6">
+              <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">ℹ️ Genel Bilgiler</h2>
+            </div>
+            <p className="text-gray-800 text-lg leading-relaxed font-medium">
+              {data.generalInfo}
+            </p>
           </div>
-          <p className="text-gray-800 text-lg leading-relaxed font-medium">
-            {data.generalInfo}
-          </p>
-        </div>
+        )}
 
-        {/* Visa Types */}
+        {/* Visa Types - sadece doluysa göster */}
+        {data.visaTypes?.length > 0 && (
         <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
           <div className="inline-block px-5 py-2.5 bg-pink-600 text-white border-4 border-pink-800 transform -skew-x-12 mb-8">
             <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📋 Vize Türleri</h2>
@@ -174,39 +177,44 @@ export default function CountryVizePage({ params }: { params: Promise<{ country:
             ))}
           </div>
         </div>
+        )}
 
-        {/* Process */}
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
-          <div className="inline-block px-5 py-2.5 bg-rose-600 text-white border-4 border-rose-800 transform -skew-x-12 mb-8">
-            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🔄 Başvuru Süreci</h2>
-          </div>
-          
-          <div className="space-y-4">
-            {data.process.map((step, index) => (
-              <div key={index} className="flex items-start p-6 bg-rose-50 border-4 border-rose-200">
-                <div className="w-12 h-12 bg-rose-600 text-white rounded-full flex items-center justify-center flex-shrink-0 mr-4 border-4 border-rose-800 font-black text-lg">
-                  {index + 1}
+        {/* Process - sadece doluysa göster */}
+        {data.process?.length > 0 && (
+          <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
+            <div className="inline-block px-5 py-2.5 bg-rose-600 text-white border-4 border-rose-800 transform -skew-x-12 mb-8">
+              <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🔄 Başvuru Süreci</h2>
+            </div>
+            
+            <div className="space-y-4">
+              {data.process.map((step, index) => (
+                <div key={index} className="flex items-start p-6 bg-rose-50 border-4 border-rose-200">
+                  <div className="w-12 h-12 bg-rose-600 text-white rounded-full flex items-center justify-center flex-shrink-0 mr-4 border-4 border-rose-800 font-black text-lg">
+                    {index + 1}
+                  </div>
+                  <p className="text-gray-800 font-bold text-lg flex-1 pt-2">{step}</p>
                 </div>
-                <p className="text-gray-800 font-bold text-lg flex-1 pt-2">{step}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Documents */}
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
-          <div className="inline-block px-5 py-2.5 bg-red-600 text-white border-4 border-red-800 transform -skew-x-12 mb-8">
-            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📄 Gerekli Belgeler</h2>
+        {/* Documents - sadece doluysa göster */}
+        {data.documents?.length > 0 && (
+          <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
+            <div className="inline-block px-5 py-2.5 bg-red-600 text-white border-4 border-red-800 transform -skew-x-12 mb-8">
+              <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📄 Gerekli Belgeler</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {data.documents.map((doc, index) => (
+                <div key={index} className="p-4 bg-red-50 border-4 border-red-200">
+                  <p className="text-gray-800 font-bold text-sm uppercase tracking-wide">{doc}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {data.documents.map((doc, index) => (
-              <div key={index} className="p-4 bg-red-50 border-4 border-red-200">
-                <p className="text-gray-800 font-bold text-sm uppercase tracking-wide">{doc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        )}
 
         {/* Important Notes */}
         {data.importantNotes && data.importantNotes.length > 0 && (

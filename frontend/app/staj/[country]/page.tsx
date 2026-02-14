@@ -200,53 +200,59 @@ export default function CountryStajPage({ params }: { params: Promise<{ country:
           </div>
         </div>
 
-        {/* Benefits */}
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
-          <div className="inline-block px-5 py-2.5 bg-indigo-600 text-white border-4 border-indigo-800 transform -skew-x-12 mb-8">
-            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">⭐ Program Avantajları</h2>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {programData.advantages.map((benefit, index) => (
-              <div key={index} className="p-4 bg-indigo-50 border-4 border-indigo-200">
-                <p className="text-gray-800 font-bold text-sm uppercase tracking-wide">{benefit}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Process */}
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
-          <div className="inline-block px-5 py-2.5 bg-violet-600 text-white border-4 border-violet-800 transform -skew-x-12 mb-8">
-            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🔄 Başvuru Süreci</h2>
-          </div>
-          
-          <div className="space-y-4">
-            {programData.applicationSteps.map((step, index) => (
-              <div key={index} className="flex items-start p-6 bg-violet-50 border-4 border-violet-200">
-                <div className="w-12 h-12 bg-violet-600 text-white rounded-full flex items-center justify-center flex-shrink-0 mr-4 border-4 border-violet-800 font-black text-lg">
-                  {index + 1}
+        {/* Benefits - sadece doluysa göster */}
+        {programData.advantages?.length > 0 && (
+          <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
+            <div className="inline-block px-5 py-2.5 bg-indigo-600 text-white border-4 border-indigo-800 transform -skew-x-12 mb-8">
+              <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">⭐ Program Avantajları</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {programData.advantages.map((benefit, index) => (
+                <div key={index} className="p-4 bg-indigo-50 border-4 border-indigo-200">
+                  <p className="text-gray-800 font-bold text-sm uppercase tracking-wide">{benefit}</p>
                 </div>
-                <p className="text-gray-800 font-bold text-lg flex-1 pt-2">{step}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Documents */}
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
-          <div className="inline-block px-5 py-2.5 bg-purple-600 text-white border-4 border-purple-800 transform -skew-x-12 mb-8">
-            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📄 Gerekli Belgeler</h2>
+        {/* Process - sadece doluysa göster */}
+        {programData.applicationSteps?.length > 0 && (
+          <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
+            <div className="inline-block px-5 py-2.5 bg-violet-600 text-white border-4 border-violet-800 transform -skew-x-12 mb-8">
+              <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🔄 Başvuru Süreci</h2>
+            </div>
+            
+            <div className="space-y-4">
+              {programData.applicationSteps.map((step, index) => (
+                <div key={index} className="flex items-start p-6 bg-violet-50 border-4 border-violet-200">
+                  <div className="w-12 h-12 bg-violet-600 text-white rounded-full flex items-center justify-center flex-shrink-0 mr-4 border-4 border-violet-800 font-black text-lg">
+                    {index + 1}
+                  </div>
+                  <p className="text-gray-800 font-bold text-lg flex-1 pt-2">{step}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {programData.requiredDocuments.map((doc, index) => (
-              <div key={index} className="p-4 bg-purple-50 border-4 border-purple-200">
-                <p className="text-gray-800 font-bold text-sm uppercase tracking-wide">{doc}</p>
-              </div>
-            ))}
+        )}
+
+        {/* Documents - sadece doluysa göster */}
+        {programData.requiredDocuments?.length > 0 && (
+          <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
+            <div className="inline-block px-5 py-2.5 bg-purple-600 text-white border-4 border-purple-800 transform -skew-x-12 mb-8">
+              <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📄 Gerekli Belgeler</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {programData.requiredDocuments.map((doc, index) => (
+                <div key={index} className="p-4 bg-purple-50 border-4 border-purple-200">
+                  <p className="text-gray-800 font-bold text-sm uppercase tracking-wide">{doc}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* CTA */}
         <div className="bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.2)] p-10 md:p-12 text-white text-center">

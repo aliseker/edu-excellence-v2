@@ -370,60 +370,66 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
         </section>
       )}
 
-      {/* Features */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
-          <div className="inline-block px-5 py-2.5 bg-green-600 text-white border-4 border-green-800 transform -skew-x-12 mb-8">
-            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">⭐ Okul Özellikleri</h2>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.features.map((feature, index) => (
-              <div key={index} className="p-6 bg-green-50 border-4 border-green-200 transform hover:-skew-x-1 transition-all duration-200">
-                <div className="transform skew-x-1">
-                  <div className="flex items-start">
-                    <span className="text-2xl mr-3">✓</span>
-                    <p className="text-gray-800 font-bold text-sm uppercase tracking-wide">{feature}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Programs */}
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
-          <div className="inline-block px-5 py-2.5 bg-emerald-600 text-white border-4 border-emerald-800 transform -skew-x-12 mb-8">
-            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📚 Program Seçenekleri</h2>
-          </div>
-          
-          <div className="space-y-6">
-            {data.programs.map((program, index) => (
-              <div key={index} className="p-6 bg-emerald-50 border-4 border-emerald-200">
-                <h3 className="text-xl font-black text-gray-900 mb-2 uppercase tracking-wider">{program.name}</h3>
-                <p className="text-gray-700 font-medium">{program.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Accommodation */}
-        {data.accommodation && data.accommodation.length > 0 && (
+      {/* Features - sadece doluysa göster */}
+      {data.features?.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
-            <div className="inline-block px-5 py-2.5 bg-teal-600 text-white border-4 border-teal-800 transform -skew-x-12 mb-8">
-              <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🏠 Konaklama Seçenekleri</h2>
+            <div className="inline-block px-5 py-2.5 bg-green-600 text-white border-4 border-green-800 transform -skew-x-12 mb-8">
+              <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">⭐ Okul Özellikleri</h2>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {data.accommodation.map((acc, index) => (
-                <div key={index} className="p-6 bg-teal-50 border-4 border-teal-200">
-                  <h3 className="text-xl font-black text-gray-900 mb-3 uppercase tracking-wider">{acc.type}</h3>
-                  <p className="text-gray-700 font-medium">{acc.description}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {data.features.map((feature, index) => (
+                <div key={index} className="p-6 bg-green-50 border-4 border-green-200 transform hover:-skew-x-1 transition-all duration-200">
+                  <div className="transform skew-x-1">
+                    <div className="flex items-start">
+                      <span className="text-2xl mr-3">✓</span>
+                      <p className="text-gray-800 font-bold text-sm uppercase tracking-wide">{feature}</p>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
-        )}
+        </section>
+      )}
+
+      {/* Program Seçenekleri + Konaklama Seçenekleri - aynı hizada (yan yana) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          {/* Programs - sadece doluysa göster */}
+          {data.programs?.length > 0 && (
+            <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10">
+              <div className="inline-block px-5 py-2.5 bg-emerald-600 text-white border-4 border-emerald-800 transform -skew-x-12 mb-8">
+                <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📚 Program Seçenekleri</h2>
+              </div>
+              <div className="space-y-6">
+                {data.programs.map((program, index) => (
+                  <div key={index} className="p-6 bg-emerald-50 border-4 border-emerald-200">
+                    <h3 className="text-xl font-black text-gray-900 mb-2 uppercase tracking-wider">{program.name}</h3>
+                    <p className="text-gray-700 font-medium">{program.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {/* Accommodation - sadece doluysa göster */}
+          {data.accommodation && data.accommodation.length > 0 && (
+            <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10">
+              <div className="inline-block px-5 py-2.5 bg-teal-600 text-white border-4 border-teal-800 transform -skew-x-12 mb-8">
+                <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🏠 Konaklama Seçenekleri</h2>
+              </div>
+              <div className="grid grid-cols-1 gap-6">
+                {data.accommodation.map((acc, index) => (
+                  <div key={index} className="p-6 bg-teal-50 border-4 border-teal-200">
+                    <h3 className="text-xl font-black text-gray-900 mb-3 uppercase tracking-wider">{acc.type}</h3>
+                    <p className="text-gray-700 font-medium">{acc.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Facilities */}
         {data.facilities && data.facilities.length > 0 && (

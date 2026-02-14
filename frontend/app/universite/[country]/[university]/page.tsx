@@ -746,7 +746,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
           return;
         }
 
-        const fetchedUniversity = await apiService.getUniversityById(universityId);
+        const fetchedUniversity = await apiService.getUniversityById(universityId) as { countryId?: number; cityId?: number; [key: string]: unknown } | null;
         if (!fetchedUniversity) {
           setError('Üniversite bulunamadı.');
           setIsLoading(false);
@@ -757,17 +757,17 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
         const countriesRes = await fetch(`${API_BASE_URL}${API_ENDPOINTS.countries}`);
         const fetchedCountries = await countriesRes.json();
         setAllCountries(fetchedCountries);
-        const matchedCountry = fetchedCountries.find((c: any) => c.id === fetchedUniversity.countryId);
+        const matchedCountry = fetchedCountries.find((c: { id: number }) => c.id === fetchedUniversity.countryId);
         if (matchedCountry) {
           setCountry(matchedCountry);
           if (fetchedUniversity.cityId) {
-            const fetchedCities = await apiService.getCities(matchedCountry.id);
-            const matchedCity = fetchedCities.find((c: any) => c.id === fetchedUniversity.cityId);
+            const fetchedCities = (await apiService.getCities(matchedCountry.id)) as { id: number; name?: string }[];
+            const matchedCity = fetchedCities.find((c: { id: number }) => c.id === fetchedUniversity.cityId);
             setCity(matchedCity || null);
           }
         }
 
-        const allUnis = await apiService.getUniversities();
+        const allUnis = (await apiService.getUniversities()) as any[];
         setAllUniversities(allUnis);
       } catch (err) {
         console.error('Üniversite detayları yüklenemedi:', err);
@@ -931,7 +931,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {data.features.map((feature, index) => (
+            {data.features.map((feature: string, index: number) => (
               <div key={index} className="p-4 bg-blue-50 border-4 border-blue-200 transform hover:-skew-x-1 transition-all duration-200">
                 <div className="transform skew-x-1">
                   <div className="flex items-start">
@@ -953,7 +953,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.programs.map((program, index) => (
+            {data.programs.map((program: { name: string; description: string; level: string }, index: number) => (
               <div key={index} className="p-6 bg-gray-50 border-4 border-gray-300 transform hover:-skew-x-1 transition-all duration-200">
                 <div className="transform skew-x-1">
                   <h3 className="text-xl font-black text-gray-900 mb-3 uppercase tracking-tight">{program.name}</h3>
@@ -980,7 +980,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
             <div>
               <h3 className="text-lg font-black text-gray-900 mb-4 uppercase tracking-wider">Dil Gereksinimleri</h3>
               <ul className="space-y-2">
-                {data.requirements.language.map((req, index) => (
+                {data.requirements.language.map((req: string, index: number) => (
                   <li key={index} className="p-3 bg-purple-50 border-2 border-purple-200">
                     <span className="font-bold text-gray-900">{req}</span>
                   </li>
@@ -992,7 +992,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
             <div>
               <h3 className="text-lg font-black text-gray-900 mb-4 uppercase tracking-wider">Akademik Gereksinimler</h3>
               <ul className="space-y-2">
-                {data.requirements.academic.map((req, index) => (
+                {data.requirements.academic.map((req: string, index: number) => (
                   <li key={index} className="p-3 bg-purple-50 border-2 border-purple-200">
                     <span className="font-bold text-gray-900">{req}</span>
                   </li>
@@ -1004,7 +1004,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
             <div>
               <h3 className="text-lg font-black text-gray-900 mb-4 uppercase tracking-wider">Gerekli Belgeler</h3>
               <ul className="space-y-2">
-                {data.requirements.documents.map((doc, index) => (
+                {data.requirements.documents.map((doc: string, index: number) => (
                   <li key={index} className="p-3 bg-purple-50 border-2 border-purple-200">
                     <span className="font-bold text-gray-900">{doc}</span>
                   </li>
@@ -1030,7 +1030,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
               <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🏛️ Kampüsler</h2>
             </div>
             <ul className="space-y-3">
-              {data.campus.map((campus, index) => (
+              {data.campus.map((campus: string, index: number) => (
                 <li key={index} className="p-4 bg-yellow-50 border-2 border-yellow-200">
                   <span className="font-bold text-gray-900">{campus}</span>
                 </li>
@@ -1050,7 +1050,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
                   <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🏠 Konaklama</h2>
                 </div>
                 <div className="space-y-4">
-                  {data.accommodation.map((acc, index) => (
+                  {data.accommodation.map((acc: { type: string; description: string }, index: number) => (
                     <div key={index} className="p-4 bg-pink-50 border-2 border-pink-200">
                       <h3 className="font-black text-gray-900 mb-2 uppercase">{acc.type}</h3>
                       <p className="text-gray-700 font-medium">{acc.description}</p>
@@ -1066,7 +1066,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
                   <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🎓 Burslar</h2>
                 </div>
                 <ul className="space-y-3">
-                  {data.scholarships.map((scholarship, index) => (
+                  {data.scholarships.map((scholarship: string, index: number) => (
                     <li key={index} className="p-4 bg-teal-50 border-2 border-teal-200">
                       <span className="font-bold text-gray-900">{scholarship}</span>
                     </li>
