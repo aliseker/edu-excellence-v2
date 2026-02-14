@@ -85,7 +85,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return true;
     } catch (error) {
-      // Sadece beklenmeyen hatalar için log (auth hataları zaten handle edildi)
+      // Rate limit veya bağlantı hatası: mesajı kullanıcıya göstermek için yukarı fırlat
+      if (error instanceof Error && ((error as any).isRateLimitError || error.message.includes('bağlanılamadı') || error.message.includes('Çok fazla giriş'))) {
+        throw error;
+      }
       if (error instanceof Error && !(error as any).isAuthError) {
         console.error('Login error:', error);
       }

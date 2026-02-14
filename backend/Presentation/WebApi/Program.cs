@@ -1,8 +1,10 @@
+using System.Threading.RateLimiting;
 using System.Text;
 using EduExcellenceV2.Application.Interfaces;
 using EduExcellenceV2.Infrastructure.Persistence.Data;
 using EduExcellenceV2.Infrastructure.Persistence.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -54,6 +56,22 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+// Login rate limiting: IP başına dakikada 5 deneme (brute force koruması)
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddPolicy("LoginPolicy", context =>
+    {
+        var ip = context.Connection.RemoteIpAddress?.ToString() ?? context.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? "unknown";
+        return RateLimitPartition.GetFixedWindowLimiter(ip, _ => new FixedWindowRateLimiterOptions
+        {
+            Window = TimeSpan.FromMinutes(1),
+            PermitLimit = 5,
+            QueueLimit = 0
+        });
+    });
+    options.RejectionStatusCode = 429;
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -76,7 +94,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors("LocalFrontend");
+app.UseCors("LocalFrontend"); // CORS, rate limiter'dan önce olmalı ki 429 yanıtı da CORS header alsın
+app.UseRateLimiter();
 // Ülke bayrakları: /uploads/flags/* -> ContentRoot/uploads/flags
 var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "uploads");
 Directory.CreateDirectory(Path.Combine(uploadsPath, "flags"));

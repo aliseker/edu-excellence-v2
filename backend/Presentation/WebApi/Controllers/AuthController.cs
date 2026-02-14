@@ -2,6 +2,7 @@ using EduExcellenceV2.Application.DTOs;
 using EduExcellenceV2.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace EduExcellenceV2.Presentation.WebApi.Controllers;
 
@@ -17,6 +18,8 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
+    [AllowAnonymous]
+    [EnableRateLimiting("LoginPolicy")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
     {
         if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password))
@@ -35,6 +38,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("validate")]
+    [AllowAnonymous]
     public async Task<IActionResult> ValidateToken([FromBody] ValidateTokenRequest request)
     {
         if (string.IsNullOrEmpty(request.Token))
@@ -50,20 +54,6 @@ public class AuthController : ControllerBase
         }
 
         return Ok(new { valid = true });
-    }
-
-    [HttpPost("create-user")]
-    public async Task<IActionResult> CreateUser([FromBody] UserCreateDto dto)
-    {
-        try
-        {
-            var user = await _authService.CreateUserAsync(dto);
-            return CreatedAtAction(nameof(ValidateToken), new { }, user);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
     }
 }
 

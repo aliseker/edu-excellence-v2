@@ -94,6 +94,10 @@ class ApiService {
           throw new Error('Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.');
         } else if (status === 404) {
           throw new Error('İstenen kaynak bulunamadı.');
+        } else if (status === 429) {
+          const rateLimitError = new Error('Çok fazla giriş denemesi. Lütfen 15 dakika sonra tekrar deneyiniz.');
+          (rateLimitError as any).isRateLimitError = true;
+          throw rateLimitError;
         } else if (status === 401 || status === 403) {
           // Login endpoint'i için 401 normal bir durum olabilir (yanlış şifre)
           // Bu durumda özel bir hata tipi fırlat
@@ -112,11 +116,19 @@ class ApiService {
 
       return response.json();
     } catch (error) {
-      // Log error for debugging but don't expose details to user
-      // Auth hatalarını (401/403) login için loglama
+      // Ağ hatası: çoğu zaman rate limit (429) CORS yüzünden "Failed to fetch" görünür
+      const isNetworkError =
+        (error instanceof TypeError && (error.message === 'Failed to fetch' || error.message === 'Load failed')) ||
+        (error instanceof Error && (error.message === 'Failed to fetch' || error.message === 'Load failed'));
+      if (isNetworkError) {
+        // Login endpoint'inde bu hata sıklıkla rate limit (çok deneme) sonucudur
+        throw new Error('Giriş yapılamadı. Çok fazla deneme yaptıysanız 15 dakika sonra tekrar deneyiniz. Aksi halde internet bağlantınızı kontrol edin.');
+      }
+      // Beklenen hataları (auth, rate limit) konsola yazma; kullanıcı zaten mesajı görüyor
       if (error instanceof Error) {
         const isAuthError = (error as any).isAuthError;
-        if (!isAuthError) {
+        const isRateLimitError = (error as any).isRateLimitError;
+        if (!isAuthError && !isRateLimitError) {
           console.error('API request failed:', error.message);
         }
         throw error;

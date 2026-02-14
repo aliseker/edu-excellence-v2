@@ -36,7 +36,7 @@ export default function AdminLoginPage() {
         setError('E-posta veya şifre hatalı.');
       }
     } catch (err) {
-      setError('Giriş başarısız. Lütfen bilgilerinizi kontrol edin.');
+      setError(err instanceof Error ? err.message : 'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.');
     } finally {
       setIsLoading(false);
     }

@@ -51,43 +51,6 @@ public class AuthService : IAuthService
         };
     }
 
-    public async Task<UserDto> CreateUserAsync(UserCreateDto dto)
-    {
-        // Kullanıcı adı veya email kontrolü
-        var existingUser = await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.Username == dto.Username || u.Email == dto.Email);
-
-        if (existingUser != null)
-        {
-            throw new Exception("Bu kullanıcı adı veya email zaten kullanılıyor.");
-        }
-
-        // Şifreyi hashle
-        var passwordHash = HashPassword(dto.Password);
-
-        var user = new User
-        {
-            Username = dto.Username,
-            Email = dto.Email,
-            PasswordHash = passwordHash,
-            Role = dto.Role,
-            IsActive = true
-        };
-
-        _dbContext.Users.Add(user);
-        await _dbContext.SaveChangesAsync();
-
-        return new UserDto
-        {
-            Id = user.Id,
-            Username = user.Username,
-            Email = user.Email,
-            Role = user.Role,
-            IsActive = user.IsActive,
-            CreatedAt = user.CreatedAt
-        };
-    }
-
     public async Task<bool> ValidateTokenAsync(string token)
     {
         try
