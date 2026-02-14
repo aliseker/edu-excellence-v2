@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import { sanitizeInput, isValidEmail, isValidPhone } from '@/utils/sanitize';
+import { apiService } from '@/services/api';
 
 export default function IletisimPage() {
   const [formData, setFormData] = useState({
@@ -18,6 +19,38 @@ export default function IletisimPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
+  const [contactAddress, setContactAddress] = useState<string | null>(null);
+  const [contactPhoneNumber, setContactPhoneNumber] = useState<string | null>(null);
+  const [contactEmail, setContactEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const settings = await apiService.getSiteSettings();
+        setContactAddress(settings?.contactAddress?.trim() || null);
+        setContactPhoneNumber(settings?.contactPhoneNumber?.trim() || null);
+        setContactEmail(settings?.contactEmail?.trim() || null);
+      } catch (error) {
+        console.error('İletişim ayarları alınamadı:', error);
+      }
+    };
+
+    loadSettings();
+  }, []);
+
+  const normalizedTel = useMemo(() => {
+    if (!contactPhoneNumber) return null;
+    const digits = contactPhoneNumber.replace(/[^\d+]/g, '');
+    return digits || null;
+  }, [contactPhoneNumber]);
+
+  const addressLines = useMemo(() => {
+    if (!contactAddress) return [];
+    return contactAddress
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean);
+  }, [contactAddress]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -248,54 +281,59 @@ export default function IletisimPage() {
               </div>
 
               <div className="space-y-6">
-                <div className="flex items-start">
-                  <div className="w-14 h-14 bg-blue-100 border-4 border-blue-300 flex items-center justify-center flex-shrink-0 transform -skew-x-1">
-                    <svg className="w-7 h-7 text-blue-600 transform skew-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
+                {addressLines.length > 0 && (
+                  <div className="flex items-start">
+                    <div className="w-14 h-14 bg-blue-100 border-4 border-blue-300 flex items-center justify-center flex-shrink-0 transform -skew-x-1">
+                      <svg className="w-7 h-7 text-blue-600 transform skew-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="font-black text-gray-900 mb-2 text-lg uppercase">Adres</h3>
+                      <p className="text-gray-700 font-medium leading-relaxed">
+                        {addressLines.map((line, index) => (
+                          <span key={`${line}-${index}`}>
+                            {line}
+                            {index < addressLines.length - 1 && <br />}
+                          </span>
+                        ))}
+                      </p>
+                    </div>
                   </div>
-                  <div className="ml-4">
-                    <h3 className="font-black text-gray-900 mb-2 text-lg uppercase">Adres</h3>
-                    <p className="text-gray-700 font-medium leading-relaxed">
-                      Tahılpazarı Mahallesi, 477 sk.
-                      <br />
-                      Yerebakan İş Merkezi,
-                      <br />
-                      No-302
-                      <br />
-                      Muratpaşa, Antalya / Türkiye
-                    </p>
-                  </div>
-                </div>
+                )}
 
-                <div className="flex items-center">
-                  <div className="w-14 h-14 bg-green-100 border-4 border-green-300 flex items-center justify-center flex-shrink-0 transform -skew-x-1">
-                    <svg className="w-7 h-7 text-green-600 transform skew-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
+                {contactPhoneNumber && normalizedTel && (
+                  <div className="flex items-center">
+                    <div className="w-14 h-14 bg-green-100 border-4 border-green-300 flex items-center justify-center flex-shrink-0 transform -skew-x-1">
+                      <svg className="w-7 h-7 text-green-600 transform skew-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="font-black text-gray-900 mb-2 text-lg uppercase">Telefon</h3>
+                      <a href={`tel:${normalizedTel}`} className="text-gray-700 font-bold text-lg hover:text-purple-600 transition-colors">
+                        {contactPhoneNumber}
+                      </a>
+                    </div>
                   </div>
-                  <div className="ml-4">
-                    <h3 className="font-black text-gray-900 mb-2 text-lg uppercase">Telefon</h3>
-                    <a href="tel:+905054469007" className="text-gray-700 font-bold text-lg hover:text-purple-600 transition-colors">
-                      +90 505 446 90 07
-                    </a>
-                  </div>
-                </div>
+                )}
 
-                <div className="flex items-center">
-                  <div className="w-14 h-14 bg-purple-100 border-4 border-purple-300 flex items-center justify-center flex-shrink-0 transform -skew-x-1">
-                    <svg className="w-7 h-7 text-purple-600 transform skew-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
+                {contactEmail && (
+                  <div className="flex items-center">
+                    <div className="w-14 h-14 bg-purple-100 border-4 border-purple-300 flex items-center justify-center flex-shrink-0 transform -skew-x-1">
+                      <svg className="w-7 h-7 text-purple-600 transform skew-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="font-black text-gray-900 mb-2 text-lg uppercase">E-posta</h3>
+                      <a href={`mailto:${contactEmail}`} className="text-gray-700 font-bold text-lg hover:text-purple-600 transition-colors">
+                        {contactEmail}
+                      </a>
+                    </div>
                   </div>
-                  <div className="ml-4">
-                    <h3 className="font-black text-gray-900 mb-2 text-lg uppercase">E-posta</h3>
-                    <a href="mailto:info@edu-excellence.net" className="text-gray-700 font-bold text-lg hover:text-purple-600 transition-colors">
-                      info@edu-excellence.net
-                    </a>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
 

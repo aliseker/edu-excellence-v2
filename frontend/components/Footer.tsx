@@ -1,7 +1,44 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { useEffect, useMemo, useState } from 'react';
+import { apiService } from '@/services/api';
 
 const Footer = () => {
+  const [contactAddress, setContactAddress] = useState<string | null>(null);
+  const [contactPhoneNumber, setContactPhoneNumber] = useState<string | null>(null);
+  const [contactEmail, setContactEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const settings = await apiService.getSiteSettings();
+        setContactAddress(settings?.contactAddress?.trim() || null);
+        setContactPhoneNumber(settings?.contactPhoneNumber?.trim() || null);
+        setContactEmail(settings?.contactEmail?.trim() || null);
+      } catch (error) {
+        console.error('Footer iletişim ayarları alınamadı:', error);
+      }
+    };
+
+    loadSettings();
+  }, []);
+
+  const normalizedTel = useMemo(() => {
+    if (!contactPhoneNumber) return null;
+    const digits = contactPhoneNumber.replace(/[^\d+]/g, '');
+    return digits || null;
+  }, [contactPhoneNumber]);
+
+  const addressLines = useMemo(() => {
+    if (!contactAddress) return [];
+    return contactAddress
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean);
+  }, [contactAddress]);
+
   return (
     <footer className="bg-gray-900 text-gray-300">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-12">
@@ -58,33 +95,38 @@ const Footer = () => {
           <div>
             <h3 className="text-white font-bold mb-4 uppercase tracking-wide">İletişim</h3>
             <ul className="space-y-3 text-sm">
-              <li className="flex items-start">
-                <svg className="w-5 h-5 mr-3 mt-0.5 flex-shrink-0 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <span className="leading-relaxed">
-                  Tahılpazarı Mahallesi, 477 sk.
-                  <br />
-                  Yerebakan İş Merkezi,
-                  <br />
-                  No-302
-                  <br />
-                  Muratpaşa, Antalya / Türkiye
-                </span>
-              </li>
-              <li className="flex items-center">
-                <svg className="w-5 h-5 mr-3 flex-shrink-0 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                </svg>
-                <a href="tel:+905054469007" className="hover:text-white transition-colors">+90 505 446 90 07</a>
-              </li>
-              <li className="flex items-center">
-                <svg className="w-5 h-5 mr-3 flex-shrink-0 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                <a href="mailto:info@edu-excellence.net" className="hover:text-white transition-colors">info@edu-excellence.net</a>
-              </li>
+              {addressLines.length > 0 && (
+                <li className="flex items-start">
+                  <svg className="w-5 h-5 mr-3 mt-0.5 flex-shrink-0 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span className="leading-relaxed">
+                    {addressLines.map((line, index) => (
+                      <span key={`${line}-${index}`}>
+                        {line}
+                        {index < addressLines.length - 1 && <br />}
+                      </span>
+                    ))}
+                  </span>
+                </li>
+              )}
+              {contactPhoneNumber && normalizedTel && (
+                <li className="flex items-center">
+                  <svg className="w-5 h-5 mr-3 flex-shrink-0 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  <a href={`tel:${normalizedTel}`} className="hover:text-white transition-colors">{contactPhoneNumber}</a>
+                </li>
+              )}
+              {contactEmail && (
+                <li className="flex items-center">
+                  <svg className="w-5 h-5 mr-3 flex-shrink-0 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  <a href={`mailto:${contactEmail}`} className="hover:text-white transition-colors">{contactEmail}</a>
+                </li>
+              )}
             </ul>
           </div>
         </div>

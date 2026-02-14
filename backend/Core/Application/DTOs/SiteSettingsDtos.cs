@@ -9,6 +9,9 @@ public class SiteSettingsDto
     public string? LinkedInUrl { get; set; }
     public string? WhatsAppPhoneNumber { get; set; }
     public string? WhatsAppMessageText { get; set; }
+    public string? ContactAddress { get; set; }
+    public string? ContactPhoneNumber { get; set; }
+    public string? ContactEmail { get; set; }
 }
 
 public class SiteSettingsUpdateDto
@@ -19,4 +22,7 @@ public class SiteSettingsUpdateDto
     public string? LinkedInUrl { get; set; }
     public string? WhatsAppPhoneNumber { get; set; }
     public string? WhatsAppMessageText { get; set; }
+    public string? ContactAddress { get; set; }
+    public string? ContactPhoneNumber { get; set; }
+    public string? ContactEmail { get; set; }
 }

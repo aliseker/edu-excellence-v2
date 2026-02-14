@@ -36,6 +36,9 @@ public class SiteSettingsService : ISiteSettingsService
         entity.LinkedInUrl = string.IsNullOrWhiteSpace(dto.LinkedInUrl) ? null : dto.LinkedInUrl.Trim();
         entity.WhatsAppPhoneNumber = string.IsNullOrWhiteSpace(dto.WhatsAppPhoneNumber) ? null : dto.WhatsAppPhoneNumber.Trim();
         entity.WhatsAppMessageText = string.IsNullOrWhiteSpace(dto.WhatsAppMessageText) ? null : dto.WhatsAppMessageText.Trim();
+        entity.ContactAddress = string.IsNullOrWhiteSpace(dto.ContactAddress) ? null : dto.ContactAddress.Trim();
+        entity.ContactPhoneNumber = string.IsNullOrWhiteSpace(dto.ContactPhoneNumber) ? null : dto.ContactPhoneNumber.Trim();
+        entity.ContactEmail = string.IsNullOrWhiteSpace(dto.ContactEmail) ? null : dto.ContactEmail.Trim();
         entity.UpdatedAt = DateTime.UtcNow;
 
         await _dbContext.SaveChangesAsync();
@@ -52,7 +55,10 @@ public class SiteSettingsService : ISiteSettingsService
             InstagramUrl = entity.InstagramUrl,
             LinkedInUrl = entity.LinkedInUrl,
             WhatsAppPhoneNumber = entity.WhatsAppPhoneNumber,
-            WhatsAppMessageText = entity.WhatsAppMessageText
+            WhatsAppMessageText = entity.WhatsAppMessageText,
+            ContactAddress = entity.ContactAddress,
+            ContactPhoneNumber = entity.ContactPhoneNumber,
+            ContactEmail = entity.ContactEmail
         };
     }
 }

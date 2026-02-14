@@ -12,6 +12,9 @@ export type SiteSettings = {
   linkedInUrl: string | null;
   whatsAppPhoneNumber: string | null;
   whatsAppMessageText: string | null;
+  contactAddress: string | null;
+  contactPhoneNumber: string | null;
+  contactEmail: string | null;
 };
 
 export type SiteSettingsUpdatePayload = {
@@ -21,6 +24,9 @@ export type SiteSettingsUpdatePayload = {
   linkedInUrl?: string | null;
   whatsAppPhoneNumber?: string | null;
   whatsAppMessageText?: string | null;
+  contactAddress?: string | null;
+  contactPhoneNumber?: string | null;
+  contactEmail?: string | null;
 };
 
 function toNullableString(value: unknown): string | null {
@@ -36,6 +42,9 @@ function normalizeSiteSettings(raw: any): SiteSettings {
     linkedInUrl: toNullableString(raw?.linkedInUrl ?? raw?.LinkedInUrl),
     whatsAppPhoneNumber: toNullableString(raw?.whatsAppPhoneNumber ?? raw?.WhatsAppPhoneNumber),
     whatsAppMessageText: toNullableString(raw?.whatsAppMessageText ?? raw?.WhatsAppMessageText),
+    contactAddress: toNullableString(raw?.contactAddress ?? raw?.ContactAddress),
+    contactPhoneNumber: toNullableString(raw?.contactPhoneNumber ?? raw?.ContactPhoneNumber),
+    contactEmail: toNullableString(raw?.contactEmail ?? raw?.ContactEmail),
   };
 }
 

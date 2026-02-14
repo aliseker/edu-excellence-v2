@@ -56,6 +56,36 @@ export default function HakkimizdaPage() {
           </div>
         </div>
 
+        {/* Broşür */}
+        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
+          <div className="inline-block px-5 py-2.5 bg-emerald-600 text-white border-4 border-emerald-800 transform -skew-x-12 mb-6">
+            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">📄 Broşür</h2>
+          </div>
+
+          <p className="text-gray-700 font-medium mb-6">
+            Kurumsal broşürümüzü görüntüleyebilir veya indirebilirsiniz.
+          </p>
+
+          <div className="flex flex-wrap gap-4">
+            <a
+              href="/brosur/edu-excellence-brosur.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 bg-blue-600 text-white font-bold border-2 border-blue-800 hover:bg-blue-700 transition-colors"
+            >
+              Broşürü Aç
+            </a>
+
+            <a
+              href="/brosur/edu-excellence-brosur.pdf"
+              download
+              className="px-6 py-3 bg-gray-900 text-white font-bold border-2 border-black hover:bg-gray-800 transition-colors"
+            >
+              Broşürü İndir
+            </a>
+          </div>
+        </div>
+
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <div className="bg-gradient-to-br from-blue-600 to-indigo-600 border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.2)] p-8 text-white text-center transform hover:-translate-y-2 hover:shadow-[12px_12px_0_0_rgba(0,0,0,0.3)] transition-all duration-200">

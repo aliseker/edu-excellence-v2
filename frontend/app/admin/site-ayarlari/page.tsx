@@ -11,6 +11,9 @@ type SiteSettingsForm = {
   linkedInUrl: string;
   whatsAppPhoneNumber: string;
   whatsAppMessageText: string;
+  contactAddress: string;
+  contactPhoneNumber: string;
+  contactEmail: string;
 };
 
 const initialForm: SiteSettingsForm = {
@@ -21,6 +24,9 @@ const initialForm: SiteSettingsForm = {
   linkedInUrl: '',
   whatsAppPhoneNumber: '',
   whatsAppMessageText: '',
+  contactAddress: '',
+  contactPhoneNumber: '',
+  contactEmail: '',
 };
 
 export default function SiteAyarlarPage() {
@@ -47,6 +53,9 @@ export default function SiteAyarlarPage() {
         linkedInUrl: settings?.linkedInUrl ?? '',
         whatsAppPhoneNumber: settings?.whatsAppPhoneNumber ?? '',
         whatsAppMessageText: settings?.whatsAppMessageText ?? '',
+        contactAddress: settings?.contactAddress ?? '',
+        contactPhoneNumber: settings?.contactPhoneNumber ?? '',
+        contactEmail: settings?.contactEmail ?? '',
       });
     } catch (err) {
       console.error('Site ayarları yüklenirken hata oluştu:', err);
@@ -73,6 +82,9 @@ export default function SiteAyarlarPage() {
         linkedInUrl: form.linkedInUrl.trim() || null,
         whatsAppPhoneNumber: form.whatsAppPhoneNumber.trim() || null,
         whatsAppMessageText: form.whatsAppMessageText.trim() || null,
+        contactAddress: form.contactAddress.trim() || null,
+        contactPhoneNumber: form.contactPhoneNumber.trim() || null,
+        contactEmail: form.contactEmail.trim() || null,
       };
 
       const updated = await apiService.updateSiteSettings(form.id || 0, payload);
@@ -184,6 +196,42 @@ export default function SiteAyarlarPage() {
                   value={form.whatsAppMessageText}
                   onChange={(e) => handleChange('whatsAppMessageText', e.target.value)}
                   placeholder="Merhaba, bilgi almak istiyorum."
+                  className="w-full px-4 py-2 border-2 border-slate-300 rounded-lg focus:outline-none focus:border-indigo-600"
+                />
+              </div>
+            </div>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-lg font-black text-slate-900">İletişim Bilgileri</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Adres</label>
+                <textarea
+                  value={form.contactAddress}
+                  onChange={(e) => handleChange('contactAddress', e.target.value)}
+                  placeholder="Tahılpazarı Mahallesi, 477 sk.&#10;Yerebakan İş Merkezi, No-302&#10;Muratpaşa, Antalya / Türkiye"
+                  rows={4}
+                  className="w-full px-4 py-2 border-2 border-slate-300 rounded-lg focus:outline-none focus:border-indigo-600"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Telefon</label>
+                <input
+                  type="text"
+                  value={form.contactPhoneNumber}
+                  onChange={(e) => handleChange('contactPhoneNumber', e.target.value)}
+                  placeholder="+90 505 446 90 07"
+                  className="w-full px-4 py-2 border-2 border-slate-300 rounded-lg focus:outline-none focus:border-indigo-600"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">E-posta</label>
+                <input
+                  type="email"
+                  value={form.contactEmail}
+                  onChange={(e) => handleChange('contactEmail', e.target.value)}
+                  placeholder="info@edu-excellence.net"
                   className="w-full px-4 py-2 border-2 border-slate-300 rounded-lg focus:outline-none focus:border-indigo-600"
                 />
               </div>
