@@ -74,6 +74,10 @@ export const API_ENDPOINTS = {
   // Auth
   authLogin: '/auth/login',
   authValidate: '/auth/validate',
+
+  // Site settings (sosyal medya, WhatsApp)
+  siteSettings: '/site-settings',
+  siteSettingsById: (id: number) => `/site-settings/${id}`,
 };
 
 /** Admin API istekleri için: Bearer token ekler. json: true ise Content-Type: application/json eklenir (FormData için false kullan). */

@@ -112,6 +112,15 @@ const AdminSidebar = () => {
       ),
     },
     {
+      title: 'Site Ayarları',
+      href: '/admin/site-ayarlari',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.983 5.25c.407-1.137 1.627-1.766 2.765-1.36 1.04.37 1.64 1.408 1.498 2.45a2.25 2.25 0 001.307 2.348c1.01.446 1.486 1.64 1.04 2.65-.406.92-1.39 1.4-2.334 1.212a2.25 2.25 0 00-2.554 1.124c-.545.908-1.727 1.204-2.635.66a2.248 2.248 0 01-.996-2.465 2.25 2.25 0 00-1.56-2.323c-1.073-.32-1.682-1.45-1.362-2.523a2.248 2.248 0 012.316-1.573 2.25 2.25 0 002.515-1.2zM12 13.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+        </svg>
+      ),
+    },
+    {
       title: 'Görüşler',
       href: '/admin/gorusler',
       icon: (

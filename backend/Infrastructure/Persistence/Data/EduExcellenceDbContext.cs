@@ -23,6 +23,7 @@ public class EduExcellenceDbContext : DbContext
     public DbSet<GalleryItem> GalleryItems => Set<GalleryItem>();
     public DbSet<Testimonial> Testimonials => Set<Testimonial>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<SiteSettings> SiteSettings => Set<SiteSettings>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

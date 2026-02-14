@@ -4,6 +4,41 @@ interface FetchOptions extends RequestInit {
   params?: Record<string, string>;
 }
 
+export type SiteSettings = {
+  id: number;
+  facebookUrl: string | null;
+  twitterUrl: string | null;
+  instagramUrl: string | null;
+  linkedInUrl: string | null;
+  whatsAppPhoneNumber: string | null;
+  whatsAppMessageText: string | null;
+};
+
+export type SiteSettingsUpdatePayload = {
+  facebookUrl?: string | null;
+  twitterUrl?: string | null;
+  instagramUrl?: string | null;
+  linkedInUrl?: string | null;
+  whatsAppPhoneNumber?: string | null;
+  whatsAppMessageText?: string | null;
+};
+
+function toNullableString(value: unknown): string | null {
+  return typeof value === 'string' ? value : null;
+}
+
+function normalizeSiteSettings(raw: any): SiteSettings {
+  return {
+    id: typeof raw?.id === 'number' ? raw.id : (typeof raw?.Id === 'number' ? raw.Id : 0),
+    facebookUrl: toNullableString(raw?.facebookUrl ?? raw?.FacebookUrl),
+    twitterUrl: toNullableString(raw?.twitterUrl ?? raw?.TwitterUrl),
+    instagramUrl: toNullableString(raw?.instagramUrl ?? raw?.InstagramUrl),
+    linkedInUrl: toNullableString(raw?.linkedInUrl ?? raw?.LinkedInUrl),
+    whatsAppPhoneNumber: toNullableString(raw?.whatsAppPhoneNumber ?? raw?.WhatsAppPhoneNumber),
+    whatsAppMessageText: toNullableString(raw?.whatsAppMessageText ?? raw?.WhatsAppMessageText),
+  };
+}
+
 class ApiService {
   private baseUrl: string;
 
@@ -369,6 +404,22 @@ class ApiService {
       method: 'POST',
       body: JSON.stringify({ token }),
     });
+  }
+
+  // Site Settings
+  async getSiteSettings() {
+    const raw = await this.request<any>(API_ENDPOINTS.siteSettings, {
+      cache: 'no-store',
+    });
+    return normalizeSiteSettings(raw);
+  }
+
+  async updateSiteSettings(id: number, data: SiteSettingsUpdatePayload) {
+    const raw = await this.request<any>(API_ENDPOINTS.siteSettingsById(id), {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+    return normalizeSiteSettings(raw);
   }
 }
 
