@@ -24,6 +24,7 @@ const categoryLabels: Record<string, string> = {
 export default function GaleriPage() {
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState<GalleryItem | null>(null);
 
   useEffect(() => {
     loadGalleryItems();
@@ -94,9 +95,11 @@ export default function GaleriPage() {
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">{category.name}</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {items.map((item) => (
-                      <div
+                      <button
                         key={item.id}
-                        className="relative h-64 rounded-xl overflow-hidden bg-gray-200 group cursor-pointer"
+                        type="button"
+                        onClick={() => setSelectedImage(item)}
+                        className="relative block h-64 rounded-xl overflow-hidden bg-gray-200 group cursor-pointer focus:outline-none"
                       >
                         <img
                           src={`${BACKEND_BASE_URL}/uploads/${item.imagePath}`}
@@ -109,7 +112,7 @@ export default function GaleriPage() {
                             {item.title || category.name}
                           </p>
                         </div>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -118,6 +121,38 @@ export default function GaleriPage() {
           </div>
         )}
       </section>
+
+      {/* Lightbox */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div
+            className="relative max-w-5xl w-full mx-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setSelectedImage(null)}
+              className="absolute -top-10 right-0 text-white text-3xl font-bold hover:text-gray-200"
+              aria-label="Kapat"
+            >
+              ×
+            </button>
+            <img
+              src={`${BACKEND_BASE_URL}/uploads/${selectedImage.imagePath}`}
+              alt={selectedImage.title || 'Galeri resmi'}
+              className="w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl bg-black/40"
+            />
+            {(selectedImage.title || categoryLabels[selectedImage.category]) && (
+              <p className="mt-3 text-center text-white text-sm">
+                {selectedImage.title || categoryLabels[selectedImage.category]}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

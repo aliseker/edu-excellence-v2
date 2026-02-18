@@ -491,7 +491,7 @@ const Navbar = () => {
                   
                   {/* Dropdown Menu - Geometric Style */}
                   {hasDropdown && (
-                    <div className="absolute top-full left-0 mt-1 w-56 bg-white border-4 border-gray-900 shadow-[6px_6px_0_0_rgba(0,0,0,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="absolute top-full left-0 mt-1 w-52 bg-white border-4 border-gray-900 shadow-[6px_6px_0_0_rgba(0,0,0,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                       <div className="py-2">
                         {item.dropdown?.map((dropdownItem) => {
                           const hasSubmenu = dropdownItem.submenu && dropdownItem.submenu.length > 0;
@@ -511,7 +511,7 @@ const Navbar = () => {
                               
                               {/* Nested Submenu */}
                               {hasSubmenu && (
-                                <div className="submenu-child absolute left-full top-0 ml-1 w-64 bg-white border-4 border-gray-900 shadow-[6px_6px_0_0_rgba(0,0,0,0.1)] opacity-0 invisible transition-all duration-200 z-50">
+                                <div className="submenu-child absolute left-full top-0 ml-1 w-56 bg-white border-4 border-gray-900 shadow-[6px_6px_0_0_rgba(0,0,0,0.1)] opacity-0 invisible transition-all duration-200 z-50">
                                   <div className="py-2">
                                     {dropdownItem.submenu?.map((submenuItem) => (
                                       <Link

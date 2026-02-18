@@ -100,7 +100,9 @@ class ApiService {
         if (status >= 500) {
           throw new Error('Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.');
         } else if (status === 404) {
-          throw new Error('İstenen kaynak bulunamadı.');
+          const notFoundError = new Error('İstenen kaynak bulunamadı.');
+          (notFoundError as any).isNotFoundError = true;
+          throw notFoundError;
         } else if (status === 429) {
           const rateLimitError = new Error('Çok fazla giriş denemesi. Lütfen 15 dakika sonra tekrar deneyiniz.');
           (rateLimitError as any).isRateLimitError = true;
@@ -135,7 +137,8 @@ class ApiService {
       if (error instanceof Error) {
         const isAuthError = (error as any).isAuthError;
         const isRateLimitError = (error as any).isRateLimitError;
-        if (!isAuthError && !isRateLimitError) {
+        const isNotFoundError = (error as any).isNotFoundError;
+        if (!isAuthError && !isRateLimitError && !isNotFoundError) {
           console.error('API request failed:', error.message);
         }
         throw error;
