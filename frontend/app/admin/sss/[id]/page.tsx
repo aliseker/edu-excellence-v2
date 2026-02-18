@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { apiService } from '@/services/api';
 
 export default function SSSDuzenlePage() {
@@ -36,7 +37,7 @@ export default function SSSDuzenlePage() {
       }
     } catch (error) {
       console.error('Soru yüklenirken hata oluştu:', error);
-      alert('Soru yüklenirken bir hata oluştu.');
+      toast.error('Soru yüklenirken bir hata oluştu.');
       router.push('/admin/sss');
     } finally {
       setIsLoadingData(false);
@@ -49,10 +50,11 @@ export default function SSSDuzenlePage() {
 
     try {
       await apiService.updateFaq(id, formData);
+      toast.success('Soru başarıyla güncellendi.');
       router.push('/admin/sss');
     } catch (error) {
       console.error('Soru güncellenirken hata oluştu:', error);
-      alert('Soru güncellenirken bir hata oluştu. Lütfen tekrar deneyin.');
+      toast.error('Soru güncellenirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);
     }

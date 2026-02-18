@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { toast } from 'sonner';
 import { API_BASE_URL, API_ENDPOINTS, getAuthHeaders } from '@/config/api';
 
 interface Program {
@@ -130,7 +131,7 @@ export default function MasterMBADuzenlePage() {
         }
       } catch (error) {
         console.error('Program yüklenemedi:', error);
-        alert('Program yüklenirken bir hata oluştu.');
+        toast.error('Program yüklenirken bir hata oluştu.');
       } finally {
         setIsLoading(false);
       }
@@ -245,7 +246,7 @@ export default function MasterMBADuzenlePage() {
       router.push('/admin/master-mba');
     } catch (error: any) {
       console.error('Hata:', error);
-      alert(`Program güncellenirken bir hata oluştu: ${error.message || error}`);
+      toast.error(`Program güncellenirken bir hata oluştu: ${error.message || error}`);
     } finally {
       setIsLoading(false);
     }

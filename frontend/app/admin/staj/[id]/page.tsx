@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { API_BASE_URL, API_ENDPOINTS, getAuthHeaders } from '@/config/api';
 
 export default function StajDuzenlePage() {
@@ -151,7 +152,7 @@ export default function StajDuzenlePage() {
       router.push('/admin/staj');
     } catch (err: any) {
       console.error('Program güncellenemedi:', err);
-      alert(`Program güncellenirken bir hata oluştu: ${err.message || err}`);
+      toast.error(`Program güncellenirken bir hata oluştu: ${err.message || err}`);
     } finally {
       setIsLoading(false);
     }

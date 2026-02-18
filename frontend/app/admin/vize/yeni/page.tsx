@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { apiService } from '@/services/api';
 
 type VisaTypeForm = {
@@ -140,7 +141,7 @@ export default function YeniVizePage() {
       router.push('/admin/vize');
     } catch (error) {
       console.error('Vize eklenirken hata oluştu:', error);
-      alert('Vize eklenirken bir hata oluştu. Lütfen tekrar deneyin.');
+      toast.error('Vize eklenirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);
     }

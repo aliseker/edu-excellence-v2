@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { apiService } from '@/services/api';
 
 export default function GorusDuzenlePage() {
@@ -40,7 +41,7 @@ export default function GorusDuzenlePage() {
       }
     } catch (error) {
       console.error('Görüş yüklenirken hata oluştu:', error);
-      alert('Görüş yüklenirken bir hata oluştu.');
+      toast.error('Görüş yüklenirken bir hata oluştu.');
       router.push('/admin/gorusler');
     } finally {
       setIsLoadingData(false);
@@ -56,7 +57,7 @@ export default function GorusDuzenlePage() {
       router.push('/admin/gorusler');
     } catch (error) {
       console.error('Görüş güncellenirken hata oluştu:', error);
-      alert('Görüş güncellenirken bir hata oluştu. Lütfen tekrar deneyin.');
+      toast.error('Görüş güncellenirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);
     }

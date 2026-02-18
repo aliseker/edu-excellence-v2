@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { apiService } from '@/services/api';
+import RichTextEditor from '@/components/RichTextEditor';
 
 const categories = [
   { value: 'dil-okullari', label: 'Dil Okulları' },
@@ -33,7 +35,7 @@ export default function YeniBlogPage() {
 
     // Dosya boyutu kontrolü (5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert('Dosya boyutu 5MB\'dan küçük olmalıdır!');
+      toast.error('Dosya boyutu 5MB\'dan küçük olmalıdır!');
       return;
     }
 
@@ -51,10 +53,11 @@ export default function YeniBlogPage() {
 
     try {
       await apiService.createBlogPost(formData);
+      toast.success('Blog yazısı başarıyla eklendi.');
       router.push('/admin/blog');
     } catch (error) {
       console.error('Blog eklenirken hata oluştu:', error);
-      alert('Blog eklenirken bir hata oluştu. Lütfen tekrar deneyin.');
+      toast.error('Blog eklenirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);
     }
@@ -110,17 +113,16 @@ export default function YeniBlogPage() {
           </select>
         </div>
 
-        {/* Kapak Resmi */}
+        {/* Kapak Resmi (isteğe bağlı) */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Kapak Resmi <span className="text-red-500">*</span>
+            Kapak Resmi
           </label>
           <input
             type="file"
             accept="image/*"
             onChange={handleImageChange}
             className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-emerald-600"
-            required={!formData.coverImageBase64}
           />
           <p className="text-xs text-gray-500 mt-1">Maksimum 5MB, JPG, PNG veya WebP formatında</p>
           
@@ -160,20 +162,19 @@ export default function YeniBlogPage() {
           />
         </div>
 
-        {/* İçerik */}
+        {/* İçerik (isteğe bağlı) */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">
-            İçerik <span className="text-red-500">*</span>
+            İçerik
           </label>
-          <textarea
+          <RichTextEditor
             value={formData.content}
-            onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-            rows={15}
-            placeholder="Blog yazısının tam içeriğini girin"
-            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-emerald-600 font-mono text-sm"
-            required
+            onChange={(html) => setFormData({ ...formData, content: html })}
+            minHeight="280px"
           />
-          <p className="text-xs text-gray-500 mt-1">Markdown formatını destekler</p>
+          <p className="text-xs text-gray-500 mt-1">
+            Kalın, italik, liste ve başlıklarla zengin metin olarak içerik girebilirsiniz.
+          </p>
         </div>
 
         {/* Durum */}

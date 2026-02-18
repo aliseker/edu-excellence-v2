@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { apiService } from '@/services/api';
 
 const categories = [
@@ -36,6 +37,8 @@ export default function BlogPage() {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [pendingDelete, setPendingDelete] = useState<{ id: number; title: string } | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     loadBlogPosts();
@@ -53,17 +56,23 @@ export default function BlogPage() {
     }
   };
 
-  const handleDelete = async (id: number, title: string) => {
-    if (!confirm(`"${title}" yazısını silmek istediğinize emin misiniz?`)) {
-      return;
-    }
+  const handleDeleteClick = (id: number, title: string) => {
+    setPendingDelete({ id, title });
+  };
 
+  const handleDeleteConfirm = async () => {
+    if (!pendingDelete) return;
+    setDeleting(true);
     try {
-      await apiService.deleteBlogPost(id);
+      await apiService.deleteBlogPost(pendingDelete.id);
       await loadBlogPosts();
+      setPendingDelete(null);
+      toast.success('Blog yazısı başarıyla silindi.');
     } catch (error) {
       console.error('Blog yazısı silinirken hata oluştu:', error);
-      alert('Silme işlemi sırasında bir hata oluştu.');
+      toast.error('Silme işlemi sırasında bir hata oluştu.');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -193,7 +202,8 @@ export default function BlogPage() {
                           Düzenle
                         </Link>
                         <button
-                          onClick={() => handleDelete(post.id, post.title)}
+                          type="button"
+                          onClick={() => handleDeleteClick(post.id, post.title)}
                           className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold"
                         >
                           Sil
@@ -207,6 +217,18 @@ export default function BlogPage() {
           </table>
         </div>
       </div>
+
+      {pendingDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => !deleting && setPendingDelete(null)}>
+          <div className="bg-white rounded-xl shadow-xl border-2 border-gray-200 p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+            <p className="text-gray-800 font-semibold mb-4">&quot;{pendingDelete.title}&quot; yazısını silmek istediğinize emin misiniz?</p>
+            <div className="flex gap-3 justify-end">
+              <button type="button" onClick={() => !deleting && setPendingDelete(null)} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300">İptal</button>
+              <button type="button" onClick={handleDeleteConfirm} disabled={deleting} className="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 disabled:opacity-50">{deleting ? 'Siliniyor…' : 'Sil'}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

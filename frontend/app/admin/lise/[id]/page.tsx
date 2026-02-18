@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { API_BASE_URL, API_ENDPOINTS, getAuthHeaders } from '@/config/api';
 
 interface CountryOption {
@@ -108,7 +109,7 @@ export default function LiseDuzenlePage() {
         setAccreditation(data.accreditation && data.accreditation.length ? data.accreditation : ['']);
       } catch (error) {
         console.error('Lise detayı yüklenemedi:', error);
-        alert('Lise detayı yüklenemedi.');
+        toast.error('Lise detayı yüklenemedi.');
       } finally {
         setIsFetching(false);
       }
@@ -216,7 +217,7 @@ export default function LiseDuzenlePage() {
       router.push('/admin/lise');
     } catch (error) {
       console.error('Lise güncellenirken hata oluştu:', error);
-      alert('Lise güncellenirken bir hata oluştu.');
+      toast.error('Lise güncellenirken bir hata oluştu.');
     } finally {
       setIsLoading(false);
     }

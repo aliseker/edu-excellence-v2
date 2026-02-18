@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { API_BASE_URL, API_ENDPOINTS, getAuthHeaders } from '@/config/api';
 
 interface CountryOption {
@@ -146,7 +147,7 @@ export default function YeniLisePage() {
       router.push('/admin/lise');
     } catch (error) {
       console.error('Lise eklenirken hata oluştu:', error);
-      alert('Lise eklenirken bir hata oluştu.');
+      toast.error('Lise eklenirken bir hata oluştu.');
     } finally {
       setIsLoading(false);
     }

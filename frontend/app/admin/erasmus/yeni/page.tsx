@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { apiService } from '@/services/api';
 import RichTextEditor from '@/components/RichTextEditor';
 
@@ -79,6 +80,7 @@ export default function AdminErasmusYeniPage() {
         finalPdfPath = res.path;
       }
       const created = await apiService.createErasmusPage({ slug, title, htmlContent, pdfPath: finalPdfPath || undefined });
+      toast.success('Kayıt başarıyla oluşturuldu.');
       router.push(`/admin/erasmus/${created.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Kayıt sırasında hata oluştu.');

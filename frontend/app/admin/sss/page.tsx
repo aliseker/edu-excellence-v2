@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { apiService } from '@/services/api';
 
 type Faq = {
@@ -18,6 +19,8 @@ export default function SSSAdminPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [faqs, setFaqs] = useState<Faq[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [pendingDelete, setPendingDelete] = useState<{ id: number; question: string } | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     loadFaqs();
@@ -35,17 +38,23 @@ export default function SSSAdminPage() {
     }
   };
 
-  const handleDelete = async (id: number, question: string) => {
-    if (!confirm(`"${question}" sorusunu silmek istediğinize emin misiniz?`)) {
-      return;
-    }
+  const handleDeleteClick = (id: number, question: string) => {
+    setPendingDelete({ id, question });
+  };
 
+  const handleDeleteConfirm = async () => {
+    if (!pendingDelete) return;
+    setDeleting(true);
     try {
-      await apiService.deleteFaq(id);
+      await apiService.deleteFaq(pendingDelete.id);
       await loadFaqs();
+      setPendingDelete(null);
+      toast.success('Soru başarıyla silindi.');
     } catch (error) {
       console.error('Soru silinirken hata oluştu:', error);
-      alert('Silme işlemi sırasında bir hata oluştu.');
+      toast.error('Silme işlemi sırasında bir hata oluştu.');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -146,7 +155,8 @@ export default function SSSAdminPage() {
                           Düzenle
                         </Link>
                         <button
-                          onClick={() => handleDelete(faq.id, faq.question)}
+                          type="button"
+                          onClick={() => handleDeleteClick(faq.id, faq.question)}
                           className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold"
                         >
                           Sil
@@ -160,6 +170,18 @@ export default function SSSAdminPage() {
           </table>
         </div>
       </div>
+
+      {pendingDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => !deleting && setPendingDelete(null)}>
+          <div className="bg-white rounded-xl shadow-xl border-2 border-gray-200 p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+            <p className="text-gray-800 font-semibold mb-4">&quot;{pendingDelete.question}&quot; sorusunu silmek istediğinize emin misiniz?</p>
+            <div className="flex gap-3 justify-end">
+              <button type="button" onClick={() => !deleting && setPendingDelete(null)} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300">İptal</button>
+              <button type="button" onClick={handleDeleteConfirm} disabled={deleting} className="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 disabled:opacity-50">{deleting ? 'Siliniyor…' : 'Sil'}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { apiService } from '@/services/api';
 
 type VisaCountry = {
@@ -34,6 +35,8 @@ export default function VizePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [vizeUlkeler, setVizeUlkeler] = useState<VisaCountry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [pendingDelete, setPendingDelete] = useState<{ id: number; countryName: string } | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     loadVisaCountries();
@@ -51,17 +54,23 @@ export default function VizePage() {
     }
   };
 
-  const handleDelete = async (id: number, countryName: string) => {
-    if (!confirm(`${countryName} ülkesini silmek istediğinize emin misiniz?`)) {
-      return;
-    }
+  const handleDeleteClick = (id: number, countryName: string) => {
+    setPendingDelete({ id, countryName });
+  };
 
+  const handleDeleteConfirm = async () => {
+    if (!pendingDelete) return;
+    setDeleting(true);
     try {
-      await apiService.deleteVisaService(id);
+      await apiService.deleteVisaService(pendingDelete.id);
       await loadVisaCountries();
+      setPendingDelete(null);
+      toast.success('Vize ülkesi başarıyla silindi.');
     } catch (error) {
       console.error('Vize ülkesi silinirken hata oluştu:', error);
-      alert('Silme işlemi sırasında bir hata oluştu.');
+      toast.error('Silme işlemi sırasında bir hata oluştu.');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -164,7 +173,7 @@ export default function VizePage() {
                           Düzenle
                         </Link>
                         <button
-                          onClick={() => handleDelete(ulke.id, ulke.countryName)}
+                          onClick={() => handleDeleteClick(ulke.id, ulke.countryName)}
                           className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold"
                         >
                           Sil
@@ -178,6 +187,18 @@ export default function VizePage() {
           </table>
         </div>
       </div>
+
+      {pendingDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => !deleting && setPendingDelete(null)}>
+          <div className="bg-white rounded-xl shadow-xl border-2 border-gray-200 p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+            <p className="text-gray-800 font-semibold mb-4">{pendingDelete.countryName} ülkesini silmek istediğinize emin misiniz?</p>
+            <div className="flex gap-3 justify-end">
+              <button type="button" onClick={() => !deleting && setPendingDelete(null)} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300">İptal</button>
+              <button type="button" onClick={handleDeleteConfirm} disabled={deleting} className="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 disabled:opacity-50">{deleting ? 'Siliniyor…' : 'Sil'}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

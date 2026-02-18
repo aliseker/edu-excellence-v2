@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { apiService } from '@/services/api';
 
 const categories = [
@@ -27,13 +28,13 @@ export default function YeniGaleriPage() {
 
     // Dosya boyutu kontrolü (5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert('Dosya boyutu 5MB\'dan küçük olmalıdır!');
+      toast.error('Dosya boyutu 5MB\'dan küçük olmalıdır!');
       return;
     }
 
     // Dosya tipi kontrolü
     if (!file.type.startsWith('image/')) {
-      alert('Lütfen bir resim dosyası seçin!');
+      toast.error('Lütfen bir resim dosyası seçin!');
       return;
     }
 
@@ -51,7 +52,7 @@ export default function YeniGaleriPage() {
       })
       .catch((err) => {
         console.error('Galeri resmi yüklenirken hata oluştu:', err);
-        alert('Resim yüklenirken bir hata oluştu.');
+        toast.error('Resim yüklenirken bir hata oluştu.');
         setFormData((prev) => ({ ...prev, imagePath: '' }));
         setPreviewUrl('');
       });
@@ -60,17 +61,18 @@ export default function YeniGaleriPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.imagePath) {
-      alert('Lütfen bir resim yükleyin.');
+      toast.error('Lütfen bir resim yükleyin.');
       return;
     }
     setIsLoading(true);
 
     try {
       await apiService.createGalleryItem(formData);
+      toast.success('Galeri resmi başarıyla eklendi.');
       router.push('/admin/galeri');
     } catch (error) {
       console.error('Galeri eklenirken hata oluştu:', error);
-      alert('Galeri eklenirken bir hata oluştu. Lütfen tekrar deneyin.');
+      toast.error('Galeri eklenirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);
     }

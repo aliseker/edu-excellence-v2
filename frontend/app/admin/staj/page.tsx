@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { API_BASE_URL, API_ENDPOINTS, getAuthHeaders } from '@/config/api';
 
 export default function StajPage() {
@@ -11,6 +12,8 @@ export default function StajPage() {
   const [countries, setCountries] = useState<Array<{ id: number; name?: string; label?: string }>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,22 +56,27 @@ export default function StajPage() {
     });
   }, [programs, searchQuery, selectedCountry]);
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm('Bu programı silmek istediğinizden emin misiniz?')) {
-      return;
-    }
+  const handleDeleteClick = (id: number) => {
+    setPendingDeleteId(id);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (pendingDeleteId == null) return;
+    setDeleting(true);
     try {
-      const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.internshipProgramById(id)}`, {
+      const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.internshipProgramById(pendingDeleteId)}`, {
         method: 'DELETE',
         headers: getAuthHeaders(false),
       });
-      if (!res.ok) {
-        throw new Error('Program silinemedi.');
-      }
-      setPrograms(prev => prev.filter(item => item.id !== id));
+      if (!res.ok) throw new Error('Program silinemedi.');
+      setPrograms(prev => prev.filter(item => item.id !== pendingDeleteId));
+      setPendingDeleteId(null);
+      toast.success('Program başarıyla silindi.');
     } catch (err) {
       console.error('Program silinirken hata oluştu:', err);
-      alert('Program silinirken bir hata oluştu.');
+      toast.error('Program silinirken bir hata oluştu.');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -176,7 +184,7 @@ export default function StajPage() {
                         </Link>
                         <button
                           type="button"
-                          onClick={() => handleDelete(staj.id)}
+                          onClick={() => handleDeleteClick(staj.id)}
                           className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold"
                         >
                           Sil
@@ -190,6 +198,18 @@ export default function StajPage() {
           </table>
         </div>
       </div>
+
+      {pendingDeleteId != null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => !deleting && setPendingDeleteId(null)}>
+          <div className="bg-white rounded-xl shadow-xl border-2 border-gray-200 p-6 max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
+            <p className="text-gray-800 font-semibold mb-4">Bu programı silmek istediğinizden emin misiniz?</p>
+            <div className="flex gap-3 justify-end">
+              <button type="button" onClick={() => !deleting && setPendingDeleteId(null)} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300">İptal</button>
+              <button type="button" onClick={handleDeleteConfirm} disabled={deleting} className="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 disabled:opacity-50">{deleting ? 'Siliniyor…' : 'Sil'}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

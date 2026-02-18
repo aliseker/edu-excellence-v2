@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { API_BASE_URL, API_ENDPOINTS, getAuthHeaders } from '@/config/api';
 
 interface LanguageSchoolRow {
@@ -18,22 +19,30 @@ export default function DilOkullariPage() {
 
   const [dilOkullari, setDilOkullari] = useState<LanguageSchoolRow[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Bu dil okulunu silmek istediğinize emin misiniz?')) {
-      return;
-    }
+  const handleDeleteClick = (id: number) => {
+    setPendingDeleteId(id);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (pendingDeleteId == null) return;
+    setDeleting(true);
     try {
-      const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.languageSchoolById(id)}`, {
+      const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.languageSchoolById(pendingDeleteId)}`, {
         method: 'DELETE',
         headers: getAuthHeaders(false),
       });
-      if (!res.ok) {
-        throw new Error('Silme başarısız.');
-      }
-      setDilOkullari(prev => prev.filter(item => item.id !== id));
+      if (!res.ok) throw new Error('Silme başarısız.');
+      setDilOkullari(prev => prev.filter(item => item.id !== pendingDeleteId));
+      setPendingDeleteId(null);
+      toast.success('Dil okulu başarıyla silindi.');
     } catch (error) {
       console.error('Silme hatası:', error);
+      toast.error('Silme sırasında bir hata oluştu.');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -152,7 +161,7 @@ export default function DilOkullariPage() {
                         </Link>
                         <button
                           type="button"
-                          onClick={() => handleDelete(okul.id)}
+                          onClick={() => handleDeleteClick(okul.id)}
                           className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold"
                         >
                           Sil
@@ -179,6 +188,18 @@ export default function DilOkullariPage() {
             <button className="px-4 py-2 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-semibold">
               Sonraki
             </button>
+          </div>
+        </div>
+      )}
+
+      {pendingDeleteId != null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => !deleting && setPendingDeleteId(null)}>
+          <div className="bg-white rounded-xl shadow-xl border-2 border-gray-200 p-6 max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
+            <p className="text-gray-800 font-semibold mb-4">Bu dil okulunu silmek istediğinize emin misiniz?</p>
+            <div className="flex gap-3 justify-end">
+              <button type="button" onClick={() => !deleting && setPendingDeleteId(null)} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300">İptal</button>
+              <button type="button" onClick={handleDeleteConfirm} disabled={deleting} className="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 disabled:opacity-50">{deleting ? 'Siliniyor…' : 'Sil'}</button>
+            </div>
           </div>
         </div>
       )}

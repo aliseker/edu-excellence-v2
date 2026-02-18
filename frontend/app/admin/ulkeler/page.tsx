@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { API_BASE_URL, API_ENDPOINTS, getAuthHeaders } from '@/config/api';
 
 interface Country {
@@ -14,6 +15,8 @@ interface Country {
 export default function UlkelerPage() {
   const [countries, setCountries] = useState<Country[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchCountries = async () => {
     setIsLoading(true);
@@ -32,15 +35,23 @@ export default function UlkelerPage() {
     fetchCountries();
   }, []);
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Bu ülkeyi silmek istediğinize emin misiniz?')) {
-      return;
-    }
+  const handleDeleteClick = (id: number) => {
+    setPendingDeleteId(id);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (pendingDeleteId == null) return;
+    setDeleting(true);
     try {
-      await fetch(`${API_BASE_URL}${API_ENDPOINTS.countryById(id)}`, { method: 'DELETE', headers: getAuthHeaders(false) });
-      setCountries(prev => prev.filter(c => c.id !== id));
-    } catch (error) {
-      console.error('Silme hatası:', error);
+      await fetch(`${API_BASE_URL}${API_ENDPOINTS.countryById(pendingDeleteId)}`, { method: 'DELETE', headers: getAuthHeaders(false) });
+      setCountries(prev => prev.filter(c => c.id !== pendingDeleteId));
+      setPendingDeleteId(null);
+      toast.success('Ülke başarıyla silindi.');
+    } catch (err) {
+      console.error('Silme hatası:', err);
+      toast.error('Silme sırasında bir hata oluştu.');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -110,7 +121,7 @@ export default function UlkelerPage() {
                         </Link>
                         <button
                           type="button"
-                          onClick={() => handleDelete(country.id)}
+                          onClick={() => handleDeleteClick(country.id)}
                           className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold"
                         >
                           Sil
@@ -124,6 +135,18 @@ export default function UlkelerPage() {
           </table>
         </div>
       </div>
+
+      {pendingDeleteId != null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => !deleting && setPendingDeleteId(null)}>
+          <div className="bg-white rounded-xl shadow-xl border-2 border-gray-200 p-6 max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
+            <p className="text-gray-800 font-semibold mb-4">Bu ülkeyi silmek istediğinize emin misiniz?</p>
+            <div className="flex gap-3 justify-end">
+              <button type="button" onClick={() => !deleting && setPendingDeleteId(null)} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300">İptal</button>
+              <button type="button" onClick={handleDeleteConfirm} disabled={deleting} className="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 disabled:opacity-50">{deleting ? 'Siliniyor…' : 'Sil'}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

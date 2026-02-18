@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { Toaster } from 'sonner';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -37,6 +38,7 @@ export default function AdminLayout({
 
   return (
     <div className="admin-panel flex min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900">
+      <Toaster position="top-right" richColors closeButton />
       <AdminSidebar />
       <main className="flex-1 md:ml-64 lg:ml-64">
         <div className="px-4 py-6 md:px-8 md:py-8">

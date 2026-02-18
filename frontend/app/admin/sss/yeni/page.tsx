@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { apiService } from '@/services/api';
 
 export default function YeniSSSPage() {
@@ -21,10 +22,11 @@ export default function YeniSSSPage() {
 
     try {
       await apiService.createFaq(formData);
+      toast.success('Soru başarıyla eklendi.');
       router.push('/admin/sss');
     } catch (error) {
       console.error('Soru eklenirken hata oluştu:', error);
-      alert('Soru eklenirken bir hata oluştu. Lütfen tekrar deneyin.');
+      toast.error('Soru eklenirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);
     }

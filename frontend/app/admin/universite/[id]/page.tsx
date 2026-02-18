@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { toast } from 'sonner';
 import { API_BASE_URL, API_ENDPOINTS, getAuthHeaders } from '@/config/api';
 
 interface Program {
@@ -216,7 +217,7 @@ export default function UniversiteDuzenlePage() {
       router.push('/admin/universite');
     } catch (error) {
       console.error('Üniversite güncellenirken hata oluştu:', error);
-      alert('Üniversite güncellenirken bir hata oluştu.');
+      toast.error('Üniversite güncellenirken bir hata oluştu.');
     } finally {
       setIsLoading(false);
     }

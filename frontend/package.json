@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "isomorphic-dompurify": "^2.12.0",
-    "next": "16.0.10",
+    "next": "16.0.11",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "react-quill": "^2.0.0"
+    "sonner": "^2.0.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -21,7 +21,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.0.10",
+    "eslint-config-next": "16.0.11",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

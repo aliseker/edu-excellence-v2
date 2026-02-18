@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { use } from 'react';
+import { toast } from 'sonner';
 import { apiService } from '@/services/api';
 import RichTextEditor from '@/components/RichTextEditor';
 
@@ -118,6 +119,7 @@ export default function AdminErasmusEditPage({ params }: Props) {
       setPdfFile(null);
       setPdfPath(finalPdfPath ?? null);
       setData((d) => (d ? { ...d, title, htmlContent, pdfPath: finalPdfPath ?? null } : null));
+      toast.success('Kayıt başarıyla güncellendi.');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Kayıt sırasında hata oluştu.');
     } finally {

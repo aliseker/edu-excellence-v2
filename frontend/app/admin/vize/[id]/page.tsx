@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 import { apiService } from '@/services/api';
 
@@ -109,7 +110,7 @@ export default function VizeDuzenlePage() {
       }
     } catch (error) {
       console.error('Vize verisi yüklenirken hata oluştu:', error);
-      alert('Vize verisi yüklenemedi.');
+      toast.error('Vize verisi yüklenemedi.');
     } finally {
       setIsLoadingData(false);
     }
@@ -189,7 +190,7 @@ export default function VizeDuzenlePage() {
       router.push('/admin/vize');
     } catch (error) {
       console.error('Vize güncellenirken hata oluştu:', error);
-      alert('Vize güncellenirken bir hata oluştu. Lütfen tekrar deneyin.');
+      toast.error('Vize güncellenirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);
     }

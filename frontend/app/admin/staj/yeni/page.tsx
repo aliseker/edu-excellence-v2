@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { API_BASE_URL, API_ENDPOINTS, getAuthHeaders } from '@/config/api';
 
 export default function YeniStajPage() {
@@ -117,7 +118,7 @@ export default function YeniStajPage() {
       router.push('/admin/staj');
     } catch (error: any) {
       console.error('Program eklenirken hata oluştu:', error);
-      alert(`Program eklenirken bir hata oluştu: ${error.message || error}`);
+      toast.error(`Program eklenirken bir hata oluştu: ${error.message || error}`);
     } finally {
       setIsLoading(false);
     }

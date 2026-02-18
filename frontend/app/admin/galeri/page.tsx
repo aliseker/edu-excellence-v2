@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { toast } from 'sonner';
 import { apiService } from '@/services/api';
 import { BACKEND_BASE_URL } from '@/config/api';
 
@@ -30,6 +31,8 @@ export default function GaleriPage() {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [images, setImages] = useState<GalleryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     loadGalleryItems();
@@ -47,17 +50,23 @@ export default function GaleriPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Bu resmi silmek istediğinize emin misiniz?')) {
-      return;
-    }
+  const handleDeleteClick = (id: number) => {
+    setPendingDeleteId(id);
+  };
 
+  const handleDeleteConfirm = async () => {
+    if (pendingDeleteId == null) return;
+    setDeleting(true);
     try {
-      await apiService.deleteGalleryItem(id);
+      await apiService.deleteGalleryItem(pendingDeleteId);
       await loadGalleryItems();
+      setPendingDeleteId(null);
+      toast.success('Resim başarıyla silindi.');
     } catch (error) {
       console.error('Resim silinirken hata oluştu:', error);
-      alert('Silme işlemi sırasında bir hata oluştu.');
+      toast.error('Silme işlemi sırasında bir hata oluştu.');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -145,7 +154,8 @@ export default function GaleriPage() {
                 )}
                 <div className="flex items-center space-x-2">
                   <button
-                    onClick={() => handleDelete(image.id)}
+                    type="button"
+                    onClick={() => handleDeleteClick(image.id)}
                     className="flex-1 px-3 py-2 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold"
                   >
                     Sil
@@ -154,6 +164,32 @@ export default function GaleriPage() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Silme onay modalı */}
+      {pendingDeleteId != null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => !deleting && setPendingDeleteId(null)}>
+          <div className="bg-white rounded-xl shadow-xl border-2 border-gray-200 p-6 max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
+            <p className="text-gray-800 font-semibold mb-4">Bu resmi silmek istediğinize emin misiniz?</p>
+            <div className="flex gap-3 justify-end">
+              <button
+                type="button"
+                onClick={() => !deleting && setPendingDeleteId(null)}
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300"
+              >
+                İptal
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteConfirm}
+                disabled={deleting}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 disabled:opacity-50"
+              >
+                {deleting ? 'Siliniyor…' : 'Sil'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { apiService } from '@/services/api';
 
 export default function YeniGorusPage() {
@@ -26,7 +27,7 @@ export default function YeniGorusPage() {
       router.push('/admin/gorusler');
     } catch (error) {
       console.error('Görüş eklenirken hata oluştu:', error);
-      alert('Görüş eklenirken bir hata oluştu. Lütfen tekrar deneyin.');
+      toast.error('Görüş eklenirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);
     }
