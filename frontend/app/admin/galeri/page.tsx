@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { apiService } from '@/services/api';
+import { BACKEND_BASE_URL } from '@/config/api';
 
 const categories = [
   { value: '', label: 'Tüm Kategoriler' },
@@ -19,7 +20,8 @@ const getCategoryLabel = (value: string) => {
 type GalleryItem = {
   id: number;
   category: string;
-  imageBase64: string;
+  title: string;
+  imagePath: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -125,7 +127,7 @@ export default function GaleriPage() {
             >
               <div className="relative aspect-square">
                 <img
-                  src={image.imageBase64}
+                  src={`${BACKEND_BASE_URL}/uploads/${image.imagePath}`}
                   alt="Galeri resmi"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                 />
@@ -136,6 +138,11 @@ export default function GaleriPage() {
                     {getCategoryLabel(image.category)}
                   </span>
                 </p>
+                {image.title && (
+                  <p className="text-sm font-semibold text-gray-900 mb-2">
+                    {image.title}
+                  </p>
+                )}
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => handleDelete(image.id)}

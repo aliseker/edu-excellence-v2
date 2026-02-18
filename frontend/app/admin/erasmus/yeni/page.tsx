@@ -26,7 +26,6 @@ export default function AdminErasmusYeniPage() {
   const [slug, setSlug] = useState(SLUG_OPTIONS[0].value);
   const [title, setTitle] = useState(SLUG_OPTIONS[0].label);
   const [htmlContent, setHtmlContent] = useState('');
-  const [imagesJson, setImagesJson] = useState<string>('[]');
   const [pdfPath, setPdfPath] = useState<string | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
@@ -60,31 +59,7 @@ export default function AdminErasmusYeniPage() {
     if (opt) setTitle(opt.label);
   };
 
-  const addImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !file.type.startsWith('image/')) return;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const dataUrl = reader.result as string;
-      try {
-        const arr = JSON.parse(imagesJson) as string[];
-        setImagesJson(JSON.stringify([...arr, dataUrl]));
-      } catch {
-        setImagesJson(JSON.stringify([dataUrl]));
-      }
-    };
-    reader.readAsDataURL(file);
-    e.target.value = '';
-  };
-
-  const removeImage = (index: number) => {
-    try {
-      const arr = JSON.parse(imagesJson) as string[];
-      setImagesJson(JSON.stringify(arr.filter((_, i) => i !== index)));
-    } catch {
-      setImagesJson('[]');
-    }
-  };
+  // Yeni sayfa oluştururken resim ekleme yerine, resimleri düzenleme ekranından ekleyeceğiz.
 
   const handlePdfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -103,13 +78,7 @@ export default function AdminErasmusYeniPage() {
         const res = await apiService.uploadErasmusPdf(pdfFile, slug);
         finalPdfPath = res.path;
       }
-      const created = await apiService.createErasmusPage({
-        slug,
-        title,
-        htmlContent,
-        imagesJson,
-        pdfPath: finalPdfPath || undefined,
-      });
+      const created = await apiService.createErasmusPage({ slug, title, htmlContent, pdfPath: finalPdfPath || undefined });
       router.push(`/admin/erasmus/${created.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Kayıt sırasında hata oluştu.');
@@ -117,15 +86,6 @@ export default function AdminErasmusYeniPage() {
       setSaving(false);
     }
   };
-
-  const images: string[] = (() => {
-    try {
-      const arr = JSON.parse(imagesJson);
-      return Array.isArray(arr) ? arr : [];
-    } catch {
-      return [];
-    }
-  })();
 
   if (loadingList) {
     return (
@@ -201,23 +161,6 @@ export default function AdminErasmusYeniPage() {
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">Metin (zengin metin)</label>
           <RichTextEditor value={htmlContent} onChange={setHtmlContent} minHeight="280px" />
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Resimler (bilgisayardan seçin, base64 saklanır)</label>
-          <input type="file" accept="image/*" onChange={addImage} className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border file:font-semibold file:bg-purple-50 file:text-purple-700" />
-          {images.length > 0 && (
-            <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {images.map((src, i) => (
-                <div key={i} className="relative group">
-                  <img src={src} alt="" className="w-full aspect-video object-cover rounded border-2 border-gray-200" />
-                  <button type="button" onClick={() => removeImage(i)} className="absolute top-2 right-2 bg-red-600 text-white rounded-full w-8 h-8 font-bold opacity-90 hover:opacity-100">
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
 
         {showPdf && (

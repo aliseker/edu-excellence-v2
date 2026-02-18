@@ -14,7 +14,6 @@ type ErasmusPageData = {
   slug: string;
   title: string;
   htmlContent: string;
-  imagesJson: string;
   pdfPath: string | null;
 };
 
@@ -25,6 +24,7 @@ type Props = {
 
 export default function ErasmusContentPage({ slug, pageTitle }: Props) {
   const [data, setData] = useState<ErasmusPageData | null>(null);
+  const [images, setImages] = useState<string[]>([]);
   const [sanitizedHtml, setSanitizedHtml] = useState('');
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -40,6 +40,10 @@ export default function ErasmusContentPage({ slug, pageTitle }: Props) {
         const clean = await sanitizeHTML(res.htmlContent || '');
         if (cancelled) return;
         setSanitizedHtml(clean);
+        const imgs = await apiService.getErasmusPageImages(res.id).catch(() => []);
+        if (!cancelled && Array.isArray(imgs)) {
+          setImages(imgs.map((x: any) => x.imageBase64).filter((x: unknown) => typeof x === 'string'));
+        }
       } catch {
         if (!cancelled) setNotFound(true);
       } finally {
@@ -48,16 +52,6 @@ export default function ErasmusContentPage({ slug, pageTitle }: Props) {
     })();
     return () => { cancelled = true; };
   }, [slug]);
-
-  let images: string[] = [];
-  if (data?.imagesJson) {
-    try {
-      const parsed = JSON.parse(data.imagesJson);
-      images = Array.isArray(parsed) ? parsed.filter((x: unknown) => typeof x === 'string') : [];
-    } catch {
-      images = [];
-    }
-  }
 
   const pdfUrl = data?.pdfPath
     ? `${BACKEND_BASE_URL}/uploads/${data.pdfPath}`

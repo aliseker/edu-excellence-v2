@@ -307,14 +307,14 @@ class ApiService {
     return this.request(API_ENDPOINTS.galleryItemsByCategory(category));
   }
 
-  async createGalleryItem(data: { category: string; imageBase64: string }) {
+  async createGalleryItem(data: { category: string; title: string; imagePath: string }) {
     return this.request(API_ENDPOINTS.galleryItems, {
       method: 'POST',
       body: JSON.stringify(data),
     });
   }
 
-  async updateGalleryItem(id: number, data: { category: string; imageBase64: string }) {
+  async updateGalleryItem(id: number, data: { category: string; title: string; imagePath: string }) {
     return this.request(API_ENDPOINTS.galleryItemById(id), {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -325,6 +325,23 @@ class ApiService {
     return this.request(API_ENDPOINTS.galleryItemById(id), {
       method: 'DELETE',
     });
+  }
+
+  async uploadGalleryImage(file: File): Promise<{ path: string }> {
+    const form = new FormData();
+    form.append('file', file);
+
+    const url = `${this.baseUrl}${API_ENDPOINTS.galleryUploadImage}`;
+    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+    const headers: HeadersInit = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(url, { method: 'POST', body: form, headers });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err?.message || 'Galeri resmi yüklenirken hata oluştu.');
+    }
+    return res.json();
   }
 
   // Contact
@@ -485,33 +502,55 @@ class ApiService {
 
   // Erasmus sayfaları
   async getErasmusPages() {
-    return this.request<Array<{ id: number; slug: string; title: string; htmlContent: string; imagesJson: string; pdfPath: string | null; createdAt: string; updatedAt: string | null }>>(API_ENDPOINTS.erasmusPages);
+    return this.request<Array<{ id: number; slug: string; title: string; htmlContent: string; pdfPath: string | null; createdAt: string; updatedAt: string | null }>>(API_ENDPOINTS.erasmusPages);
   }
 
   async getErasmusPageBySlug(slug: string) {
-    return this.request<{ id: number; slug: string; title: string; htmlContent: string; imagesJson: string; pdfPath: string | null }>(API_ENDPOINTS.erasmusPageBySlug(slug));
+    return this.request<{ id: number; slug: string; title: string; htmlContent: string; pdfPath: string | null }>(API_ENDPOINTS.erasmusPageBySlug(slug));
   }
 
   async getErasmusPageById(id: number) {
-    return this.request<{ id: number; slug: string; title: string; htmlContent: string; imagesJson: string; pdfPath: string | null }>(API_ENDPOINTS.erasmusPageById(id));
+    return this.request<{ id: number; slug: string; title: string; htmlContent: string; pdfPath: string | null }>(API_ENDPOINTS.erasmusPageById(id));
   }
 
-  async createErasmusPage(data: { slug: string; title: string; htmlContent: string; imagesJson?: string; pdfPath?: string | null }) {
-    return this.request<{ id: number; slug: string; title: string; htmlContent: string; imagesJson: string; pdfPath: string | null }>(API_ENDPOINTS.erasmusPages, {
+  async createErasmusPage(data: { slug: string; title: string; htmlContent: string; pdfPath?: string | null }) {
+    return this.request<{ id: number; slug: string; title: string; htmlContent: string; pdfPath: string | null }>(API_ENDPOINTS.erasmusPages, {
       method: 'POST',
-      body: JSON.stringify({ ...data, imagesJson: data.imagesJson ?? '[]' }),
+      body: JSON.stringify(data),
     });
   }
 
-  async updateErasmusPage(id: number, data: { slug: string; title: string; htmlContent: string; imagesJson?: string; pdfPath?: string | null }) {
+  async updateErasmusPage(id: number, data: { slug: string; title: string; htmlContent: string; pdfPath?: string | null }) {
     return this.request(API_ENDPOINTS.erasmusPageById(id), {
       method: 'PUT',
-      body: JSON.stringify({ ...data, imagesJson: data.imagesJson ?? '[]' }),
+      body: JSON.stringify(data),
     });
   }
 
   async deleteErasmusPage(id: number) {
     return this.request(API_ENDPOINTS.erasmusPageById(id), {
+      method: 'DELETE',
+    });
+  }
+
+  async getErasmusPageImages(pageId: number) {
+    return this.request<Array<{ id: number; erasmusPageId: number; imageBase64: string; createdAt: string; updatedAt: string | null }>>(
+      API_ENDPOINTS.erasmusPageImagesByPageId(pageId)
+    );
+  }
+
+  async addErasmusPageImage(pageId: number, imageBase64: string) {
+    return this.request<{ id: number; erasmusPageId: number; imageBase64: string; createdAt: string; updatedAt: string | null }>(
+      API_ENDPOINTS.erasmusPageImagesByPageId(pageId),
+      {
+        method: 'POST',
+        body: JSON.stringify({ erasmusPageId: pageId, imageBase64 }),
+      }
+    );
+  }
+
+  async deleteErasmusPageImage(imageId: number) {
+    return this.request(API_ENDPOINTS.erasmusPageImageById(imageId), {
       method: 'DELETE',
     });
   }

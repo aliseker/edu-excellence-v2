@@ -10,10 +10,12 @@ namespace EduExcellenceV2.Presentation.WebApi.Controllers;
 public class GalleryController : ControllerBase
 {
     private readonly IGalleryService _service;
+    private readonly IWebHostEnvironment _env;
 
-    public GalleryController(IGalleryService service)
+    public GalleryController(IGalleryService service, IWebHostEnvironment env)
     {
         _service = service;
+        _env = env;
     }
 
     [HttpGet]
@@ -67,5 +69,32 @@ public class GalleryController : ControllerBase
     {
         var deleted = await _service.DeleteAsync(id);
         return deleted ? NoContent() : NotFound();
+    }
+
+    [HttpPost("upload-image")]
+    [Authorize]
+    [RequestSizeLimit(10 * 1024 * 1024)] // 10 MB
+    public async Task<IActionResult> UploadImage(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+            return BadRequest(new { message = "Dosya seçilmedi." });
+
+        if (!file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+            return BadRequest(new { message = "Sadece resim dosyaları yüklenebilir." });
+
+        var uploadsDir = Path.Combine(_env.ContentRootPath, "uploads", "gallery");
+        Directory.CreateDirectory(uploadsDir);
+
+        var ext = Path.GetExtension(file.FileName);
+        var fileName = $"{Guid.NewGuid():N}{ext}";
+        var fullPath = Path.Combine(uploadsDir, fileName);
+
+        await using (var stream = new FileStream(fullPath, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        var relativePath = Path.Combine("gallery", fileName).Replace("\\", "/");
+        return Ok(new { path = relativePath });
     }
 }

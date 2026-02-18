@@ -78,6 +78,42 @@ public class ErasmusPageService : IErasmusPageService
         return true;
     }
 
+    public async Task<IEnumerable<ErasmusPageImageDto>> GetImagesAsync(int erasmusPageId)
+    {
+        var images = await _dbContext.ErasmusPageImages
+            .Where(x => x.ErasmusPageId == erasmusPageId)
+            .OrderBy(x => x.CreatedAt)
+            .ToListAsync();
+
+        return images.Select(ToImageDto);
+    }
+
+    public async Task<ErasmusPageImageDto> AddImageAsync(ErasmusPageImageCreateDto dto)
+    {
+        var entity = new ErasmusPageImage
+        {
+            ErasmusPageId = dto.ErasmusPageId,
+            ImageBase64 = dto.ImageBase64
+        };
+
+        _dbContext.ErasmusPageImages.Add(entity);
+        await _dbContext.SaveChangesAsync();
+        return ToImageDto(entity);
+    }
+
+    public async Task<bool> DeleteImageAsync(int imageId)
+    {
+        var entity = await _dbContext.ErasmusPageImages.FindAsync(imageId);
+        if (entity == null)
+        {
+            return false;
+        }
+
+        _dbContext.ErasmusPageImages.Remove(entity);
+        await _dbContext.SaveChangesAsync();
+        return true;
+    }
+
     private static ErasmusPageDto ToDto(ErasmusPage entity)
     {
         return new ErasmusPageDto
@@ -86,7 +122,6 @@ public class ErasmusPageService : IErasmusPageService
             Slug = entity.Slug,
             Title = entity.Title,
             HtmlContent = entity.HtmlContent ?? string.Empty,
-            ImagesJson = entity.ImagesJson ?? "[]",
             PdfPath = entity.PdfPath,
             CreatedAt = entity.CreatedAt,
             UpdatedAt = entity.UpdatedAt
@@ -98,7 +133,18 @@ public class ErasmusPageService : IErasmusPageService
         entity.Slug = (dto.Slug ?? string.Empty).Trim();
         entity.Title = (dto.Title ?? string.Empty).Trim();
         entity.HtmlContent = dto.HtmlContent ?? string.Empty;
-        entity.ImagesJson = string.IsNullOrWhiteSpace(dto.ImagesJson) ? "[]" : dto.ImagesJson;
         entity.PdfPath = string.IsNullOrWhiteSpace(dto.PdfPath) ? null : dto.PdfPath.Trim();
+    }
+
+    private static ErasmusPageImageDto ToImageDto(ErasmusPageImage entity)
+    {
+        return new ErasmusPageImageDto
+        {
+            Id = entity.Id,
+            ErasmusPageId = entity.ErasmusPageId,
+            ImageBase64 = entity.ImageBase64,
+            CreatedAt = entity.CreatedAt,
+            UpdatedAt = entity.UpdatedAt
+        };
     }
 }

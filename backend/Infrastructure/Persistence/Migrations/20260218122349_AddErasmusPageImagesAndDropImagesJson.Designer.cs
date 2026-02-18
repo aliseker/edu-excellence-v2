@@ -4,6 +4,7 @@ using EduExcellenceV2.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(EduExcellenceDbContext))]
-    partial class EduExcellenceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260218122349_AddErasmusPageImagesAndDropImagesJson")]
+    partial class AddErasmusPageImagesAndDropImagesJson
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -821,11 +824,7 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ImagePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
+                    b.Property<string>("ImageBase64")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

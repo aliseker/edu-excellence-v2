@@ -77,6 +77,35 @@ public class ErasmusPagesController : ControllerBase
         return deleted ? NoContent() : NotFound();
     }
 
+    [HttpGet("{id:int}/images")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetImages(int id)
+    {
+        var images = await _service.GetImagesAsync(id);
+        return Ok(images);
+    }
+
+    [HttpPost("{id:int}/images")]
+    [Authorize]
+    public async Task<IActionResult> AddImage(int id, [FromBody] ErasmusPageImageCreateDto dto)
+    {
+        if (id != dto.ErasmusPageId)
+        {
+            return BadRequest(new { message = "ErasmusPageId ile URL'deki id uyuşmuyor." });
+        }
+
+        var created = await _service.AddImageAsync(dto);
+        return CreatedAtAction(nameof(GetImages), new { id = created.ErasmusPageId }, created);
+    }
+
+    [HttpDelete("images/{imageId:int}")]
+    [Authorize]
+    public async Task<IActionResult> DeleteImage(int imageId)
+    {
+        var deleted = await _service.DeleteImageAsync(imageId);
+        return deleted ? NoContent() : NotFound();
+    }
+
     /// <summary>
     /// PDF yükler; dosya uploads/ekler klasörüne kaydedilir. Dönen path (ekler/xxx.pdf) sayfa kaydında PdfPath olarak kullanılır.
     /// </summary>

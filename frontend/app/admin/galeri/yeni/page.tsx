@@ -16,8 +16,10 @@ export default function YeniGaleriPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     category: categories[0].value,
-    imageBase64: '',
+    title: '',
+    imagePath: '',
   });
+  const [previewUrl, setPreviewUrl] = useState<string>('');
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -37,14 +39,30 @@ export default function YeniGaleriPage() {
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      const base64String = reader.result as string;
-      setFormData({ ...formData, imageBase64: base64String });
+      setPreviewUrl(reader.result as string);
     };
     reader.readAsDataURL(file);
+
+    // Sunucuya yükle ve path'i al
+    apiService
+      .uploadGalleryImage(file)
+      .then((res) => {
+        setFormData((prev) => ({ ...prev, imagePath: res.path }));
+      })
+      .catch((err) => {
+        console.error('Galeri resmi yüklenirken hata oluştu:', err);
+        alert('Resim yüklenirken bir hata oluştu.');
+        setFormData((prev) => ({ ...prev, imagePath: '' }));
+        setPreviewUrl('');
+      });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.imagePath) {
+      alert('Lütfen bir resim yükleyin.');
+      return;
+    }
     setIsLoading(true);
 
     try {
@@ -93,6 +111,20 @@ export default function YeniGaleriPage() {
           </select>
         </div>
 
+        {/* Başlık */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Görsel Başlığı (hover'da görünecek)
+          </label>
+          <input
+            type="text"
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-pink-600 bg-white"
+            placeholder="Örn: Üniversite Kampüsleri - Yaz Okulu"
+          />
+        </div>
+
         {/* Resim */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -103,24 +135,27 @@ export default function YeniGaleriPage() {
             accept="image/*"
             onChange={handleImageChange}
             className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-pink-600"
-            required={!formData.imageBase64}
+            required={!formData.imagePath}
           />
           <p className="text-xs text-gray-500 mt-1">Maksimum 5MB, JPG, PNG veya WebP formatında</p>
           
-          {formData.imageBase64 && (
+          {previewUrl && (
             <div className="mt-4">
               <div className="flex items-center justify-between mb-2">
                 <p className="text-sm font-semibold text-gray-700">Önizleme:</p>
                 <button
                   type="button"
-                  onClick={() => setFormData({ ...formData, imageBase64: '' })}
+                  onClick={() => {
+                    setFormData({ ...formData, imagePath: '' });
+                    setPreviewUrl('');
+                  }}
                   className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm font-semibold"
                 >
                   ✕ Kaldır
                 </button>
               </div>
               <img
-                src={formData.imageBase64}
+                src={previewUrl}
                 alt="Preview"
                 className="w-full max-w-md h-64 object-cover rounded-lg border-2 border-gray-300"
               />

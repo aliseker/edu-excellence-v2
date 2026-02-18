@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { apiService } from '@/services/api';
+import { BACKEND_BASE_URL } from '@/config/api';
 
 type GalleryItem = {
   id: number;
   category: string;
-  imageBase64: string;
+  title: string;
+  imagePath: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -97,13 +99,15 @@ export default function GaleriPage() {
                         className="relative h-64 rounded-xl overflow-hidden bg-gray-200 group cursor-pointer"
                       >
                         <img
-                          src={item.imageBase64}
+                          src={`${BACKEND_BASE_URL}/uploads/${item.imagePath}`}
                           alt={`${category.name} - Görsel ${item.id}`}
                           className="w-full h-full object-cover"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity z-10"></div>
                         <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                          <p className="font-semibold">{category.name}</p>
+                          <p className="font-semibold">
+                            {item.title || category.name}
+                          </p>
                         </div>
                       </div>
                     ))}

@@ -14,7 +14,6 @@ type PageData = {
   slug: string;
   title: string;
   htmlContent: string;
-  imagesJson: string;
   pdfPath: string | null;
 };
 
@@ -27,7 +26,7 @@ export default function AdminErasmusEditPage({ params }: Props) {
   const [data, setData] = useState<PageData | null>(null);
   const [title, setTitle] = useState('');
   const [htmlContent, setHtmlContent] = useState('');
-  const [imagesJson, setImagesJson] = useState('[]');
+  const [images, setImages] = useState<Array<{ id: number; erasmusPageId: number; imageBase64: string }>>([]);
   const [pdfPath, setPdfPath] = useState<string | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(true);
@@ -45,7 +44,8 @@ export default function AdminErasmusEditPage({ params }: Props) {
         setData(page);
         setTitle(page.title);
         setHtmlContent(page.htmlContent || '');
-        setImagesJson(page.imagesJson || '[]');
+        const imgs = await apiService.getErasmusPageImages(page.id);
+        setImages(imgs);
         setPdfPath(page.pdfPath || null);
       } catch (e) {
         console.error(e);
@@ -58,29 +58,36 @@ export default function AdminErasmusEditPage({ params }: Props) {
 
   const showPdf = data ? PDF_SLUGS.includes(data.slug) : false;
 
-  const addImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const addImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !file.type.startsWith('image/')) return;
     const reader = new FileReader();
-    reader.onloadend = () => {
+    reader.onloadend = async () => {
       const dataUrl = reader.result as string;
       try {
-        const arr = JSON.parse(imagesJson) as string[];
-        setImagesJson(JSON.stringify([...arr, dataUrl]));
-      } catch {
-        setImagesJson(JSON.stringify([dataUrl]));
+        if (!data) return;
+        await apiService.addErasmusPageImage(data.id, dataUrl);
+        const imgs = await apiService.getErasmusPageImages(data.id);
+        setImages(imgs);
+      } catch (err) {
+        console.error(err);
+        setError('Resim eklenemedi.');
       }
     };
     reader.readAsDataURL(file);
     e.target.value = '';
   };
 
-  const removeImage = (index: number) => {
+  const removeImage = async (imageId: number) => {
     try {
-      const arr = JSON.parse(imagesJson) as string[];
-      setImagesJson(JSON.stringify(arr.filter((_, i) => i !== index)));
-    } catch {
-      setImagesJson('[]');
+      await apiService.deleteErasmusPageImage(imageId);
+      if (data) {
+        const imgs = await apiService.getErasmusPageImages(data.id);
+        setImages(imgs);
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Resim silinemedi.');
     }
   };
 
@@ -106,27 +113,17 @@ export default function AdminErasmusEditPage({ params }: Props) {
         slug: data.slug,
         title,
         htmlContent,
-        imagesJson,
         pdfPath: finalPdfPath ?? undefined,
       });
       setPdfFile(null);
       setPdfPath(finalPdfPath ?? null);
-      setData((d) => (d ? { ...d, title, htmlContent, imagesJson, pdfPath: finalPdfPath ?? null } : null));
+      setData((d) => (d ? { ...d, title, htmlContent, pdfPath: finalPdfPath ?? null } : null));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Kayıt sırasında hata oluştu.');
     } finally {
       setSaving(false);
     }
   };
-
-  const images: string[] = (() => {
-    try {
-      const arr = JSON.parse(imagesJson);
-      return Array.isArray(arr) ? arr : [];
-    } catch {
-      return [];
-    }
-  })();
 
   if (loading) {
     return (
@@ -185,10 +182,10 @@ export default function AdminErasmusEditPage({ params }: Props) {
           <input type="file" accept="image/*" onChange={addImage} className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border file:font-semibold file:bg-purple-50 file:text-purple-700" />
           {images.length > 0 && (
             <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {images.map((src, i) => (
-                <div key={i} className="relative group">
-                  <img src={src} alt="" className="w-full aspect-video object-cover rounded border-2 border-gray-200" />
-                  <button type="button" onClick={() => removeImage(i)} className="absolute top-2 right-2 bg-red-600 text-white rounded-full w-8 h-8 font-bold opacity-90 hover:opacity-100">
+              {images.map((img) => (
+                <div key={img.id} className="relative group">
+                  <img src={img.imageBase64} alt="" className="w-full aspect-video object-cover rounded border-2 border-gray-200" />
+                  <button type="button" onClick={() => removeImage(img.id)} className="absolute top-2 right-2 bg-red-600 text-white rounded-full w-8 h-8 font-bold opacity-90 hover:opacity-100">
                     ×
                   </button>
                 </div>

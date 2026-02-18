@@ -26,6 +26,7 @@ public class EduExcellenceDbContext : DbContext
     public DbSet<SiteSettings> SiteSettings => Set<SiteSettings>();
     public DbSet<Faq> Faqs => Set<Faq>();
     public DbSet<ErasmusPage> ErasmusPages => Set<ErasmusPage>();
+    public DbSet<ErasmusPageImage> ErasmusPageImages => Set<ErasmusPageImage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

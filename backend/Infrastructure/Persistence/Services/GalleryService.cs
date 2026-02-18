@@ -83,7 +83,8 @@ public class GalleryService : IGalleryService
         {
             Id = entity.Id,
             Category = entity.Category,
-            ImageBase64 = entity.ImageBase64,
+            Title = entity.Title,
+            ImagePath = entity.ImagePath,
             CreatedAt = entity.CreatedAt,
             UpdatedAt = entity.UpdatedAt ?? entity.CreatedAt
         };
@@ -92,6 +93,7 @@ public class GalleryService : IGalleryService
     private static void ApplyDto(GalleryItem entity, GalleryItemCreateUpdateDto dto)
     {
         entity.Category = dto.Category;
-        entity.ImageBase64 = dto.ImageBase64;
+        entity.Title = dto.Title;
+        entity.ImagePath = dto.ImagePath;
     }
 }

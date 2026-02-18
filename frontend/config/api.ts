@@ -49,6 +49,7 @@ export const API_ENDPOINTS = {
   galleryItems: '/gallery',
   galleryItemById: (id: number) => `/gallery/${id}`,
   galleryItemsByCategory: (category: string) => `/gallery/category/${encodeURIComponent(category)}`,
+  galleryUploadImage: '/gallery/upload-image',
   
   // Contact
   contact: '/contact',
@@ -89,6 +90,8 @@ export const API_ENDPOINTS = {
   erasmusPageById: (id: number) => `/erasmus-pages/${id}`,
   erasmusPageBySlug: (slug: string) => `/erasmus-pages/slug/${encodeURIComponent(slug)}`,
   erasmusPageUploadPdf: '/erasmus-pages/upload-pdf',
+  erasmusPageImagesByPageId: (id: number) => `/erasmus-pages/${id}/images`,
+  erasmusPageImageById: (imageId: number) => `/erasmus-pages/images/${imageId}`,
 };
 
 /** Admin API istekleri için: Bearer token ekler. json: true ise Content-Type: application/json eklenir (FormData için false kullan). */
