@@ -96,7 +96,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("LocalFrontend", policy =>
-        policy.WithOrigins("http://localhost:3000", "https://localhost:3000")
+        policy.WithOrigins(
+                "http://eduexcellence.com.tr",
+                "https://eduexcellence.com.tr",
+                "http://www.eduexcellence.com.tr",
+                "https://www.eduexcellence.com.tr")
             .AllowAnyHeader()
             .AllowAnyMethod());
 });

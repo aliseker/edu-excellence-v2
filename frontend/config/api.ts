@@ -2,12 +2,12 @@
 // Development için: 'https://localhost:7166/api'
 // Production için: 'https://eduexcellence.com.tr/api'
 
-export const API_BASE_URL = 'https://localhost:7166/api';
-//export const API_BASE_URL = 'https://eduexcellence.com.tr/api';
+//export const API_BASE_URL = 'https://localhost:7166/api';
+export const API_BASE_URL = 'https://eduexcellence.com.tr/api';
 
 // Backend base URL (image URLs için)
-export const BACKEND_BASE_URL = 'https://localhost:7166';
-//export const BACKEND_BASE_URL = 'https://eduexcellence.com.tr';
+//export const BACKEND_BASE_URL = 'https://localhost:7166';
+export const BACKEND_BASE_URL = 'https://eduexcellence.com.tr';
 
 export const API_ENDPOINTS = {
   // Universities

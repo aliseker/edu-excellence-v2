@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://edu-excellence.com';
+  const baseUrl = 'https://eduexcellence.com.tr';
   
   const routes = [
     '',
