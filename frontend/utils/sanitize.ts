@@ -76,6 +76,22 @@ export function isValidPhone(phone: string): boolean {
 }
 
 /**
+ * Validates GPA / Not Ortalaması (0-5 arası, ondalıklı olabilir: 3.5, 4.0)
+ * @param gpa - GPA string (örn: "3.5", "4.00")
+ * @returns true if valid GPA format
+ */
+export function isValidGpa(gpa: string): boolean {
+  if (!gpa || typeof gpa !== 'string') {
+    return false;
+  }
+  const trimmed = gpa.trim();
+  if (!trimmed) return false;
+  const num = parseFloat(trimmed);
+  if (Number.isNaN(num)) return false;
+  return num >= 0 && num <= 5 && /^\d+(\.\d{1,2})?$/.test(trimmed);
+}
+
+/**
  * Sanitizes HTML content using DOMPurify (client-side only)
  * This should be used for any HTML content that will be rendered
  * @param html - HTML string to sanitize

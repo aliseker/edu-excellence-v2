@@ -53,7 +53,10 @@ export const API_ENDPOINTS = {
   
   // Contact
   contact: '/contact',
-  
+
+  // Application (Başvuru)
+  application: '/application',
+
   // Countries
   countries: '/countries',
   countryById: (id: number) => `/countries/${id}`,

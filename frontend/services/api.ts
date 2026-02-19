@@ -358,6 +358,27 @@ class ApiService {
     });
   }
 
+  // Application (Başvuru)
+  async submitApplication(data: {
+    programType: string;
+    country: string;
+    university?: string;
+    name: string;
+    email: string;
+    phone?: string;
+    birthDate?: string;
+    educationLevel: string;
+    gpa: string;
+    languageScore?: string;
+    languageTest?: string;
+    message?: string;
+  }) {
+    return this.request(API_ENDPOINTS.application, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
   // Countries
   async getCountries() {
     return this.request(API_ENDPOINTS.locationCountries);

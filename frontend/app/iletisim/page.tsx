@@ -19,6 +19,7 @@ export default function IletisimPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [contactAddress, setContactAddress] = useState<string | null>(null);
   const [contactPhoneNumber, setContactPhoneNumber] = useState<string | null>(null);
   const [contactEmail, setContactEmail] = useState<string | null>(null);
@@ -52,10 +53,14 @@ export default function IletisimPage() {
   }, [contactAddress]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const name = e.target.name;
+    setFormData({ ...formData, [name]: e.target.value });
+    if (fieldErrors[name]) setFieldErrors((prev) => ({ ...prev, [name]: '' }));
+  };
+
+  const setError = (field: string, message: string) => {
+    setFieldErrors((prev) => ({ ...prev, [field]: message }));
+    setIsSubmitting(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -73,40 +78,44 @@ export default function IletisimPage() {
         message: sanitizeInput(formData.message)
       };
 
-      // Validate required fields
+      setFieldErrors({});
+
       if (!sanitizedData.name || sanitizedData.name.length < 2) {
-        setSubmitStatus('error');
-        alert('Lütfen geçerli bir ad soyad girin (en az 2 karakter).');
-        setIsSubmitting(false);
+        setError('name', 'Ad soyad en az 2 karakter olmalıdır.');
         return;
       }
 
       if (!isValidEmail(sanitizedData.email)) {
-        setSubmitStatus('error');
-        alert('Lütfen geçerli bir e-posta adresi girin.');
-        setIsSubmitting(false);
+        setError('email', 'Geçerli bir e-posta adresi girin.');
         return;
       }
 
       if (sanitizedData.phone && !isValidPhone(sanitizedData.phone)) {
-        setSubmitStatus('error');
-        alert('Lütfen geçerli bir telefon numarası girin.');
-        setIsSubmitting(false);
+        setError('phone', 'Geçerli bir telefon numarası girin.');
         return;
       }
 
       if (!sanitizedData.message || sanitizedData.message.length < 10) {
-        setSubmitStatus('error');
-        alert('Mesajınız en az 10 karakter olmalıdır.');
-        setIsSubmitting(false);
+        setError('message', 'Mesajınız en az 10 karakter olmalıdır.');
         return;
       }
 
-      // API çağrısı burada yapılacak - SMTP ile iletişim maili gönderilecek
-      // Email başlığı: "İletişim Formu - Edu-Excellence"
-      // Admin panelden email adresi belirlenecek
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (sanitizedData.name.length > 200) {
+        setError('name', 'Ad soyad en fazla 200 karakter olabilir.');
+        return;
+      }
+      if (sanitizedData.subject.length > 200) {
+        setError('subject', 'Konu en fazla 200 karakter olabilir.');
+        return;
+      }
+      if (sanitizedData.message.length > 5000) {
+        setError('message', 'Mesaj en fazla 5000 karakter olabilir.');
+        return;
+      }
+
+      await apiService.submitContactForm(sanitizedData);
       setSubmitStatus('success');
+      setFieldErrors({});
       setFormData({
         name: '',
         email: '',
@@ -175,8 +184,9 @@ export default function IletisimPage() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-4 border-gray-900 focus:border-purple-600 focus:outline-none font-medium text-gray-900"
+                  className={`w-full px-4 py-3 border-4 focus:outline-none font-medium text-gray-900 ${fieldErrors.name ? 'border-red-600 focus:border-red-600' : 'border-gray-900 focus:border-purple-600'}`}
                 />
+                {fieldErrors.name && <p className="mt-1 text-sm font-bold text-red-600">{fieldErrors.name}</p>}
               </div>
 
               <div>
@@ -190,8 +200,9 @@ export default function IletisimPage() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-4 border-gray-900 focus:border-purple-600 focus:outline-none font-medium text-gray-900"
+                  className={`w-full px-4 py-3 border-4 focus:outline-none font-medium text-gray-900 ${fieldErrors.email ? 'border-red-600 focus:border-red-600' : 'border-gray-900 focus:border-purple-600'}`}
                 />
+                {fieldErrors.email && <p className="mt-1 text-sm font-bold text-red-600">{fieldErrors.email}</p>}
               </div>
 
               <div>
@@ -204,8 +215,9 @@ export default function IletisimPage() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border-4 border-gray-900 focus:border-purple-600 focus:outline-none font-medium text-gray-900"
+                  className={`w-full px-4 py-3 border-4 focus:outline-none font-medium text-gray-900 ${fieldErrors.phone ? 'border-red-600 focus:border-red-600' : 'border-gray-900 focus:border-purple-600'}`}
                 />
+                {fieldErrors.phone && <p className="mt-1 text-sm font-bold text-red-600">{fieldErrors.phone}</p>}
               </div>
 
               <div>
@@ -218,7 +230,7 @@ export default function IletisimPage() {
                   value={formData.subject}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-4 border-gray-900 focus:border-purple-600 focus:outline-none font-medium text-gray-900 bg-white"
+                  className={`w-full px-4 py-3 border-4 focus:outline-none font-medium text-gray-900 bg-white ${fieldErrors.subject ? 'border-red-600 focus:border-red-600' : 'border-gray-900 focus:border-purple-600'}`}
                 >
                   <option value="">Konu Seçiniz</option>
                   <option value="dil-okulu">Dil Okulu</option>
@@ -231,6 +243,7 @@ export default function IletisimPage() {
                   <option value="vize">Vize Danışmanlığı</option>
                   <option value="diger">Diğer</option>
                 </select>
+                {fieldErrors.subject && <p className="mt-1 text-sm font-bold text-red-600">{fieldErrors.subject}</p>}
               </div>
 
               <div>
@@ -244,8 +257,9 @@ export default function IletisimPage() {
                   onChange={handleChange}
                   required
                   rows={6}
-                  className="w-full px-4 py-3 border-4 border-gray-900 focus:border-purple-600 focus:outline-none font-medium text-gray-900 resize-none"
+                  className={`w-full px-4 py-3 border-4 focus:outline-none font-medium text-gray-900 resize-none ${fieldErrors.message ? 'border-red-600 focus:border-red-600' : 'border-gray-900 focus:border-purple-600'}`}
                 />
+                {fieldErrors.message && <p className="mt-1 text-sm font-bold text-red-600">{fieldErrors.message}</p>}
               </div>
 
               {submitStatus === 'success' && (

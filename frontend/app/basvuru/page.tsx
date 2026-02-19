@@ -1,13 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
-import { sanitizeInput, isValidEmail, isValidPhone } from '@/utils/sanitize';
+import { sanitizeInput, isValidEmail, isValidPhone, isValidGpa } from '@/utils/sanitize';
+import { apiService } from '@/services/api';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+
+interface CountryOption {
+  id: number;
+  value?: string;
+  label?: string;
+  name?: string;
+}
 
 export default function BasvuruPage() {
+  const [countries, setCountries] = useState<CountryOption[]>([]);
   const [formData, setFormData] = useState({
     programType: '',
     country: '',
@@ -25,12 +35,30 @@ export default function BasvuruPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.locationCountries}`);
+        const data = await res.json();
+        setCountries(Array.isArray(data) ? data : []);
+      } catch {
+        setCountries([]);
+      }
+    };
+    fetchCountries();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const name = e.target.name;
+    setFormData({ ...formData, [name]: e.target.value });
+    if (fieldErrors[name]) setFieldErrors((prev) => ({ ...prev, [name]: '' }));
+  };
+
+  const setError = (field: string, message: string) => {
+    setFieldErrors((prev) => ({ ...prev, [field]: message }));
+    setIsSubmitting(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,31 +83,59 @@ export default function BasvuruPage() {
         message: sanitizeInput(formData.message)
       };
 
-      // Validate required fields
+      setFieldErrors({});
+
+      if (!sanitizedData.programType) {
+        setError('programType', 'Lütfen program türü seçin.');
+        return;
+      }
+
+      if (!sanitizedData.country) {
+        setError('country', 'Lütfen ülke seçin.');
+        return;
+      }
+
       if (!sanitizedData.name || sanitizedData.name.length < 2) {
-        setSubmitStatus('error');
-        alert('Lütfen geçerli bir ad soyad girin (en az 2 karakter).');
-        setIsSubmitting(false);
+        setError('name', 'Ad soyad en az 2 karakter olmalıdır.');
         return;
       }
 
       if (!isValidEmail(sanitizedData.email)) {
-        setSubmitStatus('error');
-        alert('Lütfen geçerli bir e-posta adresi girin.');
-        setIsSubmitting(false);
+        setError('email', 'Geçerli bir e-posta adresi girin.');
         return;
       }
 
-      if (!isValidPhone(sanitizedData.phone)) {
-        setSubmitStatus('error');
-        alert('Lütfen geçerli bir telefon numarası girin.');
-        setIsSubmitting(false);
+      if (sanitizedData.phone && !isValidPhone(sanitizedData.phone)) {
+        setError('phone', 'Geçerli bir telefon numarası girin (10-15 rakam).');
         return;
       }
 
-      // API çağrısı burada yapılacak
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (!sanitizedData.educationLevel) {
+        setError('educationLevel', 'Lütfen eğitim seviyesi seçin.');
+        return;
+      }
+
+      if (!sanitizedData.gpa || !isValidGpa(sanitizedData.gpa)) {
+        setError('gpa', 'Not ortalaması 0-5 arası, ondalıklı olabilir olmalıdır (örn: 3.5).');
+        return;
+      }
+
+      await apiService.submitApplication({
+        programType: sanitizedData.programType,
+        country: sanitizedData.country,
+        university: sanitizedData.university || undefined,
+        name: sanitizedData.name,
+        email: sanitizedData.email,
+        phone: sanitizedData.phone || undefined,
+        birthDate: sanitizedData.birthDate || undefined,
+        educationLevel: sanitizedData.educationLevel,
+        gpa: sanitizedData.gpa,
+        languageScore: sanitizedData.languageScore || undefined,
+        languageTest: sanitizedData.languageTest || undefined,
+        message: sanitizedData.message || undefined,
+      });
       setSubmitStatus('success');
+      setFieldErrors({});
       setFormData({
         programType: '',
         country: '',
@@ -144,7 +200,7 @@ export default function BasvuruPage() {
               </div>
             </div>
           )}
-          {submitStatus === 'error' && (
+          {submitStatus === 'error' && Object.keys(fieldErrors).length === 0 && (
             <div className="bg-red-500 text-white px-6 py-4 border-4 border-red-700 mb-6 transform -skew-x-2 shadow-lg">
               <div className="transform skew-x-2 font-bold text-sm uppercase tracking-wider">
                 ❌ Bir hata oluştu. Lütfen tekrar deneyin.
@@ -163,7 +219,7 @@ export default function BasvuruPage() {
                 value={formData.programType}
                 onChange={handleChange}
                 required
-                className="w-full px-5 py-4 border-4 border-gray-900 bg-white font-bold text-gray-900 focus:border-purple-600 focus:outline-none transition-all duration-200 hover:border-purple-500"
+                className={`w-full px-5 py-4 border-4 bg-white font-bold text-gray-900 focus:outline-none transition-all duration-200 ${fieldErrors.programType ? 'border-red-600 focus:border-red-600' : 'border-gray-900 focus:border-purple-600 hover:border-purple-500'}`}
               >
                 <option value="">-- Seçiniz --</option>
                 <option value="dil-okulu">Dil Okulu</option>
@@ -175,6 +231,7 @@ export default function BasvuruPage() {
                 <option value="staj">Yurtdışı Staj</option>
                 <option value="erasmus">Erasmus+</option>
               </select>
+              {fieldErrors.programType && <p className="mt-1 text-sm font-bold text-red-600">{fieldErrors.programType}</p>}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -188,19 +245,16 @@ export default function BasvuruPage() {
                   value={formData.country}
                   onChange={handleChange}
                   required
-                  className="w-full px-5 py-4 border-4 border-gray-900 bg-white font-bold text-gray-900 focus:border-purple-600 focus:outline-none transition-all duration-200 hover:border-purple-500"
+                  className={`w-full px-5 py-4 border-4 bg-white font-bold text-gray-900 focus:outline-none transition-all duration-200 ${fieldErrors.country ? 'border-red-600 focus:border-red-600' : 'border-gray-900 focus:border-purple-600 hover:border-purple-500'}`}
                 >
                   <option value="">-- Seçiniz --</option>
-                  <option value="kanada">🇨🇦 Kanada</option>
-                  <option value="ingiltere">🇬🇧 İngiltere</option>
-                  <option value="amerika">🇺🇸 Amerika</option>
-                  <option value="almanya">🇩🇪 Almanya</option>
-                  <option value="italya">🇮🇹 İtalya</option>
-                  <option value="fransa">🇫🇷 Fransa</option>
-                  <option value="ispanya">🇪🇸 İspanya</option>
-                  <option value="avustralya">🇦🇺 Avustralya</option>
-                  <option value="yeni-zelanda">🇳🇿 Yeni Zelanda</option>
+                  {countries.map((c) => (
+                    <option key={c.id} value={c.value ?? c.id.toString()}>
+                      {c.label ?? c.name ?? c.value ?? `Ülke ${c.id}`}
+                    </option>
+                  ))}
                 </select>
+              {fieldErrors.country && <p className="mt-1 text-sm font-bold text-red-600">{fieldErrors.country}</p>}
               </div>
 
               {/* University */}
@@ -236,8 +290,9 @@ export default function BasvuruPage() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-5 py-4 border-4 border-gray-900 bg-white font-bold text-gray-900 focus:border-purple-600 focus:outline-none transition-all duration-200 hover:border-purple-500"
+                    className={`w-full px-5 py-4 border-4 bg-white font-bold text-gray-900 focus:outline-none transition-all duration-200 ${fieldErrors.name ? 'border-red-600 focus:border-red-600' : 'border-gray-900 focus:border-purple-600 hover:border-purple-500'}`}
                   />
+                  {fieldErrors.name && <p className="mt-1 text-sm font-bold text-red-600">{fieldErrors.name}</p>}
                 </div>
 
                 <div>
@@ -250,23 +305,24 @@ export default function BasvuruPage() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-5 py-4 border-4 border-gray-900 bg-white font-bold text-gray-900 focus:border-purple-600 focus:outline-none transition-all duration-200 hover:border-purple-500"
+                    className={`w-full px-5 py-4 border-4 bg-white font-bold text-gray-900 focus:outline-none transition-all duration-200 ${fieldErrors.email ? 'border-red-600 focus:border-red-600' : 'border-gray-900 focus:border-purple-600 hover:border-purple-500'}`}
                   />
+                  {fieldErrors.email && <p className="mt-1 text-sm font-bold text-red-600">{fieldErrors.email}</p>}
                 </div>
 
                 <div>
                   <label className="block text-sm font-black text-gray-900 mb-3 uppercase tracking-wider">
-                    Telefon *
+                    Telefon
                   </label>
                   <input
                     type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    required
-                    placeholder="+90 5XX XXX XX XX"
-                    className="w-full px-5 py-4 border-4 border-gray-900 bg-white font-bold text-gray-900 focus:border-purple-600 focus:outline-none transition-all duration-200 hover:border-purple-500 placeholder:text-gray-400"
+                    placeholder="+90 5XX XXX XX XX (opsiyonel)"
+                    className={`w-full px-5 py-4 border-4 bg-white font-bold text-gray-900 focus:outline-none transition-all duration-200 placeholder:text-gray-400 ${fieldErrors.phone ? 'border-red-600 focus:border-red-600' : 'border-gray-900 focus:border-purple-600 hover:border-purple-500'}`}
                   />
+                  {fieldErrors.phone && <p className="mt-1 text-sm font-bold text-red-600">{fieldErrors.phone}</p>}
                 </div>
 
                 <div>
@@ -300,7 +356,7 @@ export default function BasvuruPage() {
                     value={formData.educationLevel}
                     onChange={handleChange}
                     required
-                    className="w-full px-5 py-4 border-4 border-gray-900 bg-white font-bold text-gray-900 focus:border-purple-600 focus:outline-none transition-all duration-200 hover:border-purple-500"
+                    className={`w-full px-5 py-4 border-4 bg-white font-bold text-gray-900 focus:outline-none transition-all duration-200 ${fieldErrors.educationLevel ? 'border-red-600 focus:border-red-600' : 'border-gray-900 focus:border-purple-600 hover:border-purple-500'}`}
                   >
                     <option value="">-- Seçiniz --</option>
                     <option value="lise">Lise</option>
@@ -308,23 +364,22 @@ export default function BasvuruPage() {
                     <option value="lisans">Lisans</option>
                     <option value="yuksek-lisans">Yüksek Lisans</option>
                   </select>
+                  {fieldErrors.educationLevel && <p className="mt-1 text-sm font-bold text-red-600">{fieldErrors.educationLevel}</p>}
                 </div>
 
                 <div>
                   <label className="block text-sm font-black text-gray-900 mb-3 uppercase tracking-wider">
-                    Not Ortalaması (GPA)
+                    Not Ortalaması (GPA) *
                   </label>
                   <input
-                    type="number"
+                    type="text"
                     name="gpa"
                     value={formData.gpa}
                     onChange={handleChange}
-                    step="0.01"
-                    min="0"
-                    max="4"
-                    placeholder="4.00 üzerinden"
-                    className="w-full px-5 py-4 border-4 border-gray-900 bg-white font-bold text-gray-900 focus:border-purple-600 focus:outline-none transition-all duration-200 hover:border-purple-500 placeholder:text-gray-400"
+                    placeholder="Örn: 3.5 veya 4.0 (0-5 arası)"
+                    className={`w-full px-5 py-4 border-4 bg-white font-bold text-gray-900 focus:outline-none transition-all duration-200 placeholder:text-gray-400 ${fieldErrors.gpa ? 'border-red-600 focus:border-red-600' : 'border-gray-900 focus:border-purple-600 hover:border-purple-500'}`}
                   />
+                  {fieldErrors.gpa && <p className="mt-1 text-sm font-bold text-red-600">{fieldErrors.gpa}</p>}
                 </div>
 
                 <div>
