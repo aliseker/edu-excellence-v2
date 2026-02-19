@@ -21,7 +21,6 @@ export default function YeniStajPage() {
         const data = await res.json();
         setCountries(data);
       } catch (error) {
-        console.error('Ülkeler yüklenemedi:', error);
       }
     };
     fetchCountries();
@@ -117,7 +116,6 @@ export default function YeniStajPage() {
       }
       router.push('/admin/staj');
     } catch (error: any) {
-      console.error('Program eklenirken hata oluştu:', error);
       toast.error(`Program eklenirken bir hata oluştu: ${error.message || error}`);
     } finally {
       setIsLoading(false);

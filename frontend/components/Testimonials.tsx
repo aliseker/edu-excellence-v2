@@ -47,7 +47,6 @@ const Testimonials = () => {
       const data = await apiService.getActiveTestimonials();
       setTestimonials(data as Testimonial[]);
     } catch (error) {
-      console.error('Görüşler yüklenirken hata oluştu:', error);
       setTestimonials([]);
     } finally {
       setIsLoading(false);

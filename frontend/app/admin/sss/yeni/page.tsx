@@ -25,7 +25,6 @@ export default function YeniSSSPage() {
       toast.success('Soru başarıyla eklendi.');
       router.push('/admin/sss');
     } catch (error) {
-      console.error('Soru eklenirken hata oluştu:', error);
       toast.error('Soru eklenirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);

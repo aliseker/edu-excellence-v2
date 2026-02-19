@@ -43,7 +43,6 @@ export default function YazOkullariPage() {
         setYazOkullari(schools);
         setCountries(countryOptions);
       } catch (fetchError) {
-        console.error('Yaz okulları yüklenemedi:', fetchError);
         setError('Yaz okulları yüklenirken bir hata oluştu.');
       } finally {
         setIsLoading(false);
@@ -79,7 +78,6 @@ export default function YazOkullariPage() {
       setPendingDeleteId(null);
       toast.success('Yaz okulu başarıyla silindi.');
     } catch (deleteError) {
-      console.error('Silme hatası:', deleteError);
       toast.error('Silme sırasında bir hata oluştu.');
     } finally {
       setDeleting(false);

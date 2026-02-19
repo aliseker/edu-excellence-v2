@@ -55,8 +55,7 @@ export default function YeniBlogPage() {
       await apiService.createBlogPost(formData);
       toast.success('Blog yazısı başarıyla eklendi.');
       router.push('/admin/blog');
-    } catch (error) {
-      console.error('Blog eklenirken hata oluştu:', error);
+    } catch {
       toast.error('Blog eklenirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);

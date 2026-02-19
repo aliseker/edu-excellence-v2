@@ -40,7 +40,6 @@ export default function GorusDuzenlePage() {
         });
       }
     } catch (error) {
-      console.error('Görüş yüklenirken hata oluştu:', error);
       toast.error('Görüş yüklenirken bir hata oluştu.');
       router.push('/admin/gorusler');
     } finally {
@@ -56,7 +55,6 @@ export default function GorusDuzenlePage() {
       await apiService.updateTestimonial(id, formData);
       router.push('/admin/gorusler');
     } catch (error) {
-      console.error('Görüş güncellenirken hata oluştu:', error);
       toast.error('Görüş güncellenirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);

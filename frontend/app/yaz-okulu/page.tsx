@@ -44,7 +44,6 @@ export default function YazOkuluPage() {
         setCountries(fetchedCountries);
         setSummerSchools(fetchedSummerSchools);
       } catch (fetchError) {
-        console.error('Yaz okulları verileri yüklenemedi:', fetchError);
         setError('Veriler yüklenirken bir hata oluştu.');
       } finally {
         setIsLoading(false);

@@ -23,7 +23,6 @@ export default function SSSContent() {
         const data = await apiService.getActiveFaqs();
         setFaqs(Array.isArray(data) ? (data as FaqItem[]) : []);
       } catch (e) {
-        console.error('SSS yüklenirken hata:', e);
         setError('Sorular yüklenirken bir hata oluştu.');
       } finally {
         setIsLoading(false);

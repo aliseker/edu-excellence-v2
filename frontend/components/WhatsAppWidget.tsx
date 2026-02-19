@@ -18,8 +18,7 @@ const WhatsAppWidget = () => {
         if (settings?.whatsAppMessageText?.trim()) {
           setWhatsAppMessageText(settings.whatsAppMessageText.trim());
         }
-      } catch (error) {
-        console.error('WhatsApp ayarları alınamadı:', error);
+      } catch {
       }
     };
 

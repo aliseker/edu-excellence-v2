@@ -96,7 +96,6 @@ export default function BasvuruPage() {
       });
     } catch (error) {
       setSubmitStatus('error');
-      console.error('Form submission error:', error);
     } finally {
       setIsSubmitting(false);
     }

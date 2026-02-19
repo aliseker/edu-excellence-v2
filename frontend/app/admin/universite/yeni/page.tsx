@@ -108,7 +108,6 @@ export default function YeniUniversitePage() {
         const data = await res.json();
         setCountries(data);
       } catch (error) {
-        console.error('Ülkeler yüklenemedi:', error);
       }
     };
     fetchCountries();
@@ -126,7 +125,6 @@ export default function YeniUniversitePage() {
         const data = await res.json();
         setCities(data);
       } catch (error) {
-        console.error('Şehirler yüklenemedi:', error);
       } finally {
         setIsCitiesLoading(false);
       }
@@ -162,7 +160,6 @@ export default function YeniUniversitePage() {
       }
       router.push('/admin/universite');
     } catch (error) {
-      console.error('Üniversite eklenirken hata oluştu:', error);
       toast.error('Üniversite eklenirken bir hata oluştu.');
     } finally {
       setIsLoading(false);

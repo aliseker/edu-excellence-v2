@@ -32,7 +32,6 @@ export default function SSSAdminPage() {
       const data = await apiService.getFaqs();
       setFaqs(data as Faq[]);
     } catch (error) {
-      console.error('SSS yüklenirken hata oluştu:', error);
     } finally {
       setIsLoading(false);
     }
@@ -51,7 +50,6 @@ export default function SSSAdminPage() {
       setPendingDelete(null);
       toast.success('Soru başarıyla silindi.');
     } catch (error) {
-      console.error('Soru silinirken hata oluştu:', error);
       toast.error('Silme işlemi sırasında bir hata oluştu.');
     } finally {
       setDeleting(false);

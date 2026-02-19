@@ -37,6 +37,7 @@ export default function YeniLisePage() {
     students: '',
     website: '',
     status: 'active',
+    schoolType: 'Devlet' as 'Devlet' | 'Özel',
   });
   const [countries, setCountries] = useState<CountryOption[]>([]);
   const [cities, setCities] = useState<CityOption[]>([]);
@@ -55,7 +56,6 @@ export default function YeniLisePage() {
         const data = await res.json();
         setCountries(data);
       } catch (error) {
-        console.error('Ülkeler yüklenemedi:', error);
       }
     };
     fetchCountries();
@@ -73,7 +73,6 @@ export default function YeniLisePage() {
         const data = await res.json();
         setCities(data);
       } catch (error) {
-        console.error('Şehirler yüklenemedi:', error);
       } finally {
         setIsCitiesLoading(false);
       }
@@ -120,6 +119,7 @@ export default function YeniLisePage() {
     try {
       const submitData = {
         ...formData,
+        schoolType: formData.schoolType,
         cityId: formData.cityId || null,
         features: features.filter(f => f.trim() !== ''),
         programOptions: programOptions
@@ -146,7 +146,6 @@ export default function YeniLisePage() {
 
       router.push('/admin/lise');
     } catch (error) {
-      console.error('Lise eklenirken hata oluştu:', error);
       toast.error('Lise eklenirken bir hata oluştu.');
     } finally {
       setIsLoading(false);
@@ -211,6 +210,17 @@ export default function YeniLisePage() {
             <div><label className="block text-sm font-bold text-gray-700 mb-2">Öğrenci Sayısı</label><input type="text" value={formData.students} onChange={(e) => setFormData({ ...formData, students: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-cyan-600" /></div>
             <div><label className="block text-sm font-bold text-gray-700 mb-2">Website</label><input type="url" value={formData.website} onChange={(e) => setFormData({ ...formData, website: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-cyan-600" /></div>
             <div><label className="block text-sm font-bold text-gray-700 mb-2">Durum</label><select value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-cyan-600"><option value="active">Aktif</option><option value="inactive">Pasif</option></select></div>
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">Okul Tipi</label>
+              <select
+                value={formData.schoolType}
+                onChange={(e) => setFormData({ ...formData, schoolType: e.target.value as 'Devlet' | 'Özel' })}
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-cyan-600"
+              >
+                <option value="Devlet">Devlet</option>
+                <option value="Özel">Özel</option>
+              </select>
+            </div>
           </div>
           <div className="mt-6"><label className="block text-sm font-bold text-gray-700 mb-2">Açıklama <span className="text-red-500">*</span></label><textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} rows={4} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-cyan-600" required /></div>
           <div className="mt-6"><label className="block text-sm font-bold text-gray-700 mb-2">Neden Bu Lise?</label><textarea value={formData.whySchool} onChange={(e) => setFormData({ ...formData, whySchool: e.target.value })} rows={4} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-cyan-600" /></div>

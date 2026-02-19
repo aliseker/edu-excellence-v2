@@ -16,8 +16,7 @@ async function getDOMPurify() {
     try {
       const dompurify = await import('isomorphic-dompurify');
       DOMPurify = dompurify.default;
-    } catch (error) {
-      console.warn('Failed to load DOMPurify:', error);
+    } catch {
       return null;
     }
   }

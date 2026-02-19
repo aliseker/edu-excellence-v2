@@ -80,7 +80,6 @@ export default function AdminDashboardPage() {
       
       // Geçersiz tarih kontrolü
       if (isNaN(date.getTime())) {
-        console.warn('Geçersiz tarih:', dateString);
         return 'Bilinmiyor';
       }
       
@@ -110,7 +109,6 @@ export default function AdminDashboardPage() {
         return `${months} ay önce`;
       }
     } catch (error) {
-      console.error('Tarih formatlama hatası:', error, dateString);
       return 'Bilinmiyor';
     }
   };
@@ -231,7 +229,6 @@ export default function AdminDashboardPage() {
       activities.sort((a, b) => b.date.getTime() - a.date.getTime());
       setRecentActivities(activities.slice(0, 5));
     } catch (error) {
-      console.error('Dashboard verileri yüklenirken hata oluştu:', error);
     } finally {
       setIsLoading(false);
     }

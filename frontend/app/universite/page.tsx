@@ -41,7 +41,6 @@ export default function UniversitiesPage() {
         setCountries(fetchedCountries);
         setUniversities(universitiesRes);
       } catch (fetchError) {
-        console.error('Üniversite verileri yüklenemedi:', fetchError);
         setError('Veriler yüklenirken bir hata oluştu.');
       } finally {
         setIsLoading(false);

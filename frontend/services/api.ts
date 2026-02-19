@@ -138,9 +138,6 @@ class ApiService {
         const isAuthError = (error as any).isAuthError;
         const isRateLimitError = (error as any).isRateLimitError;
         const isNotFoundError = (error as any).isNotFoundError;
-        if (!isAuthError && !isRateLimitError && !isNotFoundError) {
-          console.error('API request failed:', error.message);
-        }
         throw error;
       }
       throw new Error('Bağlantı hatası oluştu. Lütfen internet bağlantınızı kontrol edin.');

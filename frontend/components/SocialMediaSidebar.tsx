@@ -29,8 +29,7 @@ const SocialMediaSidebar = () => {
           instagram: settings?.instagramUrl?.trim() ?? '',
           linkedin: settings?.linkedInUrl?.trim() ?? '',
         });
-      } catch (error) {
-        console.error('Sosyal medya ayarları alınamadı:', error);
+      } catch {
       }
     };
 

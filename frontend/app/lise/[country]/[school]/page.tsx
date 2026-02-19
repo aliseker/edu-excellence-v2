@@ -271,7 +271,7 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
           country: String(hs.countryName ?? countryKey),
           city: String(hs.cityName ?? ''),
           flag: flagEmojiBySlug[countryKey] ?? '🌍',
-          type: 'Devlet',
+          type: String(hs.schoolType ?? 'Devlet'),
           description: String(hs.description ?? ''),
           intro: String(hs.whySchool ?? ''),
           image: undefined,
@@ -292,7 +292,6 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
           requirements: Array.isArray(hs.requirements) ? hs.requirements : undefined,
         });
       } catch (e) {
-        console.error('Lise detayı yüklenemedi:', e);
         setApiData(null);
       } finally {
         setIsLoading(false);

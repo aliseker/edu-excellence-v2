@@ -141,6 +141,7 @@ public class HighSchoolService : IHighSchoolService
         entity.Students = dto.Students;
         entity.Website = dto.Website;
         entity.Status = dto.Status;
+        entity.SchoolType = string.IsNullOrWhiteSpace(dto.SchoolType) ? "Devlet" : dto.SchoolType.Trim();
         entity.ImageBase64 = dto.ImageBase64;
 
         entity.FeaturesJson = JsonHelper.Serialize(dto.Features);
@@ -203,6 +204,7 @@ public class HighSchoolService : IHighSchoolService
             Students = entity.Students,
             Website = entity.Website,
             Status = entity.Status,
+            SchoolType = entity.SchoolType ?? "Devlet",
             ImageBase64 = entity.ImageBase64,
             Features = JsonHelper.Deserialize<List<string>>(entity.FeaturesJson) ?? new(),
             ProgramOptions = JsonHelper.Deserialize<List<HighSchoolTitledOptionDto>>(entity.ProgramOptionsJson) ?? new(),

@@ -81,7 +81,6 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
           setData(null);
         }
       } catch (error) {
-        console.error('Dil okulu detay yüklenemedi:', error);
         setData(null);
       } finally {
         setIsLoading(false);

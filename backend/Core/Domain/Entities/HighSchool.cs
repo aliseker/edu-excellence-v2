@@ -18,6 +18,9 @@ public class HighSchool : BaseEntity
     public string? Website { get; set; }
     public string Status { get; set; } = "active";
 
+    /// <summary>Devlet veya Özel</summary>
+    public string SchoolType { get; set; } = "Devlet";
+
     // Optional image support (frontend may omit)
     public string? ImageBase64 { get; set; }
 

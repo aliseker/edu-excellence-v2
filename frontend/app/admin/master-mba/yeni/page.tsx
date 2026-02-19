@@ -148,7 +148,6 @@ export default function YeniMasterMBAPage() {
 
       router.push('/admin/master-mba');
     } catch (error: any) {
-      console.error('Hata:', error);
       toast.error(`Program eklenirken bir hata oluştu: ${error.message || error}`);
     } finally {
       setIsLoading(false);
@@ -162,7 +161,6 @@ export default function YeniMasterMBAPage() {
         const data = await res.json();
         setCountries(data);
       } catch (error) {
-        console.error('Ülkeler yüklenemedi:', error);
       }
     };
     fetchCountries();
@@ -180,7 +178,6 @@ export default function YeniMasterMBAPage() {
         const data = await res.json();
         setCities(data);
       } catch (error) {
-        console.error('Şehirler yüklenemedi:', error);
       } finally {
         setIsCitiesLoading(false);
       }

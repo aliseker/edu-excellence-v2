@@ -51,7 +51,6 @@ export default function YeniGaleriPage() {
         setFormData((prev) => ({ ...prev, imagePath: res.path }));
       })
       .catch((err) => {
-        console.error('Galeri resmi yüklenirken hata oluştu:', err);
         toast.error('Resim yüklenirken bir hata oluştu.');
         setFormData((prev) => ({ ...prev, imagePath: '' }));
         setPreviewUrl('');
@@ -71,7 +70,6 @@ export default function YeniGaleriPage() {
       toast.success('Galeri resmi başarıyla eklendi.');
       router.push('/admin/galeri');
     } catch (error) {
-      console.error('Galeri eklenirken hata oluştu:', error);
       toast.error('Galeri eklenirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);

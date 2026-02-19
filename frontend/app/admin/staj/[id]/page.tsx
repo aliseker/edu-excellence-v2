@@ -84,7 +84,6 @@ export default function StajDuzenlePage() {
         const data = await res.json();
         setCountries(data);
       } catch (err) {
-        console.error('Ülkeler yüklenemedi:', err);
       }
     };
     fetchCountries();
@@ -115,7 +114,6 @@ export default function StajDuzenlePage() {
         setApplicationSteps(data.applicationSteps && data.applicationSteps.length > 0 ? data.applicationSteps : ['']);
         setRequiredDocuments(data.requiredDocuments && data.requiredDocuments.length > 0 ? data.requiredDocuments : ['']);
       } catch (err) {
-        console.error('Program yüklenemedi:', err);
         setError('Program yüklenirken bir hata oluştu.');
       } finally {
         setIsFetching(false);
@@ -151,7 +149,6 @@ export default function StajDuzenlePage() {
       }
       router.push('/admin/staj');
     } catch (err: any) {
-      console.error('Program güncellenemedi:', err);
       toast.error(`Program güncellenirken bir hata oluştu: ${err.message || err}`);
     } finally {
       setIsLoading(false);

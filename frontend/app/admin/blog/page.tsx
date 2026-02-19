@@ -49,8 +49,7 @@ export default function BlogPage() {
       setIsLoading(true);
       const data = await apiService.getBlogPosts();
       setBlogPosts(data as BlogPost[]);
-    } catch (error) {
-      console.error('Blog yazıları yüklenirken hata oluştu:', error);
+    } catch {
     } finally {
       setIsLoading(false);
     }
@@ -68,8 +67,7 @@ export default function BlogPage() {
       await loadBlogPosts();
       setPendingDelete(null);
       toast.success('Blog yazısı başarıyla silindi.');
-    } catch (error) {
-      console.error('Blog yazısı silinirken hata oluştu:', error);
+    } catch {
       toast.error('Silme işlemi sırasında bir hata oluştu.');
     } finally {
       setDeleting(false);

@@ -56,7 +56,6 @@ export default function BlogPage() {
       const publishedPosts = (data as BlogPost[]).filter(post => post.status === 'published');
       setBlogPosts(publishedPosts);
     } catch (error) {
-      console.error('Blog yazıları yüklenirken hata oluştu:', error);
     } finally {
       setIsLoading(false);
     }

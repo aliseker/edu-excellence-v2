@@ -44,7 +44,6 @@ export default function GaleriPage() {
       const data = await apiService.getGalleryItems();
       setImages(data as GalleryItem[]);
     } catch (error) {
-      console.error('Galeri resimleri yüklenirken hata oluştu:', error);
     } finally {
       setIsLoading(false);
     }
@@ -63,7 +62,6 @@ export default function GaleriPage() {
       setPendingDeleteId(null);
       toast.success('Resim başarıyla silindi.');
     } catch (error) {
-      console.error('Resim silinirken hata oluştu:', error);
       toast.error('Silme işlemi sırasında bir hata oluştu.');
     } finally {
       setDeleting(false);

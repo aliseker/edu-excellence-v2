@@ -51,7 +51,6 @@ export default function UniversitePage() {
         setUniversiteler(universitiesData);
         setCountries(countriesData);
       } catch (fetchError) {
-        console.error('Üniversiteler yüklenemedi:', fetchError);
         setError('Üniversiteler yüklenirken bir hata oluştu.');
       } finally {
         setIsLoading(false);
@@ -87,7 +86,6 @@ export default function UniversitePage() {
       setPendingDeleteId(null);
       toast.success('Üniversite başarıyla silindi.');
     } catch (deleteError) {
-      console.error('Silme hatası:', deleteError);
       toast.error('Silme sırasında bir hata oluştu.');
     } finally {
       setDeleting(false);

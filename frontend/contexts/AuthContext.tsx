@@ -90,7 +90,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw error;
       }
       if (error instanceof Error && !(error as any).isAuthError) {
-        console.error('Login error:', error);
       }
       return false;
     }

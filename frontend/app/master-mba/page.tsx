@@ -28,7 +28,6 @@ export default function MasterMBAPage() {
         setCountries(fetchedCountries);
         setPrograms(fetchedPrograms);
       } catch (fetchError) {
-        console.error('Master/MBA verileri yüklenemedi:', fetchError);
         setError('Veriler yüklenirken bir hata oluştu.');
       } finally {
         setIsLoading(false);

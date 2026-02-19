@@ -17,8 +17,7 @@ const Footer = () => {
         setContactAddress(settings?.contactAddress?.trim() || null);
         setContactPhoneNumber(settings?.contactPhoneNumber?.trim() || null);
         setContactEmail(settings?.contactEmail?.trim() || null);
-      } catch (error) {
-        console.error('Footer iletişim ayarları alınamadı:', error);
+      } catch {
       }
     };
 

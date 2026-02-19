@@ -57,7 +57,6 @@ export default function BlogDetailPage({ params }: PageProps) {
     try {
       setIsLoading(true);
       // Slug ile arama yap
-      console.log('Blog slug/ID:', slug); // Debug
       
       let data: BlogPost | null = null;
       
@@ -68,7 +67,6 @@ export default function BlogDetailPage({ params }: PageProps) {
         // Slug ile bulunamazsa, ID olarak dene (fallback)
         const id = parseInt(slug);
         if (!isNaN(id)) {
-          console.log('Slug ile bulunamadı, ID ile deneniyor:', id);
           data = (await apiService.getBlogPostById(id)) as BlogPost;
         } else {
           throw slugError;
@@ -87,8 +85,6 @@ export default function BlogDetailPage({ params }: PageProps) {
       const sanitized = await sanitizeHTML(data.content);
       setSanitizedContent(sanitized);
     } catch (error) {
-      console.error('Blog yazısı yüklenirken hata oluştu:', error);
-      console.error('Aranan slug/ID:', slug); // Debug
       setNotFound(true);
     } finally {
       setIsLoading(false);

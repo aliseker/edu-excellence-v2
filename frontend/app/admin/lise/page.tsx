@@ -57,7 +57,6 @@ export default function LisePage() {
       setLiseler(schoolsData);
       setCountries(countriesData);
     } catch (fetchError) {
-      console.error('Liseler yüklenemedi:', fetchError);
       setError('Liseler yüklenirken bir hata oluştu.');
     } finally {
       setIsLoading(false);
@@ -103,7 +102,6 @@ export default function LisePage() {
       setPendingDeleteId(null);
       toast.success('Lise programı başarıyla silindi.');
     } catch (deleteError) {
-      console.error('Silme hatası:', deleteError);
       toast.error('Silme sırasında bir hata oluştu.');
     } finally {
       setDeleting(false);

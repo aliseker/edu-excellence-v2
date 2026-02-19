@@ -130,7 +130,6 @@ export default function MasterMBADuzenlePage() {
           setImagePreview(imageSrc);
         }
       } catch (error) {
-        console.error('Program yüklenemedi:', error);
         toast.error('Program yüklenirken bir hata oluştu.');
       } finally {
         setIsLoading(false);
@@ -147,7 +146,6 @@ export default function MasterMBADuzenlePage() {
         const data = await res.json();
         setCountries(data);
       } catch (error) {
-        console.error('Ülkeler yüklenemedi:', error);
       }
     };
     fetchCountries();
@@ -165,7 +163,6 @@ export default function MasterMBADuzenlePage() {
         const data = await res.json();
         setCities(data);
       } catch (error) {
-        console.error('Şehirler yüklenemedi:', error);
       } finally {
         setIsCitiesLoading(false);
       }
@@ -245,7 +242,6 @@ export default function MasterMBADuzenlePage() {
 
       router.push('/admin/master-mba');
     } catch (error: any) {
-      console.error('Hata:', error);
       toast.error(`Program güncellenirken bir hata oluştu: ${error.message || error}`);
     } finally {
       setIsLoading(false);

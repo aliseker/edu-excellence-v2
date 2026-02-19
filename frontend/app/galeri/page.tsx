@@ -36,7 +36,6 @@ export default function GaleriPage() {
       const data = await apiService.getGalleryItems();
       setGalleryItems(data as GalleryItem[]);
     } catch (error) {
-      console.error('Galeri resimleri yüklenirken hata oluştu:', error);
     } finally {
       setIsLoading(false);
     }

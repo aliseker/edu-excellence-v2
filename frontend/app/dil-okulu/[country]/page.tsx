@@ -58,7 +58,6 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
         }));
         setRegions(regionList);
       } catch (error) {
-        console.error('Dil okulları yüklenemedi:', error);
         setNotFound(true);
       } finally {
         setIsLoading(false);

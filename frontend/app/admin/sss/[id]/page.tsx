@@ -36,7 +36,6 @@ export default function SSSDuzenlePage() {
         });
       }
     } catch (error) {
-      console.error('Soru yüklenirken hata oluştu:', error);
       toast.error('Soru yüklenirken bir hata oluştu.');
       router.push('/admin/sss');
     } finally {
@@ -53,7 +52,6 @@ export default function SSSDuzenlePage() {
       toast.success('Soru başarıyla güncellendi.');
       router.push('/admin/sss');
     } catch (error) {
-      console.error('Soru güncellenirken hata oluştu:', error);
       toast.error('Soru güncellenirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);

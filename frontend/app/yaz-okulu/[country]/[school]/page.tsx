@@ -89,7 +89,6 @@ export default function YazOkuluDetayPage() {
           setCity(matchedCity || null);
         }
       } catch (err) {
-        console.error('Yaz okulu detayları yüklenemedi:', err);
         setError('Yaz okulu detayları yüklenirken bir hata oluştu.');
       } finally {
         setIsLoading(false);

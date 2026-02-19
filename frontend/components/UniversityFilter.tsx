@@ -55,7 +55,6 @@ const UniversityFilter = ({ onFilterChange }: UniversityFilterProps) => {
         const data = await apiService.getLocationCountries();
         setCountries(data || []);
       } catch (error) {
-        console.error('Ülkeler yüklenirken hata oluştu:', error);
         setCountries([]);
       } finally {
         setLoadingCountries(false);
@@ -83,7 +82,6 @@ const UniversityFilter = ({ onFilterChange }: UniversityFilterProps) => {
           setCities([]);
         }
       } catch (error) {
-        console.error('Şehirler yüklenirken hata oluştu:', error);
         setCities([]);
       } finally {
         setLoadingCities(false);

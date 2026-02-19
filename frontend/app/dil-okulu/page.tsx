@@ -40,7 +40,6 @@ export default function DilOkuluPage() {
         });
         setCountries(Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name, 'tr')));
       } catch (error) {
-        console.error('Dil okulu ülkeleri yüklenemedi:', error);
       }
     };
     fetchCountries();

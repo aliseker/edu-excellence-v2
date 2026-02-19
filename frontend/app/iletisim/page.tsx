@@ -31,7 +31,6 @@ export default function IletisimPage() {
         setContactPhoneNumber(settings?.contactPhoneNumber?.trim() || null);
         setContactEmail(settings?.contactEmail?.trim() || null);
       } catch (error) {
-        console.error('İletişim ayarları alınamadı:', error);
       }
     };
 
@@ -117,7 +116,6 @@ export default function IletisimPage() {
       });
     } catch (error) {
       setSubmitStatus('error');
-      console.error('Form submission error:', error);
     } finally {
       setIsSubmitting(false);
     }

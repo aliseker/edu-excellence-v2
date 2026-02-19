@@ -60,7 +60,6 @@ export default function YeniDilOkuluPage() {
         const data = await res.json();
         setCountries(data);
       } catch (error) {
-        console.error('Ülkeler yüklenemedi:', error);
       }
     };
     fetchCountries();
@@ -78,7 +77,6 @@ export default function YeniDilOkuluPage() {
         const data = await res.json();
         setCities(data);
       } catch (error) {
-        console.error('Şehirler yüklenemedi:', error);
       } finally {
         setIsCitiesLoading(false);
       }
@@ -162,7 +160,6 @@ export default function YeniDilOkuluPage() {
       }
       router.push('/admin/dil-okullari');
     } catch (error) {
-      console.error('Hata:', error);
     } finally {
       setIsLoading(false);
     }

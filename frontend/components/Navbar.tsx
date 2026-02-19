@@ -62,7 +62,6 @@ const Navbar = () => {
         // Only show countries that actually have a HighSchool record
         const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.highSchools}?status=active`);
         if (!res.ok) {
-          console.warn('Lise ülkeleri yüklenemedi:', res.status, res.statusText);
           setHighSchoolCountries(fallbackHighSchoolCountries);
           return;
         }
@@ -93,8 +92,7 @@ const Navbar = () => {
         });
 
         setHighSchoolCountries(sorted.length ? sorted : fallbackHighSchoolCountries);
-      } catch (error) {
-        console.error('Lise ülkeleri menüsü yüklenemedi:', error);
+      } catch {
         setHighSchoolCountries(fallbackHighSchoolCountries);
       }
     };
@@ -136,8 +134,7 @@ const Navbar = () => {
           }));
 
         setLanguageSchoolDropdown(dropdown);
-      } catch (error) {
-        console.error('Dil okulları menüsü yüklenemedi:', error);
+      } catch {
       }
     };
 
@@ -177,8 +174,7 @@ const Navbar = () => {
           }));
 
         setSummerSchoolDropdown(dropdown);
-      } catch (error) {
-        console.error('Yaz okulları menüsü yüklenemedi:', error);
+      } catch {
       }
     };
 
@@ -225,8 +221,7 @@ const Navbar = () => {
           }));
 
         setUniversityDropdown(dropdown);
-      } catch (error) {
-        console.error('Üniversite menüsü yüklenemedi:', error);
+      } catch {
       }
     };
 
@@ -273,8 +268,7 @@ const Navbar = () => {
           }));
 
         setMasterMbaDropdown(dropdown);
-      } catch (error) {
-        console.error('Master/MBA menüsü yüklenemedi:', error);
+      } catch {
       }
     };
 
@@ -314,8 +308,7 @@ const Navbar = () => {
           }));
 
         setInternshipDropdown(dropdown);
-      } catch (error) {
-        console.error('Yurtdışı staj menüsü yüklenemedi:', error);
+      } catch {
       }
     };
 

@@ -52,7 +52,6 @@ export default function VizePage() {
       }));
       setCountries(withFlags);
     } catch (error) {
-      console.error('Vize ülkeleri yüklenirken hata oluştu:', error);
     } finally {
       setIsLoading(false);
     }

@@ -93,7 +93,6 @@ export default function YazOkuluDuzenlePage() {
             );
           }
         } catch (error) {
-          console.error('Yaz okulu verisi yüklenemedi:', error);
         } finally {
           setIsLoading(false);
         }
@@ -109,7 +108,6 @@ export default function YazOkuluDuzenlePage() {
         const data = await res.json();
         setCountries(data);
       } catch (error) {
-        console.error('Ülkeler yüklenemedi:', error);
       }
     };
     fetchCountries();
@@ -127,7 +125,6 @@ export default function YazOkuluDuzenlePage() {
         const data = await res.json();
         setCities(data);
       } catch (error) {
-        console.error('Şehirler yüklenemedi:', error);
       } finally {
         setIsCitiesLoading(false);
       }
@@ -184,7 +181,6 @@ export default function YazOkuluDuzenlePage() {
       }
       router.push('/admin/yaz-okullari');
     } catch (error) {
-      console.error('Hata:', error);
       toast.error('Yaz okulu güncellenirken bir hata oluştu.');
     } finally {
       setIsLoading(false);

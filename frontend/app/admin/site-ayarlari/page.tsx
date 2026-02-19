@@ -58,7 +58,6 @@ export default function SiteAyarlarPage() {
         contactEmail: settings?.contactEmail ?? '',
       });
     } catch (err) {
-      console.error('Site ayarları yüklenirken hata oluştu:', err);
       setError('Site ayarları yüklenirken bir hata oluştu.');
     } finally {
       setIsLoading(false);
@@ -95,7 +94,6 @@ export default function SiteAyarlarPage() {
       }));
       setSuccess('Site ayarları başarıyla kaydedildi.');
     } catch (err) {
-      console.error('Site ayarları kaydedilirken hata oluştu:', err);
       setError('Kaydetme sırasında bir hata oluştu.');
     } finally {
       setIsSaving(false);

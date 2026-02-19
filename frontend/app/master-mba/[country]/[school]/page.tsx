@@ -281,7 +281,6 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
           }
         }
       } catch (err) {
-        console.error('Master/MBA detayları yüklenemedi:', err);
         setError('Program detayları yüklenirken bir hata oluştu.');
       } finally {
         setIsLoading(false);

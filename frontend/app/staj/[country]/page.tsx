@@ -75,7 +75,6 @@ export default function CountryStajPage({ params }: { params: Promise<{ country:
         }
         setProgramData(matchingPrograms[0]);
       } catch (err) {
-        console.error('Staj verileri yüklenemedi:', err);
         setError('Veriler yüklenirken bir hata oluştu.');
       } finally {
         setIsLoading(false);

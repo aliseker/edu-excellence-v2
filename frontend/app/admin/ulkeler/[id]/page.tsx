@@ -30,7 +30,6 @@ export default function UlkeDuzenlePage() {
           flagImageUrl: data.flagImageUrl ?? null,
         });
       } catch (error) {
-        console.error('Ülke yüklenemedi:', error);
       }
     };
     if (id) {
@@ -60,13 +59,11 @@ export default function UlkeDuzenlePage() {
         });
         if (!flagRes.ok) {
           const err = await flagRes.json().catch(() => ({}));
-          console.warn('Bayrak yüklenemedi:', err);
         }
       }
 
       router.push('/admin/ulkeler');
     } catch (error) {
-      console.error('Hata:', error);
     } finally {
       setIsLoading(false);
     }

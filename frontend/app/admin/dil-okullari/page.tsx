@@ -39,7 +39,6 @@ export default function DilOkullariPage() {
       setPendingDeleteId(null);
       toast.success('Dil okulu başarıyla silindi.');
     } catch (error) {
-      console.error('Silme hatası:', error);
       toast.error('Silme sırasında bir hata oluştu.');
     } finally {
       setDeleting(false);
@@ -54,7 +53,6 @@ export default function DilOkullariPage() {
         const data = await res.json();
         setDilOkullari(data);
       } catch (error) {
-        console.error('Dil okulları yüklenemedi:', error);
       } finally {
         setIsLoading(false);
       }

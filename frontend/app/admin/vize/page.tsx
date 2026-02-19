@@ -48,7 +48,6 @@ export default function VizePage() {
       const data = await apiService.getVisaServices();
       setVizeUlkeler(data as VisaCountry[]);
     } catch (error) {
-      console.error('Vize ülkeleri yüklenirken hata oluştu:', error);
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +66,6 @@ export default function VizePage() {
       setPendingDelete(null);
       toast.success('Vize ülkesi başarıyla silindi.');
     } catch (error) {
-      console.error('Vize ülkesi silinirken hata oluştu:', error);
       toast.error('Silme işlemi sırasında bir hata oluştu.');
     } finally {
       setDeleting(false);

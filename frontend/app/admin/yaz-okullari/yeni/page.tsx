@@ -58,7 +58,6 @@ export default function YeniYazOkuluPage() {
         const data = await res.json();
         setCountries(data);
       } catch (error) {
-        console.error('Ülkeler yüklenemedi:', error);
       }
     };
     fetchCountries();
@@ -76,7 +75,6 @@ export default function YeniYazOkuluPage() {
         const data = await res.json();
         setCities(data);
       } catch (error) {
-        console.error('Şehirler yüklenemedi:', error);
       } finally {
         setIsCitiesLoading(false);
       }
@@ -135,7 +133,6 @@ export default function YeniYazOkuluPage() {
         included: included.filter(i => i.trim() !== ''),
         dates: dates.filter(d => d.trim() !== ''),
       };
-      console.log('Form Data:', submitData);
 
       const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.summerSchools}`, {
         method: 'POST',
@@ -150,7 +147,6 @@ export default function YeniYazOkuluPage() {
 
       router.push('/admin/yaz-okullari');
     } catch (error) {
-      console.error('Hata:', error);
       toast.error('Yaz okulu eklenirken bir hata oluştu.');
     } finally {
       setIsLoading(false);

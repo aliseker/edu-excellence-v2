@@ -62,7 +62,6 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
         const filteredUniversities = allUniversities.filter(uni => uni.countryId === currentCountry.id);
         setUniversities(filteredUniversities);
       } catch (err) {
-        console.error('Veriler yüklenemedi:', err);
         setError('Veriler yüklenirken bir hata oluştu.');
       } finally {
         setIsLoading(false);

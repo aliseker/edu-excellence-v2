@@ -34,7 +34,6 @@ export default function StajPage() {
         setPrograms(programsData);
         setCountries(countriesData);
       } catch (err) {
-        console.error('Staj programları yüklenemedi:', err);
         setError('Programlar yüklenirken bir hata oluştu.');
       } finally {
         setIsLoading(false);
@@ -73,7 +72,6 @@ export default function StajPage() {
       setPendingDeleteId(null);
       toast.success('Program başarıyla silindi.');
     } catch (err) {
-      console.error('Program silinirken hata oluştu:', err);
       toast.error('Program silinirken bir hata oluştu.');
     } finally {
       setDeleting(false);

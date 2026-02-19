@@ -49,7 +49,6 @@ export default function AdminErasmusEditPage({ params }: Props) {
         setImages(imgs);
         setPdfPath(page.pdfPath || null);
       } catch (e) {
-        console.error(e);
         setError('Sayfa yüklenemedi.');
       } finally {
         setLoading(false);
@@ -71,7 +70,6 @@ export default function AdminErasmusEditPage({ params }: Props) {
         const imgs = await apiService.getErasmusPageImages(data.id);
         setImages(imgs);
       } catch (err) {
-        console.error(err);
         setError('Resim eklenemedi.');
       }
     };
@@ -87,7 +85,6 @@ export default function AdminErasmusEditPage({ params }: Props) {
         setImages(imgs);
       }
     } catch (err) {
-      console.error(err);
       setError('Resim silinemedi.');
     }
   };

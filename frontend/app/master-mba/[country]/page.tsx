@@ -61,7 +61,6 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
         const filteredPrograms = allPrograms.filter(program => program.countryId === currentCountry.id);
         setPrograms(filteredPrograms);
       } catch (err) {
-        console.error('Veriler yüklenemedi:', err);
         setError('Veriler yüklenirken bir hata oluştu.');
       } finally {
         setIsLoading(false);

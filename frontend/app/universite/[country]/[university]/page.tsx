@@ -770,7 +770,6 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
         const allUnis = (await apiService.getUniversities()) as any[];
         setAllUniversities(allUnis);
       } catch (err) {
-        console.error('Üniversite detayları yüklenemedi:', err);
         setError('Üniversite detayları yüklenirken bir hata oluştu.');
       } finally {
         setIsLoading(false);

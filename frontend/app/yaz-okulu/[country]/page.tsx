@@ -67,7 +67,6 @@ export default function CountryPage() {
         const filteredSchools = allSchools.filter(school => school.countryId === currentCountry.id);
         setSummerSchools(filteredSchools);
       } catch (err) {
-        console.error('Veriler yüklenemedi:', err);
         setError('Veriler yüklenirken bir hata oluştu.');
       } finally {
         setIsLoading(false);

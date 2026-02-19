@@ -134,13 +134,11 @@ export default function YeniVizePage() {
       importantNotes: importantNotesItems.map((note) => note.trim()).filter(Boolean),
     };
     
-    console.log('Hazırlanan vize verisi:', payload);
     
     try {
       await apiService.createVisaService(payload);
       router.push('/admin/vize');
     } catch (error) {
-      console.error('Vize eklenirken hata oluştu:', error);
       toast.error('Vize eklenirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);

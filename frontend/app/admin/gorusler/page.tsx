@@ -34,7 +34,6 @@ export default function GoruslerPage() {
       const data = await apiService.getTestimonials();
       setTestimonials(data as Testimonial[]);
     } catch (error) {
-      console.error('Görüşler yüklenirken hata oluştu:', error);
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +52,6 @@ export default function GoruslerPage() {
       setPendingDelete(null);
       toast.success('Görüş başarıyla silindi.');
     } catch (error) {
-      console.error('Görüş silinirken hata oluştu:', error);
       toast.error('Silme işlemi sırasında bir hata oluştu.');
     } finally {
       setDeleting(false);

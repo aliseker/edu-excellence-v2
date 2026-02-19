@@ -26,7 +26,6 @@ export default function MasterMBAPage() {
         const data = await res.json();
         setPrograms(data);
       } catch (err) {
-        console.error('Programlar yüklenemedi:', err);
         setError('Programlar yüklenirken bir hata oluştu.');
       } finally {
         setIsLoading(false);
@@ -62,7 +61,6 @@ export default function MasterMBAPage() {
       setPendingDeleteId(null);
       toast.success('Program başarıyla silindi.');
     } catch (err) {
-      console.error('Program silinirken hata oluştu:', err);
       toast.error('Program silinirken bir hata oluştu.');
     } finally {
       setDeleting(false);

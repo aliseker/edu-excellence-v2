@@ -36,7 +36,6 @@ export default function SehirlerPage() {
         const data = await res.json();
         setCountry(data);
       } catch (error) {
-        console.error('Ülke yüklenemedi:', error);
       }
     };
     fetchCountry();
@@ -48,7 +47,6 @@ export default function SehirlerPage() {
       const data = await res.json();
       setCities(data);
     } catch (error) {
-      console.error('Şehirler yüklenemedi:', error);
     }
   };
 
@@ -70,7 +68,6 @@ export default function SehirlerPage() {
       setNewCity('');
       fetchCities();
     } catch (error) {
-      console.error('Şehir eklenemedi:', error);
     } finally {
       setIsLoading(false);
     }
@@ -100,7 +97,6 @@ export default function SehirlerPage() {
       cancelEdit();
       fetchCities();
     } catch (error) {
-      console.error('Şehir güncellenemedi:', error);
     } finally {
       setIsLoading(false);
     }
@@ -119,7 +115,6 @@ export default function SehirlerPage() {
       setPendingDeleteId(null);
       toast.success('Şehir başarıyla silindi.');
     } catch (error) {
-      console.error('Şehir silinemedi:', error);
       toast.error('Silme sırasında bir hata oluştu.');
     } finally {
       setDeleting(false);

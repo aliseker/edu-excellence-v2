@@ -56,8 +56,7 @@ export default function BlogDuzenlePage({ params }: PageProps) {
         status: data.status,
       });
       setCurrentSlug(data.slug);
-    } catch (error) {
-      console.error('Blog yüklenirken hata oluştu:', error);
+    } catch {
       toast.error('Blog yazısı yüklenemedi.');
     } finally {
       setIsLoadingData(false);
@@ -90,8 +89,7 @@ export default function BlogDuzenlePage({ params }: PageProps) {
       await apiService.updateBlogPost(parseInt(id), formData);
       toast.success('Blog yazısı başarıyla güncellendi.');
       router.push('/admin/blog');
-    } catch (error) {
-      console.error('Blog güncellenirken hata oluştu:', error);
+    } catch {
       toast.error('Blog güncellenirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);

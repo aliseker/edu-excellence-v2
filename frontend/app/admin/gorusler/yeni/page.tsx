@@ -26,7 +26,6 @@ export default function YeniGorusPage() {
       await apiService.createTestimonial(formData);
       router.push('/admin/gorusler');
     } catch (error) {
-      console.error('Görüş eklenirken hata oluştu:', error);
       toast.error('Görüş eklenirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);

@@ -116,7 +116,6 @@ export default function UniversiteDuzenlePage() {
             );
           }
         } catch (error) {
-          console.error('Üniversite verisi yüklenemedi:', error);
         } finally {
           setIsLoading(false);
         }
@@ -132,7 +131,6 @@ export default function UniversiteDuzenlePage() {
         const data = await res.json();
         setCountries(data);
       } catch (error) {
-        console.error('Ülkeler yüklenemedi:', error);
       }
     };
     fetchCountries();
@@ -150,7 +148,6 @@ export default function UniversiteDuzenlePage() {
         const data = await res.json();
         setCities(data);
       } catch (error) {
-        console.error('Şehirler yüklenemedi:', error);
       } finally {
         setIsCitiesLoading(false);
       }
@@ -216,7 +213,6 @@ export default function UniversiteDuzenlePage() {
       }
       router.push('/admin/universite');
     } catch (error) {
-      console.error('Üniversite güncellenirken hata oluştu:', error);
       toast.error('Üniversite güncellenirken bir hata oluştu.');
     } finally {
       setIsLoading(false);

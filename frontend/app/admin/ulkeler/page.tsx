@@ -25,7 +25,6 @@ export default function UlkelerPage() {
       const data = await res.json();
       setCountries(data);
     } catch (error) {
-      console.error('Ülkeler yüklenemedi:', error);
     } finally {
       setIsLoading(false);
     }
@@ -48,7 +47,6 @@ export default function UlkelerPage() {
       setPendingDeleteId(null);
       toast.success('Ülke başarıyla silindi.');
     } catch (err) {
-      console.error('Silme hatası:', err);
       toast.error('Silme sırasında bir hata oluştu.');
     } finally {
       setDeleting(false);

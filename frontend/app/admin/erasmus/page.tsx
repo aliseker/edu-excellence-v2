@@ -36,7 +36,6 @@ export default function AdminErasmusPage() {
         const list = await apiService.getErasmusPages();
         setPages(list);
       } catch (e) {
-        console.error(e);
       } finally {
         setLoading(false);
       }

@@ -43,7 +43,6 @@ export default function StajPage() {
 
         setCountries(availableCountries);
       } catch (fetchError) {
-        console.error('Staj ülkeleri yüklenemedi:', fetchError);
         setError('Ülkeler yüklenirken bir hata oluştu.');
       } finally {
         setIsLoading(false);

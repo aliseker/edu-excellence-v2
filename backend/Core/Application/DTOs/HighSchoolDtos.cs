@@ -25,6 +25,9 @@ public class HighSchoolCreateUpdateDto
     public string? Website { get; set; }
     public string Status { get; set; } = "active";
 
+    /// <summary>Devlet veya Özel</summary>
+    public string SchoolType { get; set; } = "Devlet";
+
     public string? ImageBase64 { get; set; }
 
     public List<string> Features { get; set; } = new();

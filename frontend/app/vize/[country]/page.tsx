@@ -62,7 +62,6 @@ export default function CountryVizePage({ params }: { params: Promise<{ country:
         setNotFound(true);
       }
     } catch (error) {
-      console.error('Vize verisi yüklenirken hata oluştu:', error);
       setNotFound(true);
     } finally {
       setIsLoading(false);

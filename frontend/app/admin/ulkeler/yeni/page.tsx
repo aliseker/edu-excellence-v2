@@ -42,13 +42,11 @@ export default function YeniUlkePage() {
         });
         if (!flagRes.ok) {
           const err = await flagRes.json().catch(() => ({}));
-          console.warn('Bayrak yüklenemedi:', err);
         }
       }
 
       router.push('/admin/ulkeler');
     } catch (error) {
-      console.error('Hata:', error);
     } finally {
       setIsLoading(false);
     }

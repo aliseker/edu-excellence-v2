@@ -109,7 +109,6 @@ export default function VizeDuzenlePage() {
         setImportantNotesItems(data.importantNotes);
       }
     } catch (error) {
-      console.error('Vize verisi yüklenirken hata oluştu:', error);
       toast.error('Vize verisi yüklenemedi.');
     } finally {
       setIsLoadingData(false);
@@ -189,7 +188,6 @@ export default function VizeDuzenlePage() {
       await apiService.updateVisaService(parseInt(id), payload);
       router.push('/admin/vize');
     } catch (error) {
-      console.error('Vize güncellenirken hata oluştu:', error);
       toast.error('Vize güncellenirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);

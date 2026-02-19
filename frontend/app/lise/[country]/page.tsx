@@ -74,10 +74,8 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
           const list = cityMap.get(cityName) ?? [];
           list.push({
             name: String(s.name ?? ''),
-            // Detail route will accept numeric id too
             slug: String(s.id),
-            // Backend currently doesn't store type; keep existing UI badge with a safe default
-            type: 'Devlet',
+            type: String(s.schoolType ?? 'Devlet'),
             description: String(s.description ?? ''),
           });
           cityMap.set(cityName, list);
@@ -97,7 +95,6 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
           cities,
         });
       } catch (error) {
-        console.error('Lise ülke sayfası yüklenemedi:', error);
         setApiError('Lise verileri yüklenirken bir hata oluştu.');
         setApiData(null);
       } finally {
