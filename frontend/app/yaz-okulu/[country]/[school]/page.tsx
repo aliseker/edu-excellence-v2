@@ -82,9 +82,9 @@ export default function YazOkuluDetayPage() {
         const matchedCountry = allCountries.find(c => c.id === fetchedSchool.countryId);
         if (matchedCountry) {
           setCountry(matchedCountry);
-          const fetchedCities = await apiService.getCities(matchedCountry.id);
+          const fetchedCities = (await apiService.getCities(matchedCountry.id)) as { id: number; name: string }[];
           const matchedCity = fetchedSchool.cityId
-            ? fetchedCities.find(c => c.id === fetchedSchool.cityId)
+            ? fetchedCities.find((c: { id: number; name: string }) => c.id === fetchedSchool.cityId)
             : null;
           setCity(matchedCity || null);
         }

@@ -255,7 +255,7 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
           return;
         }
 
-        const fetchedProgram: MasterProgram = await apiService.getMasterProgramById(programId);
+        const fetchedProgram = (await apiService.getMasterProgramById(programId)) as MasterProgram;
         if (!fetchedProgram) {
           setError('Program bulunamadı.');
           setIsLoading(false);
@@ -269,13 +269,13 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
         ]);
         const allCountriesData: Country[] = await countriesRes.json();
         setAllCountries(allCountriesData);
-        setAllPrograms(programsRes);
+        setAllPrograms((programsRes as MasterProgram[]));
 
         const matchedCountry = allCountriesData.find((c: Country) => c.id === fetchedProgram.countryId);
         if (matchedCountry) {
           setCountry(matchedCountry);
           if (fetchedProgram.cityId) {
-            const fetchedCities = await apiService.getCities(matchedCountry.id);
+            const fetchedCities = (await apiService.getCities(matchedCountry.id)) as City[];
             const matchedCity = fetchedCities.find((c: City) => c.id === fetchedProgram.cityId);
             setCity(matchedCity || null);
           }
@@ -290,7 +290,7 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
     fetchProgramData();
   }, [programId]);
 
-  const normalizedProgram = programData || {};
+  const normalizedProgram = (programData || {}) as MasterProgram;
   const features = normalizedProgram.features || [];
   const programs = normalizedProgram.programs || [];
   const requirements = normalizedProgram.requirements || { language: [], academic: [], documents: [] };
@@ -455,7 +455,7 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {features.map((feature, index) => (
+                    {features.map((feature: string, index: number) => (
                       <div key={index} className="p-4 bg-purple-50 border-4 border-purple-200 transform hover:-skew-x-1 transition-all duration-200">
                         <div className="transform skew-x-1">
                           <div className="flex items-start">
@@ -479,7 +479,7 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {programs.map((program, index) => (
+                    {programs.map((program: { name: string; type: string; duration: string; description: string; concentrations?: string[] }, index: number) => (
                       <div key={index} className="p-6 bg-gray-50 border-4 border-gray-300 transform hover:-skew-x-1 transition-all duration-200">
                         <div className="transform skew-x-1">
                           <div className="flex items-center justify-between mb-3">
@@ -496,7 +496,7 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
                             <div className="mt-4">
                               <h4 className="font-black text-gray-900 mb-2 text-sm uppercase">Konsantrasyon Alanları:</h4>
                               <div className="flex flex-wrap gap-2">
-                                {program.concentrations.map((conc, i) => (
+                                {program.concentrations.map((conc: string, i: number) => (
                                   <span key={i} className="px-2 py-1 bg-purple-100 border-2 border-purple-300 text-xs font-bold text-gray-900">
                                     {conc}
                                   </span>
@@ -525,7 +525,7 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
                       <div>
                         <h3 className="font-black text-gray-900 mb-4 text-lg uppercase border-b-4 border-red-200 pb-2">Dil Yeterliliği</h3>
                         <ul className="space-y-2">
-                          {requirements.language.map((req, index) => (
+                          {requirements.language.map((req: string, index: number) => (
                             <li key={index} className="flex items-start">
                               <span className="text-red-600 mr-2 font-black">•</span>
                               <span className="font-medium text-gray-700">{req}</span>
@@ -539,7 +539,7 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
                       <div>
                         <h3 className="font-black text-gray-900 mb-4 text-lg uppercase border-b-4 border-red-200 pb-2">Akademik Şartlar</h3>
                         <ul className="space-y-2">
-                          {requirements.academic.map((req, index) => (
+                          {requirements.academic.map((req: string, index: number) => (
                             <li key={index} className="flex items-start">
                               <span className="text-red-600 mr-2 font-black">•</span>
                               <span className="font-medium text-gray-700">{req}</span>
@@ -553,7 +553,7 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
                       <div>
                         <h3 className="font-black text-gray-900 mb-4 text-lg uppercase border-b-4 border-red-200 pb-2">Gerekli Belgeler</h3>
                         <ul className="space-y-2">
-                          {requirements.documents.map((doc, index) => (
+                          {requirements.documents.map((doc: string, index: number) => (
                             <li key={index} className="flex items-start">
                               <span className="text-red-600 mr-2 font-black">•</span>
                               <span className="font-medium text-gray-700">{doc}</span>
@@ -576,7 +576,7 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {careerServices.map((service, index) => (
+                    {careerServices.map((service: string, index: number) => (
                       <div key={index} className="p-4 bg-green-50 border-4 border-green-200 transform hover:-skew-x-1 transition-all duration-200">
                         <div className="transform skew-x-1">
                           <div className="flex items-start">
@@ -610,7 +610,7 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
                       <div>
                         <h3 className="font-black text-gray-900 mb-2 text-lg">Kampüsler</h3>
                         <div className="flex flex-wrap gap-2">
-                          {campus.map((campusItem, index) => (
+                          {campus.map((campusItem: string, index: number) => (
                             <span key={index} className="px-4 py-2 bg-blue-100 border-2 border-blue-300 font-bold text-gray-900">
                               {campusItem}
                             </span>
@@ -632,7 +632,7 @@ export default function MasterMBADetailPage({ params }: { params: Promise<{ coun
                   </div>
 
                   <div className="flex flex-wrap gap-4">
-                    {accreditation.map((acc, index) => (
+                    {accreditation.map((acc: string, index: number) => (
                       <div key={index} className="px-6 py-3 bg-yellow-100 border-4 border-yellow-300 font-black text-gray-900">
                         {acc}
                       </div>

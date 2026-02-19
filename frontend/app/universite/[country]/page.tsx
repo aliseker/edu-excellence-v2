@@ -55,10 +55,10 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
         }
         setCountry(currentCountry);
 
-        const fetchedCities = await apiService.getCities(currentCountry.id);
+        const fetchedCities = (await apiService.getCities(currentCountry.id)) as City[];
         setCities(fetchedCities);
 
-        const allUniversities: University[] = await apiService.getUniversities();
+        const allUniversities = (await apiService.getUniversities()) as University[];
         const filteredUniversities = allUniversities.filter(uni => uni.countryId === currentCountry.id);
         setUniversities(filteredUniversities);
       } catch (err) {

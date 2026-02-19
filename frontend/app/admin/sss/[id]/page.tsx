@@ -26,7 +26,7 @@ export default function SSSDuzenlePage() {
   const loadFaq = async () => {
     try {
       setIsLoadingData(true);
-      const data = await apiService.getFaqById(id);
+      const data = (await apiService.getFaqById(id)) as { question?: string; answer?: string; displayOrder?: number; isActive?: boolean } | null;
       if (data) {
         setFormData({
           question: data.question || '',

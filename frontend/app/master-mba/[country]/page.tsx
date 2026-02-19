@@ -54,10 +54,10 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
         }
         setCountryData(currentCountry);
 
-        const fetchedCities = await apiService.getCities(currentCountry.id);
+        const fetchedCities = (await apiService.getCities(currentCountry.id)) as City[];
         setCities(fetchedCities);
 
-        const allPrograms: MasterProgram[] = await apiService.getMasterPrograms();
+        const allPrograms = (await apiService.getMasterPrograms()) as MasterProgram[];
         const filteredPrograms = allPrograms.filter(program => program.countryId === currentCountry.id);
         setPrograms(filteredPrograms);
       } catch (err) {

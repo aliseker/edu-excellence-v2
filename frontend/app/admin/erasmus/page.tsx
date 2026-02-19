@@ -9,7 +9,7 @@ type ErasmusPageRow = {
   slug: string;
   title: string;
   htmlContent: string;
-  imagesJson: string;
+  imagesJson?: string;
   pdfPath: string | null;
   createdAt: string;
   updatedAt: string | null;

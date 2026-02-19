@@ -96,7 +96,7 @@ export default function SearchPage() {
   }
 
   // Metin araması için örnek sonuçlar
-  if (searchQuery && !country && !city && !language) {
+  if (searchQuery && !country && !city && !programType) {
     searchResults.push(
       { type: 'program', title: 'Kanada Üniversite Programları', description: 'Kanada\'da lisans ve yüksek lisans programları', href: '/universite/kanada' },
       { type: 'program', title: 'İngiltere Dil Okulu', description: 'İngiltere\'de İngilizce dil eğitimi programları', href: '/dil-okulu/ingiltere' },

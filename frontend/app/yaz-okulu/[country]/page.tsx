@@ -60,10 +60,10 @@ export default function CountryPage() {
         }
         setCountry(currentCountry);
 
-        const fetchedCities = await apiService.getCities(currentCountry.id);
+        const fetchedCities = (await apiService.getCities(currentCountry.id)) as City[];
         setCities(fetchedCities);
 
-        const allSchools: SummerSchool[] = await apiService.getSummerSchools();
+        const allSchools = (await apiService.getSummerSchools()) as SummerSchool[];
         const filteredSchools = allSchools.filter(school => school.countryId === currentCountry.id);
         setSummerSchools(filteredSchools);
       } catch (err) {

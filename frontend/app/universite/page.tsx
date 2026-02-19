@@ -39,7 +39,7 @@ export default function UniversitiesPage() {
         ]);
         const fetchedCountries: Country[] = await countriesRes.json();
         setCountries(fetchedCountries);
-        setUniversities(universitiesRes);
+        setUniversities((universitiesRes as University[]));
       } catch (fetchError) {
         setError('Veriler yüklenirken bir hata oluştu.');
       } finally {

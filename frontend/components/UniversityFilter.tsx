@@ -52,8 +52,8 @@ const UniversityFilter = ({ onFilterChange }: UniversityFilterProps) => {
     const loadCountries = async () => {
       try {
         setLoadingCountries(true);
-        const data = await apiService.getLocationCountries();
-        setCountries(data || []);
+        const data = (await apiService.getLocationCountries()) as CountryOption[] | null | undefined;
+        setCountries(data ?? []);
       } catch (error) {
         setCountries([]);
       } finally {
@@ -76,8 +76,8 @@ const UniversityFilter = ({ onFilterChange }: UniversityFilterProps) => {
         setLoadingCities(true);
         const countryId = parseInt(filters.country);
         if (!isNaN(countryId)) {
-          const data = await apiService.getLocationCities(countryId);
-          setCities(data || []);
+          const data = (await apiService.getLocationCities(countryId)) as CityOption[] | null | undefined;
+          setCities(data ?? []);
         } else {
           setCities([]);
         }

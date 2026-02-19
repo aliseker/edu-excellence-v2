@@ -42,7 +42,7 @@ export default function YazOkuluPage() {
         }
         const fetchedCountries: Country[] = await countriesRes.json();
         setCountries(fetchedCountries);
-        setSummerSchools(fetchedSummerSchools);
+        setSummerSchools((fetchedSummerSchools as SummerSchool[]));
       } catch (fetchError) {
         setError('Veriler yüklenirken bir hata oluştu.');
       } finally {

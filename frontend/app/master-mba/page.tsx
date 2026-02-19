@@ -26,7 +26,7 @@ export default function MasterMBAPage() {
         ]);
         const fetchedCountries = await countriesRes.json();
         setCountries(fetchedCountries);
-        setPrograms(fetchedPrograms);
+        setPrograms((fetchedPrograms as any[]));
       } catch (fetchError) {
         setError('Veriler yüklenirken bir hata oluştu.');
       } finally {

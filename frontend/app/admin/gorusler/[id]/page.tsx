@@ -28,7 +28,7 @@ export default function GorusDuzenlePage() {
   const loadTestimonial = async () => {
     try {
       setIsLoadingData(true);
-      const data = await apiService.getTestimonialById(id);
+      const data = (await apiService.getTestimonialById(id)) as { name?: string; title?: string; description?: string; universityName?: string; displayOrder?: number; isActive?: boolean } | null;
       if (data) {
         setFormData({
           name: data.name || '',
