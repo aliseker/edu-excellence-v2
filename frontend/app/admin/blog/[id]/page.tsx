@@ -14,6 +14,16 @@ interface PageProps {
   }>;
 }
 
+type BlogPostEdit = {
+  title: string;
+  category: string;
+  coverImageBase64: string;
+  summary: string;
+  content: string;
+  status: string;
+  slug: string;
+};
+
 const categories = [
   { value: 'dil-okullari', label: 'Dil Okulları' },
   { value: 'yaz-okulu', label: 'Yaz Okulu' },
@@ -46,7 +56,7 @@ export default function BlogDuzenlePage({ params }: PageProps) {
   const loadBlogPost = async () => {
     try {
       setIsLoadingData(true);
-      const data = await apiService.getBlogPostById(parseInt(id));
+      const data = (await apiService.getBlogPostById(parseInt(id))) as BlogPostEdit;
       setFormData({
         title: data.title,
         category: data.category,
