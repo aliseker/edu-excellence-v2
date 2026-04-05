@@ -1,15 +1,25 @@
+type StatItem = {
+  number: string;
+  compact?: boolean;
+  label: string;
+  icon: string;
+  color: string;
+  bgColor: string;
+};
+
 const StatsSection = () => {
-  const stats = [
+  const stats: StatItem[] = [
     {
-      number: '2010',
-      label: "'dan beri",
+      number: '2021',
+      label: 'Antalya merkezli',
       icon: '📅',
       color: 'from-purple-500 to-violet-600',
       bgColor: 'bg-purple-50'
     },
     {
-      number: '15+',
-      label: 'Yıllık Deneyim',
+      number: 'Erasmus+',
+      compact: true,
+      label: 'KA1 ve KA2',
       icon: '⭐',
       color: 'from-violet-500 to-pink-600',
       bgColor: 'bg-violet-50'
@@ -51,7 +61,7 @@ const StatsSection = () => {
             </span>
           </h2>
           <p className="text-base sm:text-lg lg:text-xl text-gray-300 font-medium border-l-2 sm:border-l-4 border-purple-400 pl-3 sm:pl-4 lg:pl-6 inline-block px-2">
-            15+ yıllık deneyimimizle binlerce öğrencinin hayalini gerçekleştirdik
+            Eğitim, uluslararası hareketlilik ve proje danışmanlığında yanınızdayız
           </p>
         </div>
 
@@ -59,13 +69,19 @@ const StatsSection = () => {
           {stats.map((stat, index) => (
             <div
               key={index}
-              className={`${stat.bgColor} p-4 sm:p-6 lg:p-8 text-center border-2 sm:border-4 border-gray-900 hover:border-purple-600 transition-all duration-200 shadow-[2px_2px_0_0_rgba(0,0,0,0.1)] sm:shadow-[4px_4px_0_0_rgba(0,0,0,0.1)] hover:shadow-[4px_4px_0_0_rgba(147,51,234,0.2)] sm:hover:shadow-[8px_8px_0_0_rgba(147,51,234,0.2)] hover:-translate-x-1 hover:-translate-y-1`}
+              className={`${stat.bgColor} p-4 sm:p-5 lg:p-6 text-center border-2 sm:border-4 border-gray-900 hover:border-purple-600 transition-all duration-200 shadow-[2px_2px_0_0_rgba(0,0,0,0.1)] sm:shadow-[4px_4px_0_0_rgba(0,0,0,0.1)] hover:shadow-[4px_4px_0_0_rgba(147,51,234,0.2)] sm:hover:shadow-[8px_8px_0_0_rgba(147,51,234,0.2)] hover:-translate-x-1 hover:-translate-y-1 min-w-0`}
             >
-              <div className="text-3xl sm:text-4xl lg:text-5xl mb-2 sm:mb-3 lg:mb-4">{stat.icon}</div>
-              <div className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black bg-gradient-to-r ${stat.color} bg-clip-text text-transparent mb-1 sm:mb-2`}>
+              <div className="text-2xl sm:text-3xl lg:text-4xl mb-2 sm:mb-2.5 lg:mb-3">{stat.icon}</div>
+              <div
+                className={`font-black bg-gradient-to-r ${stat.color} bg-clip-text text-transparent mb-1 sm:mb-2 min-w-0 w-full max-w-full px-1 leading-tight tracking-tight break-words ${
+                  stat.compact
+                    ? 'text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl'
+                    : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl'
+                }`}
+              >
                 {stat.number}
               </div>
-              <div className="text-gray-800 font-black uppercase tracking-wide text-xs sm:text-sm">
+              <div className="text-gray-800 font-black uppercase tracking-wide text-[10px] sm:text-xs leading-snug">
                 {stat.label}
               </div>
             </div>

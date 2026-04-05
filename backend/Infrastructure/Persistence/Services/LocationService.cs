@@ -23,7 +23,8 @@ public class LocationService : ILocationService
             {
                 Id = x.Id,
                 Value = x.Slug,
-                Label = x.Name
+                Label = x.Name,
+                FlagImageUrl = x.FlagImageUrl
             })
             .ToList();
     }

@@ -5,18 +5,83 @@ import Footer from '@/components/Footer';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { API_BASE_URL, API_ENDPOINTS, BACKEND_BASE_URL } from '@/config/api';
+
+type LiseCountry = {
+  name: string;
+  slug: string;
+  flagImageUrl: string | null;
+};
+
+const preferredCountryOrder = [
+  'amerika',
+  'kanada',
+  'ingiltere',
+  'irlanda',
+  'almanya',
+  'italya',
+  'fransa',
+  'ispanya',
+];
+
+function sortLiseCountries(items: LiseCountry[]): LiseCountry[] {
+  return [...items].sort((a, b) => {
+    const ia = preferredCountryOrder.indexOf(a.slug);
+    const ib = preferredCountryOrder.indexOf(b.slug);
+    const ra = ia === -1 ? Number.MAX_SAFE_INTEGER : ia;
+    const rb = ib === -1 ? Number.MAX_SAFE_INTEGER : ib;
+    if (ra !== rb) return ra - rb;
+    return a.name.localeCompare(b.name, 'tr');
+  });
+}
+
+function flagSrc(url: string | null): string | null {
+  if (!url?.trim()) return null;
+  const u = url.trim();
+  if (u.startsWith('http://') || u.startsWith('https://')) return u;
+  return `${BACKEND_BASE_URL}${u.startsWith('/') ? '' : '/'}${u}`;
+}
 
 export default function LisePage() {
-  const countries = [
-    { name: 'Amerika', flag: '🇺🇸', slug: 'amerika' },
-    { name: 'Kanada', flag: '🇨🇦', slug: 'kanada' },
-    { name: 'İngiltere', flag: '🇬🇧', slug: 'ingiltere' },
-    { name: 'İrlanda', flag: '🇮🇪', slug: 'irlanda' },
-    { name: 'Almanya', flag: '🇩🇪', slug: 'almanya' },
-    { name: 'İtalya', flag: '🇮🇹', slug: 'italya' },
-    { name: 'Fransa', flag: '🇫🇷', slug: 'fransa' },
-    { name: 'İspanya', flag: '🇪🇸', slug: 'ispanya' },
-  ];
+  const [countries, setCountries] = useState<LiseCountry[]>([]);
+  const [countriesLoading, setCountriesLoading] = useState(true);
+  const [countriesError, setCountriesError] = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      setCountriesLoading(true);
+      setCountriesError(false);
+      try {
+        const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.highSchoolCountries}?status=active`);
+        if (!res.ok) {
+          setCountries([]);
+          setCountriesError(true);
+          return;
+        }
+        const data = await res.json();
+        const raw = Array.isArray(data) ? data : [];
+        const mapped: LiseCountry[] = raw
+          .map((c: { value?: string; label?: string; flagImageUrl?: string | null }) => {
+            const slug = String(c.value || '').toLowerCase().trim();
+            if (!slug) return null;
+            return {
+              name: String(c.label || slug),
+              slug,
+              flagImageUrl: c.flagImageUrl ? String(c.flagImageUrl) : null,
+            };
+          })
+          .filter(Boolean) as LiseCountry[];
+        setCountries(sortLiseCountries(mapped));
+      } catch {
+        setCountries([]);
+        setCountriesError(true);
+      } finally {
+        setCountriesLoading(false);
+      }
+    };
+    load();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -245,20 +310,48 @@ export default function LisePage() {
             <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">🌍 Lise Eğitimi Sunan Ülkeler</h2>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {countries.map((country) => (
-              <Link
-                key={country.slug}
-                href={`/lise/${country.slug}`}
-                className="group p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-4 border-green-300 hover:border-green-600 transition-all duration-200 transform hover:-translate-y-2 hover:shadow-[8px_8px_0_0_rgba(34,197,94,0.3)]"
-              >
-                <div className="text-5xl mb-4 text-center">{country.flag}</div>
-                <h3 className="text-xl font-black text-gray-900 text-center uppercase tracking-wider group-hover:text-green-600 transition-colors">
-                  {country.name}
-                </h3>
-              </Link>
-            ))}
-          </div>
+          {countriesLoading ? (
+            <p className="text-center text-gray-600 font-bold py-8">Ülkeler yükleniyor...</p>
+          ) : countriesError ? (
+            <p className="text-center text-red-600 font-bold py-8">
+              Ülkeler yüklenemedi. Lütfen daha sonra tekrar deneyin.
+            </p>
+          ) : countries.length === 0 ? (
+            <p className="text-center text-gray-600 font-medium py-8">
+              Şu anda listelenecek lise programı bulunan ülke yok. Yakında eklenecektir.
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {countries.map((country) => {
+                const src = flagSrc(country.flagImageUrl);
+                return (
+                  <Link
+                    key={country.slug}
+                    href={`/lise/${country.slug}`}
+                    className="group p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-4 border-green-300 hover:border-green-600 transition-all duration-200 transform hover:-translate-y-2 hover:shadow-[8px_8px_0_0_rgba(34,197,94,0.3)]"
+                  >
+                    <div className="mb-4 flex h-16 items-center justify-center">
+                      {src ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={src}
+                          alt=""
+                          className="max-h-16 w-auto max-w-[5.5rem] object-contain rounded border-2 border-green-200 bg-white/80 shadow-sm"
+                        />
+                      ) : (
+                        <span className="text-5xl" aria-hidden>
+                          🌍
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-xl font-black text-gray-900 text-center uppercase tracking-wider group-hover:text-green-600 transition-colors">
+                      {country.name}
+                    </h3>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* CTA */}

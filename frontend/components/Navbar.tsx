@@ -59,28 +59,23 @@ const Navbar = () => {
   useEffect(() => {
     const fetchHighSchoolCountries = async () => {
       try {
-        // Only show countries that actually have a HighSchool record
-        const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.highSchools}?status=active`);
+        const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.highSchoolCountries}?status=active`);
         if (!res.ok) {
           setHighSchoolCountries(fallbackHighSchoolCountries);
           return;
         }
 
         const data = await res.json();
-
-        const countryMap = new Map<string, { title: string; slug: string }>();
-
-        (Array.isArray(data) ? data : []).forEach((school: any) => {
-          const slug = String(school.countrySlug || slugify(school.countryName || '') || '').toLowerCase();
-          if (!slug) return;
-
-          const title = String(school.countryName || slug);
-          if (!countryMap.has(slug)) {
-            countryMap.set(slug, { slug, title });
-          }
-        });
-
-        const mapped = Array.from(countryMap.values()).map((c) => ({ ...c, href: `/lise/${c.slug}` }));
+        const mapped = (Array.isArray(data) ? data : [])
+          .map((c: any) => {
+            const slug = String(c.value || '').toLowerCase().trim();
+            return {
+              title: String(c.label || slug),
+              slug,
+              href: `/lise/${slug}`,
+            };
+          })
+          .filter((c) => c.slug);
 
         const sorted = mapped.sort((a, b) => {
           const ia = preferredHighSchoolCountryOrder.indexOf(a.slug);

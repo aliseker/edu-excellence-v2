@@ -853,7 +853,7 @@ export default function UniversityDetailPage({ params }: { params: Promise<{ cou
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-black mb-3 leading-tight drop-shadow-[4px_4px_0_rgba(0,0,0,0.3)]">
             {data.name.toUpperCase()}
           </h1>
-          <p className="text-base md:text-lg text-blue-100 font-medium max-w-3xl leading-relaxed mb-4">
+          <p className="text-base md:text-lg text-blue-100 font-medium max-w-4xl md:max-w-5xl lg:max-w-6xl leading-relaxed text-justify hyphens-auto mb-4">
             {data.description}
           </p>
           <div className="flex flex-wrap gap-4">

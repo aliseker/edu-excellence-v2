@@ -37,7 +37,8 @@ public class HighSchoolService : IHighSchoolService
             {
                 Id = c.Id,
                 Value = c.Slug,
-                Label = c.Name
+                Label = c.Name,
+                FlagImageUrl = c.FlagImageUrl
             })
             .ToListAsync();
     }

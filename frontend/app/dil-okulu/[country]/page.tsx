@@ -153,7 +153,7 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
                       <h3 className="text-xl font-black text-gray-900 mb-3 uppercase tracking-tight group-hover:text-purple-600 transition-colors">
                         {school.name}
                       </h3>
-                      <p className="text-gray-700 font-medium leading-relaxed mb-4">
+                      <p className="text-gray-700 font-medium leading-relaxed mb-4 line-clamp-3">
                         {school.description}
                       </p>
                       <div className="flex items-center text-purple-600 font-bold group-hover:text-purple-700">

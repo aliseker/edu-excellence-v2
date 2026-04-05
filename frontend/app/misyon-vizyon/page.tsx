@@ -26,9 +26,9 @@ export default function MisyonVizyonPage() {
             <span className="transform skew-x-12 text-sm font-black uppercase tracking-wider">🎯 Kurumsal</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight drop-shadow-[4px_4px_0_rgba(0,0,0,0.3)]">
-            MİSYON & VİZYON
+            VİZYON, MİSYON
             <br />
-            <span>DEĞERLERİMİZ</span>
+            <span>VE UZMANLIK ALANLARIMIZ</span>
           </h1>
         </div>
       </section>
@@ -43,11 +43,8 @@ export default function MisyonVizyonPage() {
             </div>
             
             <div className="prose prose-lg max-w-none">
-              <p className="text-gray-800 text-lg leading-relaxed font-medium mb-6">
-                Türkiye'nin en güvenilir ve başarılı yurtdışı eğitim danışmanlık firması olmak, öğrencilerimizin hayallerini gerçekleştirmelerine yardımcı olmak.
-              </p>
               <p className="text-gray-800 text-lg leading-relaxed font-medium">
-                Uluslararası eğitim ve Erasmus programları alanında öncü bir kurum olarak, kaliteli hizmet sunmayı ve sürekli gelişimi hedefliyoruz. Öğrencilerimize ve ortaklarımıza en iyi deneyimi sunmak için çalışıyoruz.
+                Eğitimde uluslararasılaşmayı destekleyen, yenilikçi, kapsayıcı ve sürdürülebilir projeler geliştiren; bireylerin ve kurumların küresel yetkinliklerini artıran öncü bir kuruluş olmak.
               </p>
             </div>
           </div>
@@ -59,119 +56,38 @@ export default function MisyonVizyonPage() {
             </div>
             
             <div className="prose prose-lg max-w-none">
-              <p className="text-gray-800 text-lg leading-relaxed font-medium mb-6">
-                Öğrencilerimize en kaliteli eğitim fırsatlarını sunmak, profesyonel danışmanlık hizmeti vererek onların en doğru kararları almalarını sağlamak.
-              </p>
-              <p className="text-gray-800 text-lg leading-relaxed font-medium">
-                Disiplinli çalışma sistemimiz ve kaliteye olan bağlılığımızla, uluslararası proje faaliyetleri, öğretmen eğitimi ve kapsamlı eğitim hizmetleri sunarak mükemmelliği yakalıyoruz.
-              </p>
+              <ul className="text-gray-800 text-lg leading-relaxed font-medium space-y-4 list-none pl-0 m-0">
+                <li className="flex gap-3">
+                  <span className="text-emerald-600 font-black shrink-0">•</span>
+                  <span>Kurumları ve bireyleri uluslararası fırsatlarla buluşturmak</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="text-emerald-600 font-black shrink-0">•</span>
+                  <span>Erasmus+ ve diğer hibe programlarında yüksek başarı oranları yakalamak</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="text-emerald-600 font-black shrink-0">•</span>
+                  <span>Eğitimde kaliteyi artıran, uygulanabilir ve etkili projeler üretmek</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="text-emerald-600 font-black shrink-0">•</span>
+                  <span>Uluslararası hareketlilik programlarını erişilebilir ve etkili hale getirmek</span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
 
-        {/* Values */}
+        {/* Expertise */}
         <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
           <div className="inline-block px-5 py-2.5 bg-teal-600 text-white border-4 border-teal-800 transform -skew-x-12 mb-8">
-            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">⭐ DEĞERLERİMİZ</h2>
+            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">⭐ UZMANLIK ALANLARIMIZ</h2>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-8 bg-green-50 border-4 border-green-300 text-center transform hover:-skew-x-2 transition-all duration-200">
-              <div className="transform skew-x-2">
-                <div className="text-5xl mb-4">🛡️</div>
-                <h3 className="text-xl font-black text-gray-900 mb-4 uppercase tracking-wider">Güvenilirlik</h3>
-                <p className="text-gray-700 font-medium leading-relaxed">
-                  15+ yıllık deneyimimizle güvenilir hizmet sunuyoruz. Öğrencilerimizin ve ortaklarımızın güvenini kazanmak önceliğimizdir.
-                </p>
-              </div>
-            </div>
 
-            <div className="p-8 bg-emerald-50 border-4 border-emerald-300 text-center transform hover:-skew-x-2 transition-all duration-200">
-              <div className="transform skew-x-2">
-                <div className="text-5xl mb-4">⚡</div>
-                <h3 className="text-xl font-black text-gray-900 mb-4 uppercase tracking-wider">Hız</h3>
-                <p className="text-gray-700 font-medium leading-relaxed">
-                  Hızlı ve etkili çözümler sunuyoruz. Başvurudan kabul sürecine kadar hızlı destek sağlıyoruz.
-                </p>
-              </div>
-            </div>
-
-            <div className="p-8 bg-teal-50 border-4 border-teal-300 text-center transform hover:-skew-x-2 transition-all duration-200">
-              <div className="transform skew-x-2">
-                <div className="text-5xl mb-4">👥</div>
-                <h3 className="text-xl font-black text-gray-900 mb-4 uppercase tracking-wider">Uzmanlık</h3>
-                <p className="text-gray-700 font-medium leading-relaxed">
-                  Deneyimli ve sertifikalı danışman ekibimizle profesyonel hizmet veriyoruz. Her alanda uzman desteği.
-                </p>
-              </div>
-            </div>
-
-            <div className="p-8 bg-green-50 border-4 border-green-300 text-center transform hover:-skew-x-2 transition-all duration-200">
-              <div className="transform skew-x-2">
-                <div className="text-5xl mb-4">🌍</div>
-                <h3 className="text-xl font-black text-gray-900 mb-4 uppercase tracking-wider">Uluslararası Deneyim</h3>
-                <p className="text-gray-700 font-medium leading-relaxed">
-                  7 ülkede faaliyet gösteriyoruz. Geniş uluslararası ağımızla en iyi hizmeti sunuyoruz.
-                </p>
-              </div>
-            </div>
-
-            <div className="p-8 bg-emerald-50 border-4 border-emerald-300 text-center transform hover:-skew-x-2 transition-all duration-200">
-              <div className="transform skew-x-2">
-                <div className="text-5xl mb-4">✨</div>
-                <h3 className="text-xl font-black text-gray-900 mb-4 uppercase tracking-wider">Kalite</h3>
-                <p className="text-gray-700 font-medium leading-relaxed">
-                  Disiplinli çalışma sistemimiz ve kaliteye olan bağlılığımızla mükemmelliği yakalıyoruz.
-                </p>
-              </div>
-            </div>
-
-            <div className="p-8 bg-teal-50 border-4 border-teal-300 text-center transform hover:-skew-x-2 transition-all duration-200">
-              <div className="transform skew-x-2">
-                <div className="text-5xl mb-4">🤝</div>
-                <h3 className="text-xl font-black text-gray-900 mb-4 uppercase tracking-wider">İşbirliği</h3>
-                <p className="text-gray-700 font-medium leading-relaxed">
-                  Doğru kişiler ve kuruluşlarla işbirliği yaparak başarılı projeler gerçekleştiriyoruz.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Working Principles */}
-        <div className="bg-white border-4 border-gray-900 shadow-[8px_8px_0_0_rgba(0,0,0,0.1)] p-8 md:p-10 mb-12">
-          <div className="inline-block px-5 py-2.5 bg-green-600 text-white border-4 border-green-800 transform -skew-x-12 mb-8">
-            <h2 className="transform skew-x-12 text-xl font-black uppercase tracking-wider">⚙️ ÇALIŞMA PRENSİPLERİMİZ</h2>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-6 bg-green-50 border-4 border-green-200">
-              <h3 className="text-xl font-black text-gray-900 mb-3 uppercase tracking-wider">Disiplinli Çalışma Sistemi</h3>
-              <p className="text-gray-700 font-medium leading-relaxed">
-                Organize ve sistematik bir çalışma anlayışıyla her projeyi titizlikle yönetiyoruz. Süreçlerimiz şeffaf ve takip edilebilirdir.
-              </p>
-            </div>
-
-            <div className="p-6 bg-emerald-50 border-4 border-emerald-200">
-              <h3 className="text-xl font-black text-gray-900 mb-3 uppercase tracking-wider">Kaliteye Bağlılık</h3>
-              <p className="text-gray-700 font-medium leading-relaxed">
-                Hizmetlerimizin her aşamasında kalite standartlarını koruyoruz. Mükemmellik için sürekli gelişim sağlıyoruz.
-              </p>
-            </div>
-
-            <div className="p-6 bg-teal-50 border-4 border-teal-200">
-              <h3 className="text-xl font-black text-gray-900 mb-3 uppercase tracking-wider">Müşteri Odaklılık</h3>
-              <p className="text-gray-700 font-medium leading-relaxed">
-                Öğrencilerimizin ve ortaklarımızın ihtiyaçlarına odaklanıyoruz. Her adımda onların başarısı için çalışıyoruz.
-              </p>
-            </div>
-
-            <div className="p-6 bg-green-50 border-4 border-green-200">
-              <h3 className="text-xl font-black text-gray-900 mb-3 uppercase tracking-wider">İnovasyon</h3>
-              <p className="text-gray-700 font-medium leading-relaxed">
-                Eğitim sektöründeki yenilikleri takip ediyor, modern çözümler geliştiriyoruz. Teknolojiyi etkin kullanıyoruz.
-              </p>
-            </div>
+          <div className="prose prose-lg max-w-none">
+            <p className="text-gray-800 text-lg leading-relaxed font-medium">
+              Edu Excellence, her yıl gerçekleştirdiği Yerel ve Uluslararası faaliyetler, Yurtdışı imkânı sağladığı kişi sayısı, kendisi ile iş ortaklığı yaptığı kurumların aldığı hibe sayısı ve proje başarıları ile Türkiye&apos;nin ve Avrupa&apos;nın en başarılı kurumları arasında yer almaktadır.
+            </p>
           </div>
         </div>
 

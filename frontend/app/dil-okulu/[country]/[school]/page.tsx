@@ -150,7 +150,7 @@ export default function SchoolDetailPage({ params }: { params: Promise<{ country
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-black mb-6 leading-tight drop-shadow-[4px_4px_0_rgba(0,0,0,0.3)]">
             {data.name.toUpperCase()}
           </h1>
-          <p className="text-lg md:text-xl text-purple-100 font-medium max-w-3xl leading-relaxed">
+          <p className="text-lg md:text-xl text-purple-100 font-medium max-w-4xl md:max-w-5xl lg:max-w-6xl leading-relaxed text-justify hyphens-auto">
             {data.description}
           </p>
         </div>

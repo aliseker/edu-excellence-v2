@@ -35,7 +35,7 @@ const Hero = () => {
           <div className="space-y-4 sm:space-y-5 animate-slide-in-right">
             {/* Badge - Geometric Style */}
             <div className="inline-flex items-center px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 bg-purple-600 text-white font-bold text-xs sm:text-sm uppercase tracking-wider border-2 sm:border-4 border-purple-800 transform -skew-x-12 shadow-lg">
-              <span className="transform skew-x-12">✨ 2010'dan Beri Güvenilir</span>
+              <span className="transform skew-x-12">✨ 2021&apos;den Beri Antalya Merkezli</span>
             </div>
             
             {/* Title - More Geometric, Bold */}
@@ -75,8 +75,8 @@ const Hero = () => {
             <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:gap-4 pt-4 sm:pt-5">
               <div className="bg-purple-600 text-white p-3 sm:p-4 lg:p-5 border-2 sm:border-4 border-purple-800 shadow-lg transform -skew-x-3">
                 <div className="transform skew-x-3">
-                  <div className="text-xl sm:text-2xl lg:text-3xl font-black mb-0.5 sm:mb-1">15+</div>
-                  <div className="text-[10px] sm:text-xs font-bold uppercase tracking-wider leading-tight">Yıllık Deneyim</div>
+                  <div className="text-xl sm:text-2xl lg:text-3xl font-black mb-0.5 sm:mb-1">2021</div>
+                  <div className="text-[10px] sm:text-xs font-bold uppercase tracking-wider leading-tight">Faaliyette</div>
                 </div>
               </div>
               <div className="bg-violet-600 text-white p-3 sm:p-4 lg:p-5 border-2 sm:border-4 border-violet-800 shadow-lg transform -skew-x-3">

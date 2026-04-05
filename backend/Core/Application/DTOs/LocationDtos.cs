@@ -5,6 +5,7 @@ public class CountryOptionDto
     public int Id { get; set; }
     public string Value { get; set; } = string.Empty;
     public string Label { get; set; } = string.Empty;
+    public string? FlagImageUrl { get; set; }
 }
 
 public class CityOptionDto

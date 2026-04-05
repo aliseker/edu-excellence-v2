@@ -177,18 +177,18 @@ export default function CountryPage() {
               </div>
 
               {/* Schools Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 [&>a:only-child]:md:col-span-2">
                 {group.schools.map((school, schoolIndex) => (
                   <Link
                     key={schoolIndex}
                     href={`/yaz-okulu/${country.slug}/${school.id}`}
-                    className="group p-6 bg-gray-50 border-4 border-gray-300 hover:border-orange-600 transition-all duration-200 transform hover:-skew-x-1 hover:shadow-lg"
+                    className="group p-6 bg-gray-50 border-4 border-gray-300 hover:border-orange-600 transition-all duration-200 transform hover:-skew-x-1 hover:shadow-lg min-w-0"
                   >
-                    <div className="transform group-hover:skew-x-1">
+                    <div className="transform group-hover:skew-x-1 min-w-0">
                       <h3 className="text-xl font-black text-gray-900 mb-3 uppercase tracking-tight group-hover:text-orange-600 transition-colors">
                         {school.name}
                       </h3>
-                      <p className="text-gray-700 font-medium leading-relaxed mb-4">
+                      <p className="text-gray-700 font-medium leading-relaxed mb-4 line-clamp-3">
                         {school.description || 'Detaylı bilgi için tıklayın.'}
                       </p>
                       <div className="flex items-center gap-4 mb-4 text-sm">
